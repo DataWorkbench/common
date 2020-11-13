@@ -35,9 +35,12 @@ vet:
 lint:
 	@[[ ${VERBOSE} = "yes" ]] && set -x; staticcheck ./...;
 
+.PHONY: tidy
+tidy:
+	@[[ ${VERBOSE} = "yes" ]] && set -x; go mod tidy;
 
 .PHONY: check
-check: format vet lint
+check: tidy format vet lint
 
 .DEFAULT_GOAL = help
 
