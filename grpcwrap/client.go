@@ -79,7 +79,7 @@ func NewConn(ctx context.Context, address string, cfg *ClientConfig) (conn *grpc
 	opts = append(opts, grpc.WithUnaryInterceptor(grpc_retry.UnaryClientInterceptor(
 		grpc_retry.WithMax(3),
 		grpc_retry.WithPerRetryTimeout(time.Second*3),
-		grpc_retry.WithBackoff(grpc_retry.BackoffLinear(time.Millisecond*100)),
+		grpc_retry.WithBackoff(grpc_retry.BackoffLinear(time.Second*1)),
 		grpc_retry.WithCodes(codes.Unavailable, codes.Aborted, codes.DeadlineExceeded, codes.ResourceExhausted),
 	)))
 
