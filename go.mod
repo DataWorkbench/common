@@ -3,7 +3,7 @@ module github.com/DataWorkbench/common
 go 1.15
 
 require (
-	github.com/DataWorkbench/glog v0.0.0-20201112061454-32ef40c94f99
+	github.com/DataWorkbench/glog v0.0.0-20201114060240-9471edb2b8cf
 	github.com/Yu-33/gohelper v0.0.0-20201107172455-ed37b820a2f8
 	github.com/Yu-33/snowflake v0.0.0-20201112094208-883c00810b8b
 	github.com/golang/protobuf v1.4.3

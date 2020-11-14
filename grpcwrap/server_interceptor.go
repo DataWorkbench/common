@@ -13,15 +13,15 @@ import (
 // You can get logger by glog.FromContext(cxt) after.
 func loggerUnaryServerInterceptor(lp *glog.Logger) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
-		// Gets a new logger instances
-		lc := lp.Clone()
-		lc.WithFields().AddString(ctxReqIdKey, reqIdFromIncomingContext(ctx))
+		// Copy a new logger
+		nl := lp.Clone()
+		nl.WithFields().AddString(ctxReqIdKey, reqIdFromIncomingContext(ctx))
 
-		ctx = glog.WithContext(ctx, lc)
+		ctx = glog.WithContext(ctx, nl)
 		resp, err = handler(ctx, req)
 
 		// Close the logger instances
-		_ = lc.Close()
+		_ = nl.Close()
 		return resp, err
 	}
 }
