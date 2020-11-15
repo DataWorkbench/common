@@ -3,6 +3,7 @@ package gormwrap
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/DataWorkbench/glog"
@@ -63,6 +64,7 @@ func (g *Logger) Info(ctx context.Context, format string, v ...interface{}) {
 	if l == nil {
 		l = g.Output
 	}
+	format = strings.TrimSuffix(format, "\n")
 	l.Info().RawString("gormlog", fmt.Sprintf(format, v...)).Fire()
 }
 
@@ -74,6 +76,7 @@ func (g *Logger) Warn(ctx context.Context, format string, v ...interface{}) {
 	if l == nil {
 		l = g.Output
 	}
+	format = strings.TrimSuffix(format, "\n")
 	l.Warn().RawString("gormlog", fmt.Sprintf(format, v...)).Fire()
 }
 
@@ -85,6 +88,7 @@ func (g *Logger) Error(ctx context.Context, format string, v ...interface{}) {
 	if l == nil {
 		l = g.Output
 	}
+	format = strings.TrimSuffix(format, "\n")
 	l.Error().RawString("gormlog", fmt.Sprintf(format, v...)).Fire()
 }
 
