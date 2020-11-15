@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	protojsonMarshal = protojson.MarshalOptions{}
+	protojsonMarshal = protojson.MarshalOptions{EmitUnpopulated: true}
 )
 
 func pbMsgToString(logger *glog.Logger, i interface{}) string {
