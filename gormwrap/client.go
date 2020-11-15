@@ -14,11 +14,11 @@ import (
 
 type MySQLConfig struct {
 	// Hosts sample "127.0.0.1:3306,127.0.0.1:3307,127.0.0.1:3308"
-	Hosts       string `json:"hosts" yaml:"hosts" envconfig:"HOSTS" default:"" validate:"required"`
-	User        string `json:"user" yaml:"user" envconfig:"USER" default:"" validate:"required"`
-	Password    string `json:"password" yaml:"password" envconfig:"PASSWORD" default:"" validate:"required"`
-	Database    string `json:"database" yaml:"database" envconfig:"DATABASE" default:"" validate:"required"`
-	MaxIdleConn int    `json:"max_idle_conn" yaml:"max_idle_conn" envconfig:"MAX_IDLE_CONN" default:"16" validate:"required"`
+	Hosts       string `json:"hosts"         yaml:"hosts"         envconfig:"HOSTS"         default:""    validate:"required"`
+	User        string `json:"user"          yaml:"user"          envconfig:"USER"          default:""    validate:"required"`
+	Password    string `json:"password"      yaml:"password"      envconfig:"PASSWORD"      default:""    validate:"required"`
+	Database    string `json:"database"      yaml:"database"      envconfig:"DATABASE"      default:""    validate:"required"`
+	MaxIdleConn int    `json:"max_idle_conn" yaml:"max_idle_conn" envconfig:"MAX_IDLE_CONN" default:"16"  validate:"required"`
 	MaxOpenConn int    `json:"max_open_conn" yaml:"max_open_conn" envconfig:"MAX_OPEN_CONN" default:"128" validate:"required"`
 	// ConnMaxLifetime unit seconds
 	ConnMaxLifetime int `json:"conn_max_lifetime" yaml:"conn_max_lifetime" envconfig:"CONN_MAX_LIFETIME" default:"600" validate:"required"`

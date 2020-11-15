@@ -10,7 +10,7 @@ import (
 )
 
 type Config struct {
-	// This is used for reporting the status of grpc server directly through
+	// This is used for reporting the status of server directly through
 	// the HTTP address. Notice that there is a risk of leaking status
 	// information if this port is exposed to the public.
 	Address string `json:"address" yaml:"address" envconfig:"ADDRESS" default:"" validate:"required"`

@@ -21,7 +21,7 @@ type ClientConfig struct {
 	// Address sample "127.0.0.1:50001" or "127.0.0.1:50001, 127.0.0.1:50002, 127.0.0.1:50003"
 	Address string `json:"address" yaml:"address" envconfig:"ADDRESS" default:"" validate:"required"`
 	// grpc log level, 1 => info, 2 => waring, 3 => error, 4 => fatal
-	LogLevel     int `json:"log_level" yaml:"log_level" envconfig:"LOG_LEVEL" default:"2" validate:"gte=1,lte=4"`
+	LogLevel     int `json:"log_level"     yaml:"log_level"     envconfig:"LOG_LEVEL"     default:"2" validate:"gte=1,lte=4"`
 	LogVerbosity int `json:"log_verbosity" yaml:"log_verbosity" envconfig:"LOG_VERBOSITY" default:"1" validate:"required"`
 }
 
