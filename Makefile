@@ -16,7 +16,7 @@ help:
 
 .PHONY: test
 test:
-	@[[ ${VERBOSE} = "yes" ]] && set -x; go test -race -v . -test.count=1 -failfast
+	@[[ ${VERBOSE} = "yes" ]] && set -x; go test -race -v ./... -test.count=1 -failfast
 
 .PHONY: bench
 bench:
