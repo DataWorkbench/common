@@ -186,7 +186,7 @@ func (g *Logger) WarningDepth(depth int, args ...interface{}) {
 	_, file, line, ok := runtime.Caller(depth + 2)
 	if ok {
 		caller := fmt.Sprintf("%s:%d", file, line)
-		g.Output.Info().RawString("grpclog-WarningDepth", fmt.Sprint(args...)).RawString("caller", caller).Fire()
+		g.Output.Warn().RawString("grpclog-WarningDepth", fmt.Sprint(args...)).RawString("caller", caller).Fire()
 	} else {
 		g.Output.Warn().RawString("grpclog-WarningDepth", fmt.Sprint(args...)).Fire()
 	}
@@ -200,7 +200,7 @@ func (g *Logger) ErrorDepth(depth int, args ...interface{}) {
 	_, file, line, ok := runtime.Caller(depth + 2)
 	if ok {
 		caller := fmt.Sprintf("%s:%d", file, line)
-		g.Output.Info().RawString("grpclog-ErrorDepth", fmt.Sprint(args...)).RawString("caller", caller).Fire()
+		g.Output.Error().RawString("grpclog-ErrorDepth", fmt.Sprint(args...)).RawString("caller", caller).Fire()
 	} else {
 		g.Output.Error().RawString("grpclog-ErrorDepth", fmt.Sprint(args...)).Fire()
 	}
@@ -214,7 +214,7 @@ func (g *Logger) FatalDepth(depth int, args ...interface{}) {
 	_, file, line, ok := runtime.Caller(depth + 2)
 	if ok {
 		caller := fmt.Sprintf("%s:%d", file, line)
-		g.Output.Info().RawString("grpclog-FatalDepth", fmt.Sprint(args...)).RawString("caller", caller).Fire()
+		g.Output.Fatal().RawString("grpclog-FatalDepth", fmt.Sprint(args...)).RawString("caller", caller).Fire()
 	} else {
 		g.Output.Fatal().RawString("grpclog-FatalDepth", fmt.Sprint(args...)).Fire()
 	}
