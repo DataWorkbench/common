@@ -8,7 +8,7 @@ import (
 
 	"github.com/DataWorkbench/glog"
 	"github.com/grpc-ecosystem/go-grpc-middleware/retry"
-	"github.com/grpc-ecosystem/go-grpc-prometheus"
+	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/backoff"
 	"google.golang.org/grpc/codes"
@@ -18,14 +18,16 @@ import (
 
 // ClientConfig used to create an connection to grpc server
 type ClientConfig struct {
+	// Address sample "127.0.0.1:50001" or "127.0.0.1:50001, 127.0.0.1:50002, 127.0.0.1:50003"
+	Address string `json:"address" yaml:"address" envconfig:"ADDRESS" default:"" validate:"required"`
 	// grpc log level, 1 => info, 2 => waring, 3 => error, 4 => fatal
-	LogLevel     int `json:"log_level" yaml:"log_level" envconfig:"GRPC_CLIENT_LOG_LEVEL" default:"3" validate:"gte=1,lte=4"`
-	LogVerbosity int `json:"log_verbosity" yaml:"log_verbosity" envconfig:"GRPC_CLIENT_LOG_VERBOSITY" default:"1" validate:"required"`
+	LogLevel     int `json:"log_level" yaml:"log_level" envconfig:"LOG_LEVEL" default:"2" validate:"gte=1,lte=4"`
+	LogVerbosity int `json:"log_verbosity" yaml:"log_verbosity" envconfig:"LOG_VERBOSITY" default:"1" validate:"required"`
 }
 
 // NewConn return an new grpc.ClientConn
 // NOTICE: Must set glog.Logger into the ctx by glow.WithContext
-func NewConn(ctx context.Context, address string, cfg *ClientConfig) (conn *grpc.ClientConn, err error) {
+func NewConn(ctx context.Context, cfg *ClientConfig) (conn *grpc.ClientConn, err error) {
 	lp := glog.FromContext(ctx)
 
 	defer func() {
@@ -34,13 +36,13 @@ func NewConn(ctx context.Context, address string, cfg *ClientConfig) (conn *grpc
 		}
 	}()
 
-	lp.Info().Msg("connecting to grpc server").String("address", address).Fire()
+	lp.Info().Msg("connecting to grpc server").String("address", cfg.Address).Fire()
 
-	// TODO: feature: support balance
+	// TODO: support balance
 	// address format "127.0.0.1:50001" or "127.0.0.1:50001, 127.0.0.1:50002, 127.0.0.1:50003"
-	hosts := strings.Split(strings.ReplaceAll(address, " ", ""), ",")
+	hosts := strings.Split(strings.ReplaceAll(cfg.Address, " ", ""), ",")
 	if len(hosts) == 0 {
-		err = fmt.Errorf("invalid address: %s", address)
+		err = fmt.Errorf("invalid address: %s", cfg.Address)
 		return
 	}
 

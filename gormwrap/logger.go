@@ -63,7 +63,7 @@ func (g *Logger) Info(ctx context.Context, format string, v ...interface{}) {
 	if l == nil {
 		l = g.Output
 	}
-	l.Info().Msg("gormlog: ").Msg(fmt.Sprintf(format, v...)).Fire()
+	l.Info().RawString("gormlog", fmt.Sprintf(format, v...)).Fire()
 }
 
 func (g *Logger) Warn(ctx context.Context, format string, v ...interface{}) {
@@ -74,7 +74,7 @@ func (g *Logger) Warn(ctx context.Context, format string, v ...interface{}) {
 	if l == nil {
 		l = g.Output
 	}
-	l.Warn().Msg("gormlog: ").Msg(fmt.Sprintf(format, v...)).Fire()
+	l.Warn().RawString("gormlog", fmt.Sprintf(format, v...)).Fire()
 }
 
 func (g *Logger) Error(ctx context.Context, format string, v ...interface{}) {
@@ -85,7 +85,7 @@ func (g *Logger) Error(ctx context.Context, format string, v ...interface{}) {
 	if l == nil {
 		l = g.Output
 	}
-	l.Error().Msg("gormlog: ").Msg(fmt.Sprintf(format, v...)).Fire()
+	l.Error().RawString("gormlog", fmt.Sprintf(format, v...)).Fire()
 }
 
 func (g *Logger) Trace(ctx context.Context, begin time.Time, fc func() (string, int64), err error) {
@@ -101,12 +101,12 @@ func (g *Logger) Trace(ctx context.Context, begin time.Time, fc func() (string, 
 	switch {
 	case err != nil && g.Level >= ErrorLevel:
 		sql, rows := fc()
-		l.Error().Msg("gormlog trace: ").String("SQL", sql).Int64("rows", rows).Error("error", err).Millisecond("elapsed", elapsed).Fire()
+		l.Error().Msg("gormlog trace ").String("SQL", sql).Int64("rows", rows).Error("error", err).Millisecond("elapsed", elapsed).Fire()
 	case elapsed > g.SlowThreshold && g.SlowThreshold != 0 && g.Level >= WarnLevel:
 		sql, rows := fc()
-		l.Warn().Msg("gormlog trace: ").String("SQL", sql).Int64("rows", rows).Millisecond("elapsed", elapsed).Fire()
+		l.Warn().Msg("gormlog trace ").String("SQL", sql).Int64("rows", rows).Millisecond("elapsed", elapsed).Fire()
 	case g.Level >= InfoLevel:
 		sql, rows := fc()
-		l.Debug().Msg("gormlog trace: ").String("SQL", sql).Int64("rows", rows).Millisecond("elapsed", elapsed).Fire()
+		l.Debug().Msg("gormlog trace ").String("SQL", sql).Int64("rows", rows).Millisecond("elapsed", elapsed).Fire()
 	}
 }

@@ -14,19 +14,18 @@ import (
 
 type MySQLConfig struct {
 	// Hosts sample "127.0.0.1:3306,127.0.0.1:3307,127.0.0.1:3308"
-	Hosts       string `json:"hosts" yaml:"hosts" envconfig:"MYSQL_HOSTS" default:"" validate:"required"`
-	User        string `json:"user" yaml:"user" envconfig:"MYSQL_USER" default:"" validate:"required"`
-	Password    string `json:"password" yaml:"password" envconfig:"MYSQL_PASSWORD" default:"" validate:"required"`
-	Database    string `json:"database" yaml:"database" envconfig:"MYSQL_DATABASE" default:"" validate:"required"`
-	MaxIdleConn int    `json:"max_idle_conn" yaml:"max_idle_conn" envconfig:"MYSQL_MAX_IDLE_CONN" default:"16" validate:"required"`
-	MaxOpenConn int    `json:"max_open_conn" yaml:"max_open_conn" envconfig:"MYSQL_OPEN_CONN" default:"128" validate:"required"`
+	Hosts       string `json:"hosts" yaml:"hosts" envconfig:"HOSTS" default:"" validate:"required"`
+	User        string `json:"user" yaml:"user" envconfig:"USER" default:"" validate:"required"`
+	Password    string `json:"password" yaml:"password" envconfig:"PASSWORD" default:"" validate:"required"`
+	Database    string `json:"database" yaml:"database" envconfig:"DATABASE" default:"" validate:"required"`
+	MaxIdleConn int    `json:"max_idle_conn" yaml:"max_idle_conn" envconfig:"MAX_IDLE_CONN" default:"16" validate:"required"`
+	MaxOpenConn int    `json:"max_open_conn" yaml:"max_open_conn" envconfig:"MAX_OPEN_CONN" default:"128" validate:"required"`
 	// ConnMaxLifetime unit seconds
-	ConnMaxLifetime int `json:"conn_max_lifetime" yaml:"conn_max_lifetime" envconfig:"MYSQL_CONN_MAX_LIFETIME" default:"600" validate:"required"`
-
-	// gorm log level, 1 => Silent, 2 => Error, 3 => Warn, 4 => Info
-	LogLevel int `json:"log_level" yaml:"log_level" envconfig:"MYSQL_LOG_LEVEL" default:"4" validate:"gte=1,lte=4"`
+	ConnMaxLifetime int `json:"conn_max_lifetime" yaml:"conn_max_lifetime" envconfig:"CONN_MAX_LIFETIME" default:"600" validate:"required"`
+	// gorm log level: 1 => Silent, 2 => Error, 3 => Warn, 4 => Info
+	LogLevel int `json:"log_level" yaml:"log_level" envconfig:"LOG_LEVEL" default:"3" validate:"gte=1,lte=4"`
 	// SlowThreshold unit seconds, 0 indicates disabled
-	SlowThreshold int `json:"slow_threshold" yaml:"slow_threshold" envconfig:"MYSQL_SLOW_THRESHOLD" default:"2" validate:"gte=0"`
+	SlowThreshold int `json:"slow_threshold" yaml:"slow_threshold" envconfig:"SLOW_THRESHOLD" default:"2" validate:"gte=0"`
 }
 
 // NewMySQLConn return a grom.DB by mysql driver

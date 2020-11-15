@@ -13,10 +13,9 @@ type Config struct {
 	// This is used for reporting the status of grpc server directly through
 	// the HTTP address. Notice that there is a risk of leaking status
 	// information if this port is exposed to the public.
-	Address string `json:"address" yaml:"address" envconfig:"METRICS_ADDR" default:"" validate:"required"`
-
+	Address string `json:"address" yaml:"address" envconfig:"ADDRESS" default:"" validate:"required"`
 	// HTTP URI PATH
-	Path string `json:"path" yaml:"path" envconfig:"METRICS_PATH" default:"/metrics" validate:"required"`
+	Path string `json:"path" yaml:"path" envconfig:"PATH" default:"/metrics" validate:"required"`
 }
 
 // Server implements prometheus metrics server
@@ -30,7 +29,6 @@ type Server struct {
 // NOTICE: Must set glog.Logger into the ctx by glow.WithContext
 func NewServer(ctx context.Context, cfg *Config) (*Server, error) {
 	lp := glog.FromContext(ctx)
-
 	s := &Server{
 		lp:  lp,
 		cfg: cfg,
@@ -38,7 +36,7 @@ func NewServer(ctx context.Context, cfg *Config) (*Server, error) {
 	return s, nil
 }
 
-func (s *Server) ListenAndServe() error {
+func (s *Server) ListenAndServe() (err error) {
 	mux := http.NewServeMux()
 	// Expose the registered metrics via HTTP.
 	mux.Handle(s.cfg.Path, promhttp.HandlerFor(
@@ -46,37 +44,44 @@ func (s *Server) ListenAndServe() error {
 		promhttp.HandlerOpts{
 			// Opt into OpenMetrics to support exemplars.
 			EnableOpenMetrics: true,
+			ErrorLog:          &Logger{Output: s.lp},
 		},
 	))
 
-	s.h = &http.Server{Addr: s.cfg.Address, Handler: mux}
-
 	s.lp.Info().String("prometheus metrics server listening", s.cfg.Address).Fire()
 
-	err := s.h.ListenAndServe()
+	s.h = &http.Server{Addr: s.cfg.Address, Handler: mux}
+
+	err = s.h.ListenAndServe()
 	if err != nil && err != http.ErrServerClosed {
 		s.lp.Error().Error("listen and serve prometheus metrics server error", err).Fire()
 		return err
 	}
-	return nil
+	return
 }
 
-func (s *Server) Close() error {
+func (s *Server) Close() (err error) {
+	if s == nil {
+		return
+	}
 	s.lp.Info().Msg("waiting for prometheus metrics server close").Fire()
-	if err := s.h.Close(); err != nil {
+	if err = s.h.Close(); err != nil {
 		s.lp.Error().Error("prometheus metrics server close error", err).Fire()
-		return err
+		return
 	}
 	s.lp.Info().Msg("prometheus metrics server closed").Fire()
-	return nil
+	return
 }
 
-func (s *Server) Shutdown(ctx context.Context) error {
+func (s *Server) Shutdown(ctx context.Context) (err error) {
+	if s == nil {
+		return
+	}
 	s.lp.Info().Msg("waiting for prometheus metrics server shutdown").Fire()
-	if err := s.h.Shutdown(ctx); err != nil {
+	if err = s.h.Shutdown(ctx); err != nil {
 		s.lp.Error().Error("prometheus metrics server shutdown error", err).Fire()
-		return err
+		return
 	}
 	s.lp.Info().Msg("prometheus metrics server shutdown").Fire()
-	return nil
+	return
 }

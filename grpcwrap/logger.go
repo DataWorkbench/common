@@ -10,7 +10,7 @@ import (
 
 const (
 	// InfoLevel indicates Info severity.
-	InfoLevel int = iota
+	InfoLevel int = iota + 1
 	// WarningLevel indicates Warning severity.
 	WarningLevel
 	// ErrorLevel indicates Error severity.
@@ -21,17 +21,17 @@ const (
 
 // Logger for implements interface{} grpclog.LoggerV2
 type Logger struct {
-	Output    *glog.Logger // the default logger instances
-	Verbosity int
+	Output    *glog.Logger
 	Level     int
+	Verbosity int
 }
 
 // NewLogger return a new Logger
 func NewLogger(output *glog.Logger) *Logger {
 	return &Logger{
 		Output:    output,
+		Level:     WarningLevel,
 		Verbosity: 0,
-		Level:     ErrorLevel,
 	}
 }
 

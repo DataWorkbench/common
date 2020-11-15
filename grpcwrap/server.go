@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/DataWorkbench/glog"
-	"github.com/grpc-ecosystem/go-grpc-prometheus"
+	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/reflection"
 
@@ -17,10 +17,10 @@ import (
 // ServerConfig used to create an new grpc server
 type ServerConfig struct {
 	// Listening address of the grpc server.
-	Address string `json:"address" yaml:"address" envconfig:"RPC_SERVER_ADDR" default:"" validate:"required"`
-	// grpc log level, 1 => info, 2 => waring, 3 => error, 4 => fatal
-	LogLevel     int `json:"log_level" yaml:"log_level" envconfig:"GRPC_SERVER_LOG_LEVEL" default:"3" validate:"gte=1,lte=4"`
-	LogVerbosity int `json:"log_verbosity" yaml:"log_verbosity" envconfig:"GRPC_SERVER_LOG_VERBOSITY" default:"1" validate:"required"`
+	Address string `json:"address" yaml:"address" envconfig:"ADDRESS" default:"" validate:"required"`
+	// grpc log level: 1 => info, 2 => waring, 3 => error, 4 => fatal
+	LogLevel     int `json:"log_level" yaml:"log_level" envconfig:"LOG_LEVEL" default:"2" validate:"gte=1,lte=4"`
+	LogVerbosity int `json:"log_verbosity" yaml:"log_verbosity" envconfig:"LOG_VERBOSITY" default:"1" validate:"required"`
 }
 
 // Server is an wrapper for gRPC server.
@@ -111,6 +111,9 @@ func (s *Server) ListenAndServe() error {
 
 // GracefulStop wrapper for grpc.Server.GracefulStop
 func (s *Server) GracefulStop() {
+	if s == nil {
+		return
+	}
 	s.lp.Info().Msg("waiting for gRPC server stop").Fire()
 	s.gRPC.GracefulStop()
 	s.lp.Info().Msg("gRPC server stopped").Fire()
