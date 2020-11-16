@@ -15,7 +15,7 @@ import (
 type MySQLConfig struct {
 	// Hosts sample "127.0.0.1:3306,127.0.0.1:3307,127.0.0.1:3308"
 	Hosts       string `json:"hosts"         yaml:"hosts"         envconfig:"HOSTS"         default:""    validate:"required"`
-	User        string `json:"user"          yaml:"user"          envconfig:"USER"          default:""    validate:"required"`
+	Users       string `json:"users"         yaml:"users"         envconfig:"USERS"         default:""    validate:"required"`
 	Password    string `json:"password"      yaml:"password"      envconfig:"PASSWORD"      default:""    validate:"required"`
 	Database    string `json:"database"      yaml:"database"      envconfig:"DATABASE"      default:""    validate:"required"`
 	MaxIdleConn int    `json:"max_idle_conn" yaml:"max_idle_conn" envconfig:"MAX_IDLE_CONN" default:"16"  validate:"required"`
@@ -49,7 +49,7 @@ func NewMySQLConn(ctx context.Context, cfg *MySQLConfig) (db *gorm.DB, err error
 
 	dsn := fmt.Sprintf(
 		"%s:%s@tcp(%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
-		cfg.User, cfg.Password, hosts[0], cfg.Database,
+		cfg.Users, cfg.Password, hosts[0], cfg.Database,
 	)
 
 	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{

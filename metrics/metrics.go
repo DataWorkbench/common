@@ -15,7 +15,7 @@ type Config struct {
 	// information if this port is exposed to the public.
 	Address string `json:"address" yaml:"address" envconfig:"ADDRESS" default:"" validate:"required"`
 	// HTTP URI PATH
-	Path string `json:"path" yaml:"path" envconfig:"PATH" default:"/metrics" validate:"required"`
+	URLPath string `json:"url_path" yaml:"url_path" envconfig:"URL_PATH" default:"/metrics" validate:"required"`
 }
 
 // Server implements prometheus metrics server
@@ -39,7 +39,7 @@ func NewServer(ctx context.Context, cfg *Config) (*Server, error) {
 func (s *Server) ListenAndServe() (err error) {
 	mux := http.NewServeMux()
 	// Expose the registered metrics via HTTP.
-	mux.Handle(s.cfg.Path, promhttp.HandlerFor(
+	mux.Handle(s.cfg.URLPath, promhttp.HandlerFor(
 		prometheus.DefaultGatherer,
 		promhttp.HandlerOpts{
 			// Opt into OpenMetrics to support exemplars.
