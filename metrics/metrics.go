@@ -10,10 +10,11 @@ import (
 )
 
 type Config struct {
+	Enabled bool `json:"enabled" yaml:"enabled" env:"ENABLED" validate:"-"`
 	// This is used for reporting the status of server directly through
 	// the HTTP address. Notice that there is a risk of leaking status
 	// information if this port is exposed to the public.
-	Address string `json:"address" yaml:"address" env:"ADDRESS" validate:"required"`
+	Address string `json:"address" yaml:"address" env:"ADDRESS" validate:"required_with=Enabled"`
 	// HTTP URI PATH
 	URLPath string `json:"url_path" yaml:"url_path" env:"URL_PATH,default=/metrics" validate:"required"`
 }
@@ -28,6 +29,10 @@ type Server struct {
 // NewServer return an new Server
 // NOTICE: Must set glog.Logger into the ctx by glow.WithContext
 func NewServer(ctx context.Context, cfg *Config) (*Server, error) {
+	if !cfg.Enabled {
+		return nil, nil
+	}
+
 	lp := glog.FromContext(ctx)
 	s := &Server{
 		lp:  lp,
@@ -37,6 +42,9 @@ func NewServer(ctx context.Context, cfg *Config) (*Server, error) {
 }
 
 func (s *Server) ListenAndServe() (err error) {
+	if s == nil {
+		return
+	}
 	mux := http.NewServeMux()
 	// Expose the registered metrics via HTTP.
 	mux.Handle(s.cfg.URLPath, promhttp.HandlerFor(
