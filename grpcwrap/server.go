@@ -17,10 +17,10 @@ import (
 // ServerConfig used to create an new grpc server
 type ServerConfig struct {
 	// Listening address of the grpc server.
-	Address string `json:"address" yaml:"address" envconfig:"ADDRESS" default:"" validate:"required"`
+	Address string `json:"address" yaml:"address" env:"ADDRESS" validate:"required"`
 	// grpc log level: 1 => info, 2 => waring, 3 => error, 4 => fatal
-	LogLevel     int `json:"log_level"     yaml:"log_level"     envconfig:"LOG_LEVEL"     default:"2" validate:"gte=1,lte=4"`
-	LogVerbosity int `json:"log_verbosity" yaml:"log_verbosity" envconfig:"LOG_VERBOSITY" default:"1" validate:"required"`
+	LogLevel     int `json:"log_level"     yaml:"log_level"     env:"LOG_LEVEL,default=2"     validate:"gte=1,lte=4"`
+	LogVerbosity int `json:"log_verbosity" yaml:"log_verbosity" env:"LOG_VERBOSITY,default=1" validate:"required"`
 }
 
 // Server is an wrapper for gRPC server.

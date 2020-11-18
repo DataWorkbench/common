@@ -13,9 +13,9 @@ type Config struct {
 	// This is used for reporting the status of server directly through
 	// the HTTP address. Notice that there is a risk of leaking status
 	// information if this port is exposed to the public.
-	Address string `json:"address" yaml:"address" envconfig:"ADDRESS" default:"" validate:"required"`
+	Address string `json:"address" yaml:"address" env:"ADDRESS" validate:"required"`
 	// HTTP URI PATH
-	URLPath string `json:"url_path" yaml:"url_path" envconfig:"URL_PATH" default:"/metrics" validate:"required"`
+	URLPath string `json:"url_path" yaml:"url_path" env:"URL_PATH,default=/metrics" validate:"required"`
 }
 
 // Server implements prometheus metrics server

@@ -14,18 +14,18 @@ import (
 
 type MySQLConfig struct {
 	// Hosts sample "127.0.0.1:3306,127.0.0.1:3307,127.0.0.1:3308"
-	Hosts       string `json:"hosts"         yaml:"hosts"         envconfig:"HOSTS"         default:""    validate:"required"`
-	Users       string `json:"users"         yaml:"users"         envconfig:"USERS"         default:""    validate:"required"`
-	Password    string `json:"password"      yaml:"password"      envconfig:"PASSWORD"      default:""    validate:"required"`
-	Database    string `json:"database"      yaml:"database"      envconfig:"DATABASE"      default:""    validate:"required"`
-	MaxIdleConn int    `json:"max_idle_conn" yaml:"max_idle_conn" envconfig:"MAX_IDLE_CONN" default:"16"  validate:"required"`
-	MaxOpenConn int    `json:"max_open_conn" yaml:"max_open_conn" envconfig:"MAX_OPEN_CONN" default:"128" validate:"required"`
-	// ConnMaxLifetime unit seconds
-	ConnMaxLifetime int `json:"conn_max_lifetime" yaml:"conn_max_lifetime" envconfig:"CONN_MAX_LIFETIME" default:"600" validate:"required"`
+	Hosts       string `json:"hosts"         yaml:"hosts"         env:"HOSTS"                     validate:"required"`
+	Users       string `json:"users"         yaml:"users"         env:"USERS"                     validate:"required"`
+	Password    string `json:"password"      yaml:"password"      env:"PASSWORD"                  validate:"required"`
+	Database    string `json:"database"      yaml:"database"      env:"DATABASE"                  validate:"required"`
+	MaxIdleConn int    `json:"max_idle_conn" yaml:"max_idle_conn" env:"MAX_IDLE_CONN,default=16"  validate:"required"`
+	MaxOpenConn int    `json:"max_open_conn" yaml:"max_open_conn" env:"MAX_OPEN_CONN,default=128" validate:"required"`
 	// gorm log level: 1 => Silent, 2 => Error, 3 => Warn, 4 => Info
-	LogLevel int `json:"log_level" yaml:"log_level" envconfig:"LOG_LEVEL" default:"3" validate:"gte=1,lte=4"`
-	// SlowThreshold unit seconds, 0 indicates disabled
-	SlowThreshold int `json:"slow_threshold" yaml:"slow_threshold" envconfig:"SLOW_THRESHOLD" default:"2" validate:"gte=0"`
+	LogLevel int `json:"log_level" yaml:"log_level" env:"LOG_LEVEL,default=3" validate:"gte=1,lte=4"`
+	// ConnMaxLifetime unit seconds
+	ConnMaxLifetime time.Duration `json:"conn_max_lifetime" yaml:"conn_max_lifetime" env:"CONN_MAX_LIFETIME,default=10m" validate:"required"`
+	// SlowThreshold time 0 indicates disabled
+	SlowThreshold time.Duration `json:"slow_threshold" yaml:"slow_threshold" env:"SLOW_THRESHOLD,default=2s" validate:"gte=0"`
 }
 
 // NewMySQLConn return a grom.DB by mysql driver
@@ -55,7 +55,7 @@ func NewMySQLConn(ctx context.Context, cfg *MySQLConfig) (db *gorm.DB, err error
 	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
 		Logger: &Logger{
 			Level:         LogLevel(cfg.LogLevel),
-			SlowThreshold: time.Second * time.Duration(cfg.SlowThreshold),
+			SlowThreshold: cfg.SlowThreshold,
 			Output:        lp,
 		},
 	})
@@ -70,7 +70,7 @@ func NewMySQLConn(ctx context.Context, cfg *MySQLConfig) (db *gorm.DB, err error
 	}
 	sqlDB.SetMaxIdleConns(cfg.MaxIdleConn)
 	sqlDB.SetMaxOpenConns(cfg.MaxOpenConn)
-	sqlDB.SetConnMaxLifetime(time.Second * time.Duration(cfg.ConnMaxLifetime))
+	sqlDB.SetConnMaxLifetime(cfg.ConnMaxLifetime)
 
 	//// TODO: Adds multiple databases if necessary
 	//// import gorm.io/plugin/dbresolver
