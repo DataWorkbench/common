@@ -58,9 +58,8 @@ func basicUnaryServerInterceptor() grpc.UnaryServerInterceptor {
 
 		reply, err := handler(ctx, req)
 
-		s, ok := status.FromError(err)
-		if !ok || s.Code() != codes.OK {
-			logger.Error().String("handled with error", s.Message()).String("code", s.Code().String()).Fire()
+		if err != nil {
+			logger.Error().Error("handled with error", err).Fire()
 			return nil, err
 		}
 

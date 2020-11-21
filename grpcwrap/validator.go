@@ -16,12 +16,12 @@ type validator interface {
 func validateRequestArgument(i interface{}, logger *glog.Logger) error {
 	if v, ok := i.(validator); ok {
 		if err := v.Validate(); err != nil {
-			logger.Error().Error("failed validate request", err).Fire()
+			logger.Error().Error("validated request", err).Fire()
 			return status.Errorf(codes.InvalidArgument, err.Error())
 		}
 		return nil
 	}
-	logger.Debug().Msg("request argument not implement validator").Fire()
+	logger.Warn().Msg("request argument not implement validator").Fire()
 	return nil
 }
 
@@ -29,11 +29,11 @@ func validateRequestArgument(i interface{}, logger *glog.Logger) error {
 func validateReplyArgument(i interface{}, logger *glog.Logger) error {
 	if v, ok := i.(validator); ok {
 		if err := v.Validate(); err != nil {
-			logger.Error().Error("failed validate reply", err).Fire()
+			logger.Error().Error("validated reply", err).Fire()
 			return status.Errorf(codes.InvalidArgument, err.Error())
 		}
 		return nil
 	}
-	logger.Debug().Msg("reply argument not implement validator").Fire()
+	logger.Warn().Msg("reply argument not implement validator").Fire()
 	return nil
 }
