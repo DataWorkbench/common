@@ -11,8 +11,17 @@ help:
 	@echo "  check   to format, vet, lint"
 	@echo "  test    to run test case"
 	@echo "  bench   to run benchmark test case"
+	@echo "  generate to generate grpc code"
 	@exit 0
 
+GENERATE_GO = _generate_go() {                     \
+    args="$(filter-out $@,$(MAKECMDGOALS))"; \
+    if [[ $(VERBOSE) = "yes" ]]; then        \
+        bash -x scripts/generate_go.sh $$args;  \
+    else                                     \
+        bash scripts/generate_go.sh $$args;      \
+    fi                                       \
+}
 
 .PHONY: test
 test:
@@ -38,6 +47,10 @@ lint:
 .PHONY: tidy
 tidy:
 	@[[ ${VERBOSE} = "yes" ]] && set -x; go mod tidy;
+
+.PHONY: generate
+generate:
+	@$(GENERATE_GO); _generate_go
 
 .PHONY: check
 check: tidy format vet lint
