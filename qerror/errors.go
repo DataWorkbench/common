@@ -13,27 +13,30 @@ type pbError = qerror.Error
 
 type Error struct {
 	code   string
-	desc   string
 	status int
+	enUS   string
+	zhCN   string
 }
 
 func (e Error) Error() string {
-	return e.desc
-}
-
-func (e Error) String() string {
-	return fmt.Sprintf("code: %s, desc: %s, status: %d", e.code, e.desc, e.status)
-}
-
-func (e Error) Code() string {
 	return e.code
 }
 
-func (e Error) Desc() string {
-	return e.desc
+func (e *Error) Format(a ...interface{}) *Error {
+	e.enUS = fmt.Sprintf(e.enUS, a...)
+	e.zhCN = fmt.Sprintf(e.zhCN, a...)
+	return e
 }
 
-func (e Error) Status() int {
+func (e *Error) String() string {
+	return fmt.Sprintf("code: %s, desc: %s, status: %d", e.code, e.enUS, e.status)
+}
+
+func (e *Error) Code() string {
+	return e.code
+}
+
+func (e *Error) Status() int {
 	return e.status
 }
 
@@ -42,19 +45,14 @@ func (e *Error) GRPCStatus() *status.Status {
 	s := status.New(codes.Unknown, e.Error())
 	sd, err := s.WithDetails(&pbError{
 		Code:   e.code,
-		Desc:   e.desc,
 		Status: int32(e.status),
+		EnUS:   e.enUS,
+		ZhCN:   e.zhCN,
 	})
 	if err == nil {
 		return sd
 	}
 	return s
-}
-
-// WithDesc set desc message to specified error
-func WithDesc(err *Error, desc string) *Error {
-	err.desc = desc
-	return err
 }
 
 // FromGRPC check the err's type if returned by gRPC
@@ -64,25 +62,21 @@ func FromGRPC(err error) *Error {
 		return nil
 	}
 
-	switch s.Code() {
-	case codes.InvalidArgument:
-		return WithDesc(InvalidRequest, s.Message())
-	default:
-		var pe *pbError
-		d := s.Details()
-		for i := range d {
-			pe, ok = d[i].(*pbError)
-			if ok {
-				break
-			}
+	var pe *pbError
+	d := s.Details()
+	for i := range d {
+		pe, ok = d[i].(*pbError)
+		if ok {
+			break
 		}
-		if pe == nil {
-			return nil
-		}
-		return &Error{
-			code:   pe.Code,
-			desc:   pe.Desc,
-			status: int(pe.Status),
-		}
+	}
+	if pe == nil {
+		return nil
+	}
+	return &Error{
+		code:   pe.Code,
+		status: int(pe.Status),
+		enUS:   pe.EnUS,
+		zhCN:   pe.ZhCN,
 	}
 }

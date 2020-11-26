@@ -7,6 +7,7 @@ package qerror;
 // Error transmits customized-error between grpc client and server by status details
 message Error {
 	string Code = 1;
-	string Desc = 2;
-	int32  Status = 3;
+	int32  Status = 2;
+	string EnUS = 3;
+	string ZhCN = 4;
 }

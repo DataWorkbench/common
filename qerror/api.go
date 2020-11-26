@@ -3,7 +3,8 @@ package qerror
 // Response used to return http error response body
 type Response struct {
 	Code      string `json:"code"`
-	Desc      string `json:"desc"`
+	EnUS      string `json:"en_us"`
+	ZhCN      string `json:"zh_cn"`
 	Status    int    `json:"status"`
 	RequestID string `json:"request_id"`
 }
@@ -11,7 +12,8 @@ type Response struct {
 func NewResponse(err *Error, reqId string) *Response {
 	return &Response{
 		Code:      err.code,
-		Desc:      err.desc,
+		EnUS:      err.enUS,
+		ZhCN:      err.zhCN,
 		Status:    err.status,
 		RequestID: reqId,
 	}
