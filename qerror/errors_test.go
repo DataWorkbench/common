@@ -8,11 +8,10 @@ import (
 )
 
 func TestTypeEqual(t *testing.T) {
-	a := WithDesc(NotExists, "aaaaaa")
-	b := WithDesc(NotExists, "bbbbbb")
-	c := AlreadyExists
+	a := ResourceNotExists.Format("aaaaaa")
+	b := ResourceNotExists.Format("bbbbb")
+	c := ResourceAlreadyExists
 
 	require.True(t, errors.Is(a, b))
 	require.False(t, errors.Is(a, c))
-
 }

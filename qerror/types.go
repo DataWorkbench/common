@@ -120,4 +120,60 @@ var (
 		enUS:   "The workspace [%s] does not active.",
 		zhCN:   "工作空间[%s]已被禁用",
 	}
+	InvalidWorkspaceName = &Error{
+		code:   "InvalidWorkspaceName",
+		status: 400,
+		enUS:   "The workspace name is invalid, accepts 0~9、a~z、_ and can't begin or end with _.",
+		zhCN:   "工作空间名称不符合要求, 只允许数字,小写字母和下划线, 并且不能以下划线开头或者结尾.",
+	}
+)
+
+// workflow error
+var (
+	WorkflowAlreadyExists = &Error{
+		code:   "WorkflowAlreadyExists",
+		status: 409,
+		enUS:   "The workflow name [%s] has been used.",
+		zhCN:   "工作流程名称[%s]已被使用.",
+	}
+	WorkflowNotExists = &Error{
+		code:   "WorkflowNotExists",
+		status: 404,
+		enUS:   "The workflow [%s] does not exists.",
+		zhCN:   "工作流程[%s]不存在.",
+	}
+	CrontabNotExists = &Error{
+		code:   "CrontabNotExists",
+		status: 404,
+		enUS:   "The workflow [%s] not set crontab.",
+		zhCN:   "工作流程[%s]未设置定时任务",
+	}
+	InvalidWorkflowName = &Error{
+		code:   "InvalidWorkflowName",
+		status: 400,
+		enUS:   "The workflow name is invalid, accepts 0~9、a~z、_ and can't begin or end with _.",
+		zhCN:   "工作流程名称不符合要求, 只允许数字,小写字母和下划线, 并且不能以下划线开头或者结尾.",
+	}
+)
+
+// node error
+var (
+	NodeNotExists = &Error{
+		code:   "NodeNotExists",
+		status: 404,
+		enUS:   "The node [%s] does not exists.",
+		zhCN:   "任务节点[%s]不存在.",
+	}
+	NodeAlreadyExists = &Error{
+		code:   "NodeAlreadyExists",
+		status: 409,
+		enUS:   "The node name [%s] has been used.",
+		zhCN:   "任务节点名称[%s]已被使用.",
+	}
+	InvalidNodeName = &Error{
+		code:   "InvalidNodeName",
+		status: 400,
+		enUS:   "The node name is invalid, accepts 0~9、a~z、_ and can't begin or end with _.",
+		zhCN:   "节点名称不符合要求, 只允许数字,小写字母和下划线, 并且不能以下划线开头或者结尾.",
+	}
 )
