@@ -102,25 +102,25 @@ var (
 
 // workspace error
 var (
-	WorkspaceNotExists = &Error{
-		code:   "WorkspaceNotExists",
+	SpaceNotExists = &Error{
+		code:   "SpaceNotExists",
 		status: 404,
 		enUS:   "The workspace [%s] does not exists.",
 		zhCN:   "工作空间[%s]不存在.",
 	}
-	WorkspaceAlreadyExists = &Error{
-		code:   "WorkspaceAlreadyExists",
+	SpaceAlreadyExists = &Error{
+		code:   "SpaceAlreadyExists",
 		status: 409,
 		enUS:   "The workspace name [%s] has been used.",
 		zhCN:   "工作空间名称[%s]已被使用.",
 	}
-	WorkspaceNotActive = &Error{
-		code:   "WorkspaceNotActive",
+	SpaceNotActive = &Error{
+		code:   "SpaceNotActive",
 		status: 403,
 		enUS:   "The workspace [%s] does not active.",
 		zhCN:   "工作空间[%s]已被禁用",
 	}
-	InvalidWorkspaceName = &Error{
+	InvalidSpaceName = &Error{
 		code:   "InvalidWorkspaceName",
 		status: 400,
 		enUS:   "The workspace name is invalid, accepts 0~9、a~z、_ and can't begin or end with _.",
@@ -130,14 +130,14 @@ var (
 
 // workflow error
 var (
-	WorkflowAlreadyExists = &Error{
-		code:   "WorkflowAlreadyExists",
+	FlowAlreadyExists = &Error{
+		code:   "FlowAlreadyExists",
 		status: 409,
 		enUS:   "The workflow name [%s] has been used.",
 		zhCN:   "工作流程名称[%s]已被使用.",
 	}
-	WorkflowNotExists = &Error{
-		code:   "WorkflowNotExists",
+	FlowNotExists = &Error{
+		code:   "FlowNotExists",
 		status: 404,
 		enUS:   "The workflow [%s] does not exists.",
 		zhCN:   "工作流程[%s]不存在.",
@@ -148,8 +148,8 @@ var (
 		enUS:   "The workflow [%s] not set crontab.",
 		zhCN:   "工作流程[%s]未设置定时任务",
 	}
-	InvalidWorkflowName = &Error{
-		code:   "InvalidWorkflowName",
+	InvalidFlowName = &Error{
+		code:   "InvalidFlowName",
 		status: 400,
 		enUS:   "The workflow name is invalid, accepts 0~9、a~z、_ and can't begin or end with _.",
 		zhCN:   "工作流程名称不符合要求, 只允许数字,小写字母和下划线, 并且不能以下划线开头或者结尾.",
