@@ -2,9 +2,9 @@ package grpcwrap
 
 import (
 	"fmt"
+	"unsafe"
 
 	"github.com/DataWorkbench/glog"
-	"github.com/Yu-33/gohelper/conv"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 )
@@ -17,7 +17,7 @@ func pbMsgToString(logger *glog.Logger, i interface{}) string {
 	if p, ok := i.(proto.Message); ok {
 		b, err := protojsonMarshal.Marshal(p)
 		if err == nil {
-			return conv.BytesToString(b)
+			return *(*string)(unsafe.Pointer(&b))
 		}
 		logger.Error().Error("marshal proto.Message error", err).Fire()
 	}

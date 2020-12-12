@@ -8,9 +8,9 @@ import (
 	"math/rand"
 	"net"
 	"time"
+	"unsafe"
 
-	"github.com/Yu-33/gohelper/conv"
-	"github.com/Yu-33/snowflake"
+	"github.com/yu31/snowflake"
 )
 
 // IDGenerator implements an ID Generator uses to generate unique ID
@@ -43,10 +43,9 @@ func (g *IDGenerator) encode(x int64) string {
 	dst := make([]byte, lp+hex.EncodedLen(len(buf)))
 
 	copy(dst[:lp], g.prefix)
-
 	hex.Encode(dst[lp:], buf)
 
-	return conv.BytesToString(dst)
+	return *(*string)(unsafe.Pointer(&dst))
 }
 
 // Take return a new unique id

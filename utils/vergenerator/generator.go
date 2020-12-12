@@ -7,7 +7,7 @@ import (
 	"net"
 	"time"
 
-	"github.com/Yu-33/snowflake"
+	"github.com/yu31/snowflake"
 )
 
 // VerGenerator implements an Version Generator uses to generate unique version.
