@@ -16,6 +16,11 @@ import (
 	"google.golang.org/grpc/keepalive"
 )
 
+// ClientConn is an type aliases to make caller don't have to introduce "google.golang.org/grpc"
+// into its project go.mod files. And can keep the grpc version in other project consistent
+// with this library at all times.
+type ClientConn = grpc.ClientConn
+
 // ClientConfig used to create an connection to grpc server
 type ClientConfig struct {
 	// Address sample "127.0.0.1:50001" or "127.0.0.1:50001, 127.0.0.1:50002, 127.0.0.1:50003"
@@ -27,7 +32,7 @@ type ClientConfig struct {
 
 // NewConn return an new grpc.ClientConn
 // NOTICE: Must set glog.Logger into the ctx by glow.WithContext
-func NewConn(ctx context.Context, cfg *ClientConfig) (conn *grpc.ClientConn, err error) {
+func NewConn(ctx context.Context, cfg *ClientConfig) (conn *ClientConn, err error) {
 	lp := glog.FromContext(ctx)
 
 	defer func() {

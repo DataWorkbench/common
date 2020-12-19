@@ -14,6 +14,11 @@ import (
 	"google.golang.org/grpc/keepalive"
 )
 
+// GServer is an type aliases to make caller don't have to introduce "google.golang.org/grpc"
+// into its project go.mod files. And can keep the grpc version in other project consistent
+// with this library at all times.
+type GServer = grpc.Server
+
 // ServerConfig used to create an new grpc server
 type ServerConfig struct {
 	// Listening address of the grpc server.
@@ -85,7 +90,7 @@ func NewServer(ctx context.Context, cfg *ServerConfig) (s *Server, err error) {
 // Register registers a service and its implementation to gRPC server.
 // It is called from the IDL generated code. This must be called before
 // invoking Serve.
-func (s *Server) Register(f func(s *grpc.Server)) {
+func (s *Server) Register(f func(s *GServer)) {
 	f(s.gRPC)
 }
 
