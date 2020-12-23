@@ -17,7 +17,7 @@ const (
 
 // Defines the supported node type.
 const (
-	NodeTypeVirtual int = iota + 1 // => "virtual"
-	NodeTypeShell                  // => "shell"
+	NodeTypeVirtual int8 = iota + 1 // => "virtual"
+	NodeTypeShell                   // => "shell"
 	NodeTypeFlink
 )
