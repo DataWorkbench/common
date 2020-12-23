@@ -11,7 +11,7 @@ require (
 	github.com/prometheus/client_golang v1.8.0
 	github.com/stretchr/testify v1.6.1
 	github.com/yu31/snowflake v0.0.0-20201212140846-eca7f34c6cd3
-	google.golang.org/grpc v1.33.2
+	google.golang.org/grpc v1.34.0
 	google.golang.org/protobuf v1.25.0
 	gorm.io/driver/mysql v1.0.3
 	gorm.io/gorm v1.20.6
