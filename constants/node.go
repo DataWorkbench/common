@@ -6,18 +6,16 @@ const (
 	NodeStatusDisabled                 // => "disabled"
 )
 
-// Node priority.
+// Strategy of node task execute failure in a workflow.
 const (
-	NodePriorityHighest int8 = iota + 1 // => "highest"
-	NodePriorityHigh                    // => "high"
-	NodePriorityMedium                  // => "medium"
-	NodePriorityLow                     // => "low"
-	NodePriorityLowest                  // => "lowest"
+	NodeFailureStrategyNone   int8 = iota + 1 // => "none"
+	NodeFailureStrategyIgnore                 // => "ignore"
 )
 
 // Defines the supported node type.
 const (
 	NodeTypeVirtual int8 = iota + 1 // => "virtual"
 	NodeTypeShell                   // => "shell"
-	NodeTypeFlink
+	NodeTypeFlinkJob
+	NodeTypeFlinkSQL
 )

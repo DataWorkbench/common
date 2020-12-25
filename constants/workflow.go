@@ -12,7 +12,7 @@ const (
 // Strategy of node task execute failure in a workflow.
 const (
 	FlowFailureStrategyContinue int8 = iota + 1 // => "continue"
-	FlowFailureStrategyClosure                  // => "closure"
+	FlowFailureStrategySuspend                  // => "suspend"
 )
 
 // Strategy of schedule depends of workflow.
@@ -24,7 +24,6 @@ const (
 // Strategy of schedule.
 const (
 	FlowScheduleStrategyLoop int8 = iota + 1 // => "loop"
-	FlowScheduleStrategyOnce                 // => "once"
 )
 
 // Strategy of notify of workflow.
