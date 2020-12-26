@@ -2,6 +2,6 @@ package constants
 
 // Workspace status.
 const (
-	SpaceStatusEnabled  int8 = iota + 1 // => "enabled"
-	SpaceStatusDisabled                 // => "disabled"
+	SpaceStatusEnabled  int32 = iota + 1 // => "enabled"
+	SpaceStatusDisabled                  // => "disabled"
 )
