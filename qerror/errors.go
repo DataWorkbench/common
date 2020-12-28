@@ -12,8 +12,8 @@ import (
 type pbError = qerror.Error
 
 type Error struct {
-	code   string
-	status int
+	code   string // error code
+	status int    // http status code.
 	enUS   string
 	zhCN   string
 }
