@@ -8,9 +8,9 @@ const (
 
 const (
 	InstanceStatePending   int32 = iota + 1 // => "pending"
-	InstanceStateRunning                    // => "running"
+	InstanceStateRunning                    // => "running" -- jobmanager. RunJob return.
 	InstanceStateSuspended                  // => "suspended"
 	InstanceStateStopped                    // => "stopped"
-	InstanceStateSucceed                    // => "succeed" -- jobmanager
-	InstanceStateFailed                     // => "failed"  -- jobmanager
+	InstanceStateSucceed                    // => "succeed" -- jobmanager. Report return
+	InstanceStateFailed                     // => "failed"  -- jobmanager. Report return
 )

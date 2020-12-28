@@ -20,6 +20,10 @@ const (
 	NodeTypeFlinkSSQL
 )
 
+const (
+	MainRunQuote = "$qc$"
+)
+
 // Defines of NodeTypeFlinkSSQL.
 type FlinkSSQL struct {
 	Tables      []string `json:"tables"`
@@ -40,7 +44,7 @@ type FlinkJob struct {
 	TaskCpu     float32 `json:"task_cpu"`
 	TaskMem     int32   `json:"task_mem"` // in MB
 	TaskNum     int32   `json:"task_num"`
-	JarArgs     string  `json:"jar_args"`
-	JarEntry    string  `json:"jar_entry"`
+	JarArgs     string  `json:"jar_args"`  // allow regex `^[a-zA-Z0-9_/. ]+$`
+	JarEntry    string  `json:"jar_entry"` // allow regex `^[a-zA-Z0-9_/. ]+$`
 	MainRun     string  `json:"main_run"`
 }
