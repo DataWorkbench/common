@@ -37,5 +37,7 @@ type SourceKafkaParams struct {
 
 type FlinkTableDefine struct {
 	SqlColumn        []string `json:"sql_column"`
+	Topic            string
+	Format           string
 	ConnectorOptions []string `json:"connector_options"`
 }
