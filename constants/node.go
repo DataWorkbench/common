@@ -33,6 +33,7 @@ type FlinkSSQL struct {
 	JobCpu      float32  `json:"job_cpu"`
 	TaskCpu     float32  `json:"task_cpu"`
 	TaskMem     int32    `json:"task_mem"` // in MB
+	TaskNum     int32    `json:"task_num"`
 	MainRun     string   `json:"main_run"`
 }
 
