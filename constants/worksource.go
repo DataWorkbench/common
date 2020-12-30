@@ -35,9 +35,19 @@ type SourceKafkaParams struct {
 	ConnectorOptions []string `json:"connector_options"`
 }
 
-type FlinkTableDefine struct {
+type FlinkTableDefineKafka struct {
 	SqlColumn        []string `json:"sql_column"`
-	Topic            string
-	Format           string
+	Topic            string   `json:"topic"`
+	Format           string   `json:"format"`
+	ConnectorOptions []string `json:"connector_options"`
+}
+
+type FlinkTableDefineMysql struct {
+	SqlColumn        []string `json:"sql_column"`
+	ConnectorOptions []string `json:"connector_options"`
+}
+
+type FlinkTableDefinePostgreSQL struct {
+	SqlColumn        []string `json:"sql_column"`
 	ConnectorOptions []string `json:"connector_options"`
 }
