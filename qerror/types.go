@@ -1,5 +1,9 @@
 package qerror
 
+import (
+	"net/http"
+)
+
 // general error
 var (
 	Internal = &Error{
@@ -68,6 +72,13 @@ var (
 		status: 409,
 		enUS:   "The resource you are creating already exists.",
 		zhCN:   "资源已存在",
+	}
+
+	ResourceIsUsing = &Error{
+		code:   "ResourceIsUsing",
+		status: http.StatusProcessing,
+		enUS:   "The resource is using.",
+		zhCN:   "资源正在使用",
 	}
 )
 
@@ -175,5 +186,39 @@ var (
 		status: 400,
 		enUS:   "The node name is invalid, accepts 0~9、a~z、_ and can't begin or end with _.",
 		zhCN:   "节点名称不符合要求, 只允许数字,小写字母和下划线, 并且不能以下划线开头或者结尾.",
+	}
+)
+
+// sourcemanager
+var (
+	NotSupportSourceType = &Error{
+		code:   "NotSupportSourceType",
+		status: http.StatusInternalServerError,
+		enUS:   "not support source type[%s]",
+		zhCN:   "不支持的数据源类型[%s]",
+	}
+	NotSupportEngineType = &Error{
+		code:   "NotSupportEngineType",
+		status: http.StatusInternalServerError,
+		enUS:   "not support engine type[%s]",
+		zhCN:   "不支持的引擎类型[%s]",
+	}
+	InvalidSourceName = &Error{
+		code:   "InvalidSourceName",
+		status: http.StatusInternalServerError,
+		enUS:   "invalid name. can't use '.'",
+		zhCN:   "无效名字，不能使用'.'",
+	}
+	InvalidDimensionSource = &Error{
+		code:   "InvalidDimensionSource",
+		status: http.StatusInternalServerError,
+		enUS:   "dimension just use in relation database",
+		zhCN:   "维表只能在关系型数据库使用",
+	}
+	ConnectSourceFailed = &Error{
+		code:   "ConnectSourceFailed",
+		status: http.StatusInternalServerError,
+		enUS:   "this source can't connect",
+		zhCN:   "数据源无法连接",
 	}
 )
