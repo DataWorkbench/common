@@ -2,6 +2,7 @@ package grpcwrap
 
 import (
 	"context"
+	"runtime"
 
 	"github.com/DataWorkbench/glog"
 	"google.golang.org/grpc"
@@ -35,8 +36,13 @@ func recoverUnaryServerInterceptor() grpc.UnaryServerInterceptor {
 		panicked := true
 		defer func() {
 			if r := recover(); r != nil || panicked {
-				// TODO: dump runtime stack when panic
-				glog.FromContext(ctx).Error().Any("unary server panic recover", r).Fire()
+				lg := glog.FromContext(ctx)
+				lg.Error().Any("unary server panic recover", r).Fire()
+
+				buf := make([]byte, 2048)
+				n := runtime.Stack(buf, true)
+				lg.Error().RawString("error trace", string(buf[0:n]))
+
 				err = status.Errorf(codes.Internal, "unary server panic recover: %v", r)
 			}
 		}()
