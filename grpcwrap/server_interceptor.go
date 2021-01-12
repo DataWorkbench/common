@@ -41,7 +41,7 @@ func recoverUnaryServerInterceptor() grpc.UnaryServerInterceptor {
 
 				buf := make([]byte, 2048)
 				n := runtime.Stack(buf, true)
-				lg.Error().RawString("error trace", string(buf[0:n]))
+				lg.Error().RawString("error trace", string(buf[0:n])).Fire()
 
 				err = status.Errorf(codes.Internal, "unary server panic recover: %v", r)
 			}
