@@ -5,6 +5,7 @@ const (
 	SourceTypeMysql      = "MySQL"
 	SourceTypePostgreSQL = "PostgreSQL"
 	SourceTypeKafka      = "Kafka"
+	SourceTypeS3         = "S3"
 	TableTypeDimension   = "d"
 	TableTypeCommon      = "c"
 	CreatorWorkBench     = "workbench" //can't drop by custom,  workbench is auto create when spark/other engine created
@@ -32,6 +33,19 @@ type SourcePostgreSQLParams struct {
 type SourceKafkaParams struct {
 	Host             string   `json:"host"`
 	Port             int32    `json:"port"`
+	ConnectorOptions []string `json:"connector_options"`
+}
+
+type SourceS3Params struct {
+	AccessKey string `json:"accesskey"`
+	SecretKey string `json:"secretkey"`
+	EndPoint  string `json:"endpoint"`
+}
+
+type FlinkTableDefineS3 struct {
+	SqlColumn        []string `json:"sql_column"`
+	Path             string   `json:"path"`
+	Format           string   `json:"format"`
 	ConnectorOptions []string `json:"connector_options"`
 }
 
