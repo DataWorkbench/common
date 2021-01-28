@@ -6,6 +6,7 @@ const (
 	SourceTypePostgreSQL = "PostgreSQL"
 	SourceTypeKafka      = "Kafka"
 	SourceTypeS3         = "S3"
+	SourceTypeClickHouse = "ClickHouse"
 	TableTypeDimension   = "d"
 	TableTypeCommon      = "c"
 	CreatorWorkBench     = "workbench" //can't drop by custom,  workbench is auto create when spark/other engine created
@@ -40,6 +41,20 @@ type SourceS3Params struct {
 	AccessKey string `json:"accesskey"`
 	SecretKey string `json:"secretkey"`
 	EndPoint  string `json:"endpoint"`
+}
+
+type SourceClickHouseParams struct {
+	User             string   `json:"user"`
+	Password         string   `json:"password"`
+	Host             string   `json:"host"`
+	Port             int32    `json:"port"`
+	Database         string   `json:"database"`
+	ConnectorOptions []string `json:"connector_options"`
+}
+
+type FlinkTableDefineClickHouse struct {
+	SqlColumn        []string `json:"sql_column"`
+	ConnectorOptions []string `json:"connector_options"`
 }
 
 type FlinkTableDefineS3 struct {
