@@ -1,18 +1,20 @@
 package constants
 
 const (
-	EngineTypeFlink      = "Flink"
-	SourceTypeMysql      = "MySQL"
-	SourceTypePostgreSQL = "PostgreSQL"
-	SourceTypeKafka      = "Kafka"
-	SourceTypeS3         = "S3"
-	SourceTypeClickHouse = "ClickHouse"
-	TableTypeDimension   = "d"
-	TableTypeCommon      = "c"
-	DirectionSource      = "s"
-	DirectionDestination = "d"
-	CreatorWorkBench     = "workbench" //can't drop by custom,  workbench is auto create when spark/other engine created
-	CreatorCustom        = "custom"
+	EngineTypeFlink        = "Flink"
+	SourceTypeMysql        = "MySQL"
+	SourceTypePostgreSQL   = "PostgreSQL"
+	SourceTypeKafka        = "Kafka"
+	SourceTypeS3           = "S3"
+	SourceTypeClickHouse   = "ClickHouse"
+	TableTypeDimension     = "d"
+	TableTypeCommon        = "c"
+	DirectionSource        = "s"
+	DirectionDestination   = "d"
+	SourceConnectedSuccess = "t"
+	SourceConnectedFailed  = "f"
+	CreatorWorkBench       = "workbench" //can't drop by custom,  workbench is auto create when spark/other engine created
+	CreatorCustom          = "custom"
 )
 
 type SourceMysqlParams struct {
