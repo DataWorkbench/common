@@ -9,6 +9,8 @@ const (
 	SourceTypeClickHouse = "ClickHouse"
 	TableTypeDimension   = "d"
 	TableTypeCommon      = "c"
+	DirectionSource      = "s"
+	DirectionDestination = "d"
 	CreatorWorkBench     = "workbench" //can't drop by custom,  workbench is auto create when spark/other engine created
 	CreatorCustom        = "custom"
 )
