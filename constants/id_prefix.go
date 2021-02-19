@@ -10,4 +10,5 @@ const (
 	SourceManagerIDPrefix = "som-"
 	SourceTablesIDPrefix  = "sot-"
 	JobIDPrefix           = "job-"
+	UdfManagerIDPrefix    = "udf-"
 )

@@ -222,3 +222,19 @@ var (
 		zhCN:   "数据源无法连接",
 	}
 )
+
+// udfmanager
+var (
+	InvalidUdfName = &Error{
+		code:   "InvalidUdfName",
+		status: http.StatusInternalServerError,
+		enUS:   "invalid name. can't use '.'",
+		zhCN:   "无效名字，不能使用'.'",
+	}
+	NotSupportUdfType = &Error{
+		code:   "NotSupportUdfType",
+		status: http.StatusInternalServerError,
+		enUS:   "not support udf type[%s]",
+		zhCN:   "不支持的自定义函数类型[%s]",
+	}
+)
