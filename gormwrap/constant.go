@@ -1,0 +1,5 @@
+package gormwrap
+
+const (
+	Placeholder = "?"
+)

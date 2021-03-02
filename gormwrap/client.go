@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"go/types"
 	"strings"
 	"time"
 
@@ -75,4 +76,26 @@ func NewMySQLConn(ctx context.Context, cfg *MySQLConfig) (db *gorm.DB, err error
 	//// TODO: Adds multiple databases if necessary
 	//// import gorm.io/plugin/dbresolver
 	return
+}
+
+// conditions: column: values(string, int or slice)
+func BuildQuery(conditions map[string]interface{}) (query string, args []interface{}) {
+	var q string
+	var a []interface{}
+	identifier := " "
+	operator := " = "
+	for k, v := range conditions {
+		switch v.(type) {
+		case types.Slice:
+		case types.Array:
+			operator = " in "
+		default:
+			operator = " = "
+		}
+
+		q = q + identifier + k + operator + Placeholder
+		a = append(a, v)
+		identifier = "and"
+	}
+	return q, a
 }

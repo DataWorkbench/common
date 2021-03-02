@@ -238,3 +238,20 @@ var (
 		zhCN:   "不支持的自定义函数类型[%s]",
 	}
 )
+
+// enginemanager error
+var (
+	EngineNameAlreadyExist = &Error{
+		code:   "EngineNameAlreadyExist",
+		status: 409,
+		enUS:   "The engine name[%s] has been used.",
+		zhCN:   "计算引擎名称[%s]已占用.",
+	}
+
+	EngineNotExist = &Error{
+		code:   "EngineNotExist",
+		status: 404,
+		enUS:   "The engine[%s] not exist.",
+		zhCN:   "计算引擎[%s]不存在.",
+	}
+)
