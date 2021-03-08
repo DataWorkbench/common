@@ -7,6 +7,7 @@ import (
 
 	"github.com/DataWorkbench/glog"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
+	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/reflection"
 
@@ -37,7 +38,8 @@ type Server struct {
 
 // NewServer return a new Server
 // NOTICE: Must set glog.Logger into the ctx by glow.WithContext
-func NewServer(ctx context.Context, cfg *ServerConfig) (s *Server, err error) {
+func NewServer(ctx context.Context, cfg *ServerConfig, options ...ServerOption) (s *Server, err error) {
+	opts := applyServerOptions(options...)
 	lp := glog.FromContext(ctx)
 
 	defer func() {
@@ -53,10 +55,10 @@ func NewServer(ctx context.Context, cfg *ServerConfig) (s *Server, err error) {
 		Level:     cfg.LogLevel,
 	})
 
-	var opts []grpc.ServerOption
+	var srvOpts []grpc.ServerOption
 	// Set and add keepalive server parameters
 	// TODO: set keepalive parameters by config
-	opts = append(opts, grpc.KeepaliveParams(
+	srvOpts = append(srvOpts, grpc.KeepaliveParams(
 		keepalive.ServerParameters{
 			MaxConnectionIdle:     time.Second * 30,
 			MaxConnectionAge:      time.Second * 30,
@@ -67,14 +69,15 @@ func NewServer(ctx context.Context, cfg *ServerConfig) (s *Server, err error) {
 
 	// Set and add keepalive enforcement policy
 	// TODO: set keepalive parameters by config
-	opts = append(opts, grpc.KeepaliveEnforcementPolicy(
+	srvOpts = append(srvOpts, grpc.KeepaliveEnforcementPolicy(
 		keepalive.EnforcementPolicy{
 			MinTime:             time.Second * 10,
 			PermitWithoutStream: true,
 		}))
 
 	// Set and add Unary Server Interceptor
-	opts = append(opts, grpc.ChainUnaryInterceptor(
+	srvOpts = append(srvOpts, grpc.ChainUnaryInterceptor(
+		otgrpc.OpenTracingServerInterceptor(opts.tracer),
 		loggerUnaryServerInterceptor(lp),
 		recoverUnaryServerInterceptor(),
 		grpc_prometheus.UnaryServerInterceptor,
@@ -83,7 +86,7 @@ func NewServer(ctx context.Context, cfg *ServerConfig) (s *Server, err error) {
 
 	// TODO: Impls and add Stream Server Interceptor
 
-	s = &Server{lp: lp, cfg: cfg, gRPC: grpc.NewServer(opts...)}
+	s = &Server{lp: lp, cfg: cfg, gRPC: grpc.NewServer(srvOpts...)}
 	return s, nil
 }
 

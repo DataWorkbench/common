@@ -31,12 +31,14 @@ type MySQLConfig struct {
 
 // NewMySQLConn return a grom.DB by mysql driver
 // NOTICE: Must set glog.Logger into the ctx by glow.WithContext
-func NewMySQLConn(ctx context.Context, cfg *MySQLConfig) (db *gorm.DB, err error) {
+func NewMySQLConn(ctx context.Context, cfg *MySQLConfig, options ...Option) (db *gorm.DB, err error) {
+	opts := applyOptions(options...)
 	lp := glog.FromContext(ctx)
 
 	defer func() {
 		if err != nil {
 			lp.Error().Error("create mysql connection error", err).Fire()
+			db = nil
 		}
 	}()
 
@@ -73,8 +75,12 @@ func NewMySQLConn(ctx context.Context, cfg *MySQLConfig) (db *gorm.DB, err error
 	sqlDB.SetMaxOpenConns(cfg.MaxOpenConn)
 	sqlDB.SetConnMaxLifetime(cfg.ConnMaxLifetime)
 
-	//// TODO: Adds multiple databases if necessary
-	//// import gorm.io/plugin/dbresolver
+	if err = db.Use(newOpenTracingPlugin(opts.tracer)); err != nil {
+		return
+	}
+
+	// TODO: Adds multiple databases if necessary
+	// import gorm.io/plugin/dbresolver
 	return
 }
 

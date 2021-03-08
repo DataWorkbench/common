@@ -9,6 +9,7 @@ import (
 	"github.com/DataWorkbench/glog"
 	"github.com/grpc-ecosystem/go-grpc-middleware/retry"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
+	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/backoff"
 	"google.golang.org/grpc/codes"
@@ -32,7 +33,8 @@ type ClientConfig struct {
 
 // NewConn return an new grpc.ClientConn
 // NOTICE: Must set glog.Logger into the ctx by glow.WithContext
-func NewConn(ctx context.Context, cfg *ClientConfig) (conn *ClientConn, err error) {
+func NewConn(ctx context.Context, cfg *ClientConfig, options ...ClientOption) (conn *ClientConn, err error) {
+	opts := applyClientOptions(options...)
 	lp := glog.FromContext(ctx)
 
 	defer func() {
@@ -58,12 +60,12 @@ func NewConn(ctx context.Context, cfg *ClientConfig) (conn *ClientConn, err erro
 		Level:     cfg.LogLevel,
 	})
 
-	var opts []grpc.DialOption
+	var dialOpts []grpc.DialOption
 	// Set and add insecure
-	opts = append(opts, grpc.WithInsecure())
+	dialOpts = append(dialOpts, grpc.WithInsecure())
 
 	// set and add connect params
-	opts = append(opts, grpc.WithConnectParams(grpc.ConnectParams{
+	dialOpts = append(dialOpts, grpc.WithConnectParams(grpc.ConnectParams{
 		Backoff: backoff.Config{
 			BaseDelay:  time.Millisecond * 100, // Default was 1s.
 			Multiplier: 1.6,                    // Default
@@ -74,7 +76,7 @@ func NewConn(ctx context.Context, cfg *ClientConfig) (conn *ClientConn, err erro
 	}))
 
 	// Setup keepalive params
-	opts = append(opts, grpc.WithKeepaliveParams(
+	dialOpts = append(dialOpts, grpc.WithKeepaliveParams(
 		keepalive.ClientParameters{
 			Time:                time.Second * 30,
 			Timeout:             time.Second * 10,
@@ -83,20 +85,21 @@ func NewConn(ctx context.Context, cfg *ClientConfig) (conn *ClientConn, err erro
 	))
 
 	// Set and add Unary Client Interceptor
-	opts = append(opts, grpc.WithUnaryInterceptor(grpc_retry.UnaryClientInterceptor(
+	dialOpts = append(dialOpts, grpc.WithUnaryInterceptor(grpc_retry.UnaryClientInterceptor(
 		grpc_retry.WithMax(3),
 		grpc_retry.WithPerRetryTimeout(0),
 		grpc_retry.WithBackoff(grpc_retry.BackoffLinear(time.Second*1)),
 		grpc_retry.WithCodes(codes.Unavailable, codes.Aborted, codes.DeadlineExceeded, codes.ResourceExhausted),
 	)))
 
-	opts = append(opts, grpc.WithChainUnaryInterceptor(
+	dialOpts = append(dialOpts, grpc.WithChainUnaryInterceptor(
+		otgrpc.OpenTracingClientInterceptor(opts.tracer),
 		grpc_prometheus.UnaryClientInterceptor,
 		basicUnaryClientInterceptor(),
 	))
 
 	// TODO: Impls and add Stream Client Interceptor
 
-	conn, err = grpc.DialContext(ctx, hosts[0], opts...)
+	conn, err = grpc.DialContext(ctx, hosts[0], dialOpts...)
 	return
 }

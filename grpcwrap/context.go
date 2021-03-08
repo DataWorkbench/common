@@ -11,15 +11,27 @@ const (
 	ctxReqIdKey = "rid"
 )
 
-// ContextWithRequest set "*glo.Logger" into context.Context and set "reqId" into
+// ContextWithRequest set "*glog.Logger" into context.Context and set "reqId" into
 // grpc outgoing metadata
 func ContextWithRequest(ctx context.Context, l *glog.Logger, reqId string) context.Context {
-	if l != nil {
-		ctx = glog.WithContext(ctx, l)
+	if l == nil {
+		panic("grpcwrap:ContextWithRequest: logger is nil")
 	}
-	if reqId != "" {
-		ctx = metadata.NewOutgoingContext(ctx, metadata.Pairs(ctxReqIdKey, reqId))
+	if reqId == "" {
+		panic("grpcwrap:ContextWithRequest: request id is nil")
 	}
+
+	// Insert logger to context
+	ctx = glog.WithContext(ctx, l)
+
+	// Insert request id to context by grpc metadata.
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		md = metadata.New(nil)
+	}
+	md.Set(ctxReqIdKey, reqId)
+
+	ctx = metadata.NewOutgoingContext(ctx, md)
 	return ctx
 }
 

@@ -64,7 +64,6 @@ func basicUnaryServerInterceptor() grpc.UnaryServerInterceptor {
 		if err := validateRequestArgument(req, logger); err != nil {
 			return nil, err
 		}
-
 		reply, err := handler(ctx, req)
 
 		if err != nil {
