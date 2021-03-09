@@ -18,7 +18,7 @@ const (
 	ServerTypeSpark = "spark"
 
 	// Engine build Type
-	InBuilt = 1
+	InBuilt  = 1
 	External = 0
 )
 
@@ -33,7 +33,7 @@ var StatusCode = map[int8]string{
 	EngineStatusDeleted: "deleted",
 }
 
-var BuildTypeCode = map[int8]string {
+var BuildTypeCode = map[int8]string{
 	InBuilt:  "inbuilt",
 	External: "external",
 }

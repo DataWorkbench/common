@@ -23,9 +23,12 @@ func (e Error) Error() string {
 }
 
 func (e *Error) Format(a ...interface{}) *Error {
-	e.enUS = fmt.Sprintf(e.enUS, a...)
-	e.zhCN = fmt.Sprintf(e.zhCN, a...)
-	return e
+	return &Error{
+		code:   e.code,
+		status: e.status,
+		enUS:   fmt.Sprintf(e.enUS, a...),
+		zhCN:   fmt.Sprintf(e.zhCN, a...),
+	}
 }
 
 func (e *Error) String() string {
