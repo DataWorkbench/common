@@ -52,7 +52,7 @@ func (g *IDGenerator) encode(x int64) string {
 func (g *IDGenerator) Take() (string, error) {
 	id, err := g.worker.Next()
 	if err != nil {
-		return "", nil
+		return "", err
 	}
 	return g.encode(id), nil
 }

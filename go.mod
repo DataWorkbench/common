@@ -15,7 +15,7 @@ require (
 	github.com/stretchr/testify v1.6.1
 	github.com/uber/jaeger-client-go v2.25.0+incompatible
 	github.com/uber/jaeger-lib v2.4.0+incompatible // indirect
-	github.com/yu31/snowflake v0.0.0-20201212140846-eca7f34c6cd3
+	github.com/yu31/snowflake v0.0.0-20210309213122-580647caa2bb
 	google.golang.org/grpc v1.34.0
 	google.golang.org/protobuf v1.25.0
 	gorm.io/driver/mysql v1.0.3
