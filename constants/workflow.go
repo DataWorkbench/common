@@ -1,5 +1,11 @@
 package constants
 
+// Workflow Type.
+const (
+	FlowTypeStream int32 = iota + 1 // => "stream works"
+	FlowTypeBatch                   // => "batch works"
+)
+
 // Workflow priority.
 const (
 	FlowPriorityHighest int32 = iota + 1 // => "highest"

@@ -304,8 +304,6 @@ github.com/uber/jaeger-lib v2.4.0+incompatible/go.mod h1:ComeNDZlWwrWnDv8aPp0Ba6
 github.com/urfave/cli v1.20.0/go.mod h1:70zkFmudgCuE/ngEzBv17Jvp/497gISqfk5gWijbERA=
 github.com/urfave/cli v1.22.1/go.mod h1:Gos4lmkARVdJ6EkW0WaNv/tZAAMe9V7XWyB60NtXRu0=
 github.com/xiang90/probing v0.0.0-20190116061207-43a291ad63a2/go.mod h1:UETIi67q53MR2AWcXfiuqkDkRtnGDLqkBTpCHuJHxtU=
-github.com/yu31/snowflake v0.0.0-20201212140846-eca7f34c6cd3 h1:9Q873quxDxYAQ2y6x76hY7OVRm/0nEuUTLjk2GoKM2g=
-github.com/yu31/snowflake v0.0.0-20201212140846-eca7f34c6cd3/go.mod h1:kj86CfGUK7fPMCyw7lN1CgNDJ57GmtZgyzPqftMd0kQ=
 github.com/yu31/snowflake v0.0.0-20210309213122-580647caa2bb h1:4icwEahXE3BzVfq8II9ajyxo3NuP7CSiDG2Gr9HsRCk=
 github.com/yu31/snowflake v0.0.0-20210309213122-580647caa2bb/go.mod h1:kj86CfGUK7fPMCyw7lN1CgNDJ57GmtZgyzPqftMd0kQ=
 go.etcd.io/bbolt v1.3.3/go.mod h1:IbVyRI1SCnLcuJnV2u8VeU0CEYM7e686BmAb1XKL+uU=
