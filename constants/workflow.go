@@ -2,8 +2,9 @@ package constants
 
 // Workflow Type.
 const (
-	FlowTypeStream int32 = iota + 1 // => "stream works"
-	FlowTypeBatch                   // => "batch works"
+	FlowTypeStreamSQL int32 = iota + 1 // => "stream works with SQL"
+	FlowTypeStreamJAR                  // => "stream works with JAR ball"
+	FlowTypeStreamOperator             // => "stream works with operator choreography".
 )
 
 // Workflow priority.
