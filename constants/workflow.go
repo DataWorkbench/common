@@ -1,10 +1,16 @@
 package constants
 
+// Workflow Release Status.
+const (
+	FlowReleaseStatusActive    int32 = iota + 1 // => "active"
+	FlowReleaseStatusSuspended                  // => "suspended"
+)
+
 // Workflow Type.
 const (
-	FlowTypeStreamSQL int32 = iota + 1 // => "stream works with SQL"
-	FlowTypeStreamJAR                  // => "stream works with JAR ball"
-	FlowTypeStreamOperator             // => "stream works with operator choreography".
+	FlowTypeStreamSQL      int32 = iota + 1 // => "stream works with SQL"
+	FlowTypeStreamJAR                       // => "stream works with JAR ball"
+	FlowTypeStreamOperator                  // => "stream works with operator choreography".
 )
 
 // Workflow priority.
