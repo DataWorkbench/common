@@ -20,4 +20,5 @@ require (
 	google.golang.org/protobuf v1.25.0
 	gorm.io/driver/mysql v1.0.3
 	gorm.io/gorm v1.20.6
+	github.com/Shopify/sarama v1.29.0
 )
