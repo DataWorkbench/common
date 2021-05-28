@@ -49,8 +49,8 @@ func ConsumeWithGroup(ctx context.Context, client sarama.ConsumerGroup, topic st
 	lp.Info().Msg("consumer group up and running...").Fire()
 
 	consumer := Consumer{
-		ready:   make(chan bool),
-		msg: make(chan *sarama.ConsumerMessage),
+		ready: make(chan bool),
+		msg:   make(chan *sarama.ConsumerMessage),
 	}
 
 	wg := &sync.WaitGroup{}
@@ -78,8 +78,8 @@ func ConsumeWithGroup(ctx context.Context, client sarama.ConsumerGroup, topic st
 
 // Consumer represents a Sarama consumer group consumer
 type Consumer struct {
-	ready   chan bool
-	msg chan *sarama.ConsumerMessage
+	ready chan bool
+	msg   chan *sarama.ConsumerMessage
 }
 
 func (consumer *Consumer) Setup(sarama.ConsumerGroupSession) error {
