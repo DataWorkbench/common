@@ -1,7 +1,7 @@
 package constants
 
 const (
-	InstanceTriggerSchedule      int32 = iota + 1 // => "schedule"
+	InstanceTriggerSchedule      int32 = iota + 1 // => "cycle"
 	InstanceTriggerManual                         // => "manual" && "test"
 	InstanceTriggerSupplementary                  // => "supplementary data"
 )

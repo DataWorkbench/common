@@ -150,8 +150,20 @@ var (
 	MemberAlreadyExists = &Error{
 		code:   "MemberAlreadyExists",
 		status: 409,
-		enUS:   "The member [%s] has been exists..",
+		enUS:   "The member [%s] has been exists.",
 		zhCN:   "空间成员[%s]已存在.",
+	}
+	SpaceOwnerCannotRemoved = &Error{
+		code:   "SpaceOwnerCannotRemoved",
+		status: 403,
+		enUS:   "The member of workspace owner cannot be removed.",
+		zhCN:   "空间所有者不允许删除.",
+	}
+	SpaceOwnerCannotUpdated = &Error{
+		code:   "SpaceOwnerCannotUpdated",
+		status: 403,
+		enUS:   "The member of workspace owner cannot be updated.",
+		zhCN:   "空间所有者不允许更新",
 	}
 )
 

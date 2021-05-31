@@ -2,11 +2,13 @@ package constants
 
 // Declares id prefix
 const (
-	SpaceIDPrefix         = "wks-"
-	FlowIDPrefix          = "wkf-"
-	NodeIDPrefix          = "wkn-"
-	FlowInstanceIDPrefix  = "wfi-"
-	NodeInstanceIDPrefix  = "wni-"
+	// The Id prefix of workspace.
+	SpaceIdPrefix = "wks-"
+	// The Id prefix of stream workflow.
+	StreamFlowIdPrefix = "wkf-"
+	// The Id prefix of stream workflow instance.
+	StreamFlowInstIdPrefix = "wfi-"
+
 	SourceManagerIDPrefix = "som-"
 	SourceTablesIDPrefix  = "sot-"
 	JobIDPrefix           = "job-"

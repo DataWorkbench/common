@@ -13,30 +13,25 @@ const (
 	FlowTypeStreamOperator                  // => "stream works with operator choreography".
 )
 
-// Workflow priority.
-const (
-	FlowPriorityHighest int32 = iota + 1 // => "highest"
-	FlowPriorityHigh                     // => "high"
-	FlowPriorityMedium                   // => "medium"
-	FlowPriorityLow                      // => "low"
-	FlowPriorityLowest                   // => "lowest"
-)
+//// Workflow priority.
+//const (
+//	FlowPriorityHighest int32 = iota + 1 // => "highest"
+//	FlowPriorityHigh                     // => "high"
+//	FlowPriorityMedium                   // => "medium"
+//	FlowPriorityLow                      // => "low"
+//	FlowPriorityLowest                   // => "lowest"
+//)
 
-// Strategy of node task execute failure in a workflow.
-const (
-	FlowFailureStrategyContinue int32 = iota + 1 // => "continue"
-	FlowFailureStrategySuspend                   // => "suspend"
-)
+//// Strategy of node task execute failure in a workflow.
+//const (
+//	ScheduleFailureStrategyContinue    int32 = iota + 1 // => "continue"
+//	ScheduleFailureStrategyTermination                  // => "termination"
+//)
 
 // Strategy of schedule depends of workflow.
 const (
-	FlowDependStrategyNone int32 = iota + 1 // => "none"
-	FlowDependStrategyLast                  // => "last"
-)
-
-// Strategy of schedule.
-const (
-	FlowScheduleStrategyLoop int32 = iota + 1 // => "loop"
+	ScheduleDependStrategyNone int32 = iota + 1 // => "none"
+	ScheduleDependStrategyLast                  // => "last"
 )
 
 // Strategy of notify of workflow.
