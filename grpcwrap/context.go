@@ -35,7 +35,8 @@ func ContextWithRequest(ctx context.Context, l *glog.Logger, reqId string) conte
 	return ctx
 }
 
-func reqIdFromIncomingContext(ctx context.Context) string {
+// ReqIdFromContext get the request id from rpc request context.
+func ReqIdFromContext(ctx context.Context) string {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if ok {
 		ids := md.Get(ctxReqIdKey)

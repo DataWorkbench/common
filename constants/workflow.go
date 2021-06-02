@@ -32,6 +32,7 @@ const (
 const (
 	ScheduleDependStrategyNone int32 = iota + 1 // => "none"
 	ScheduleDependStrategyLast                  // => "last"
+	ScheduleDependStrategyStop                  // => "stop"
 )
 
 // Strategy of notify of workflow.
