@@ -45,3 +45,15 @@ const (
 	FlowNotifyStrategyNodeRetried
 	FlowNotifyStrategyNodeFailed
 )
+
+// The environmental parameters for Flink.
+type StreamFlowEnv struct {
+	EngineId    string            `json:"engine_id"`
+	Parallelism int32             `json:"parallelism"`
+	JobMem      int32             `json:"job_mem"` // in MB
+	JobCpu      float32           `json:"job_cpu"`
+	TaskCpu     float32           `json:"task_cpu"`
+	TaskMem     int32             `json:"task_mem"` // in MB
+	TaskNum     int32             `json:"task_num"`
+	Custom      map[string]string `json:"custom"`
+}

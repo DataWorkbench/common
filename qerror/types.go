@@ -207,26 +207,26 @@ var (
 	}
 )
 
-// node error
+// instance error
 var (
-//NodeNotExists = &Error{
-//	code:   "NodeNotExists",
-//	status: 404,
-//	enUS:   "The node [%s] does not exists.",
-//	zhCN:   "任务节点[%s]不存在.",
-//}
-//NodeAlreadyExists = &Error{
-//	code:   "NodeAlreadyExists",
-//	status: 409,
-//	enUS:   "The node name [%s] has been used.",
-//	zhCN:   "任务节点名称[%s]已被使用.",
-//}
-//InvalidNodeName = &Error{
-//	code:   "InvalidNodeName",
-//	status: 400,
-//	enUS:   "The node name is invalid, accepts 0~9、a~z、_ and can't begin or end with _.",
-//	zhCN:   "节点名称不符合要求, 只允许数字,小写字母和下划线, 并且不能以下划线开头或者结尾.",
-//}
+	InstanceNotExists = &Error{
+		code:   "InstanceNotExists",
+		status: 404,
+		enUS:   "The instance [%s] does not exists.",
+		zhCN:   "任务实例[%s]不存在.",
+	}
+	//NodeAlreadyExists = &Error{
+	//	code:   "NodeAlreadyExists",
+	//	status: 409,
+	//	enUS:   "The node name [%s] has been used.",
+	//	zhCN:   "任务节点名称[%s]已被使用.",
+	//}
+	//InvalidNodeName = &Error{
+	//	code:   "InvalidNodeName",
+	//	status: 400,
+	//	enUS:   "The node name is invalid, accepts 0~9、a~z、_ and can't begin or end with _.",
+	//	zhCN:   "节点名称不符合要求, 只允许数字,小写字母和下划线, 并且不能以下划线开头或者结尾.",
+	//}
 )
 
 // sourcemanager
