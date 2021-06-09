@@ -1,6 +1,10 @@
 package constants
 
 const (
+	EngineFlinkDefaultId = IdPrefixEngine + "0000000000000000"
+)
+
+const (
 	// ret code
 	RetSucc = 0
 
