@@ -2,27 +2,28 @@ package kafkawrap
 
 import (
 	"context"
-	"github.com/DataWorkbench/glog"
+
 	"github.com/Shopify/sarama"
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
+
+	"github.com/DataWorkbench/glog"
 )
 
 type ProducerTrace struct {
 	tracer opentracing.Tracer
-	Ctx    context.Context
+	ctx    context.Context
 }
 
 func (pt *ProducerTrace) OnSend(msg *sarama.ProducerMessage) {
 
-	lp := glog.FromContext(pt.Ctx)
+	lp := glog.FromContext(pt.ctx)
 	lp.Info().Msg("kafka producer interceptor OnSend").Fire()
 
 	var parentCtx opentracing.SpanContext
-	if parent := opentracing.SpanFromContext(pt.Ctx); parent != nil {
+	if parent := opentracing.SpanFromContext(pt.ctx); parent != nil {
 		parentCtx = parent.Context()
 	}
-
 	//tags := opentracing.Tags{
 	//	"kafka.message.topic":  topicsStr,
 	//	"kafka.message.length": length,
@@ -46,10 +47,9 @@ func (pt *ProducerTrace) OnSend(msg *sarama.ProducerMessage) {
 }
 
 // NewProducerTrace processes add some headers with the span data.
-func NewProducerTrace(ctx context.Context, tracer opentracing.Tracer) *ProducerTrace {
+func NewProducerTrace(tracer opentracing.Tracer) *ProducerTrace {
 	pt := ProducerTrace{}
 	pt.tracer = tracer
-	pt.Ctx = ctx
 	return &pt
 }
 

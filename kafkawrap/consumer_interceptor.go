@@ -2,10 +2,12 @@ package kafkawrap
 
 import (
 	"context"
-	"github.com/DataWorkbench/glog"
+
 	"github.com/Shopify/sarama"
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
+
+	"github.com/DataWorkbench/glog"
 )
 
 type ConsumerTrace struct {

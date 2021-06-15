@@ -2,102 +2,115 @@ package kafkawrap
 
 import (
 	"context"
-	"github.com/DataWorkbench/glog"
+	"strings"
+
 	"github.com/Shopify/sarama"
-	"log"
-	"sync"
+
+	"github.com/DataWorkbench/glog"
 )
 
-func Consume(ctx context.Context, client sarama.Client, topic string, msgmain chan *sarama.ConsumerMessage) {
-
-	lp := glog.FromContext(ctx)
-	lp.Info().Msg("consume kafka").Fire()
-
-	consumer, err := sarama.NewConsumerFromClient(client)
-	if err != nil {
-		lp.Error().Error("create consumer error", err).Fire()
-	}
-	defer consumer.Close()
-
-	partitionList, err := consumer.Partitions(topic)
-	if err != nil {
-		lp.Error().Error("get consumer partition error", err).Fire()
-	}
-
-	var wg sync.WaitGroup
-	wg.Add(1)
-	for partition := range partitionList {
-		pc, err := consumer.ConsumePartition(topic, int32(partition), sarama.OffsetNewest)
-		if err != nil {
-			log.Println(err)
-			lp.Error().Error("consume partition data error", err).Fire()
-		}
-		defer pc.AsyncClose()
-		go func(sarama.PartitionConsumer) {
-			for msg := range pc.Messages() {
-				msgmain <- msg
-			}
-		}(pc)
-	}
-
-	wg.Wait()
+type ConsumerConfig struct {
+	Hosts    string `json:"hosts"         yaml:"hosts"         env:"HOSTS"             validate:"required"`
+	GroupID  string `json:"group_id"      yaml:"group_id"      env:"GROUP_ID"          validate:"required"`
+	Assignor string `json:"assignor"      yaml:"assignor"      env:"ASSIGNOR"          validate:"required"`
 }
 
-func ConsumeWithGroup(ctx context.Context, client sarama.ConsumerGroup, topic string, msg chan *sarama.ConsumerMessage) {
+type ConsumerGroup struct {
+	Group  sarama.ConsumerGroup
+	cb     Callback
+	ready  chan bool
+	lp     *glog.Logger
+	ctx    context.Context
+	cancel func()
+}
 
+// NewConsumerGroup return a sarama kafka consumer group
+func NewConsumerGroup(ctx context.Context, cfg *ConsumerConfig, options ...Option) (*ConsumerGroup, error) {
+
+	opts := applyOptions(options...)
 	lp := glog.FromContext(ctx)
-	lp.Info().Msg("consumer group up and running...").Fire()
+	lp.Info().Msg("consumer group client connecting to kafka").String("hosts", cfg.Hosts).Fire()
 
-	consumer := Consumer{
-		ready: make(chan bool),
-		msg:   make(chan *sarama.ConsumerMessage),
+	config := sarama.NewConfig()
+	config.Consumer.Return.Errors = true
+	config.Consumer.Offsets.Initial = sarama.OffsetOldest
+	switch cfg.Assignor {
+	case "sticky":
+		config.Consumer.Group.Rebalance.Strategy = sarama.BalanceStrategySticky
+	case "roundrobin":
+		config.Consumer.Group.Rebalance.Strategy = sarama.BalanceStrategyRoundRobin
+	case "range":
+		config.Consumer.Group.Rebalance.Strategy = sarama.BalanceStrategyRange
+	default:
+		lp.Info().Msg("Unrecognized consumer group partition ").String("assignor", cfg.Assignor).Fire()
 	}
+	config.Consumer.Interceptors = []sarama.ConsumerInterceptor{NewConsumerTrace(ctx, opts.tracer)}
 
-	wg := &sync.WaitGroup{}
-	wg.Add(1)
+	client, err := sarama.NewConsumerGroup(strings.Split(cfg.Hosts, ","), cfg.GroupID, config)
+
+	consumer := &ConsumerGroup{Group: client, lp: lp}
+	return consumer, err
+}
+
+func (c *ConsumerGroup) ConsumeWithGroup(ctx context.Context, topic string, cbfunc Callback) {
+	if c == nil {
+		return
+	}
+	c.cb = cbfunc
+	c.ready = make(chan bool)
+	c.ctx, c.cancel = context.WithCancel(ctx)
 	go func() {
-		//defer wg.Done()
 		for {
-			if err := client.Consume(ctx, []string{topic}, &consumer); err != nil {
-				lp.Error().Error("consumer group error", err).Fire()
+			// sarama.ConsumerGroup.Consume() should be called inside an infinite loop,
+			// when rebalance happens, the consumer session will need to be recreated to get the new claims
+			if err := c.Group.Consume(c.ctx, []string{topic}, c); err != nil {
+				c.lp.Error().Error("consumer group error", err).Fire()
 			}
-			if ctx.Err() != nil {
+			c.lp.Info().Msg("partition rebalance happens, a claim session exit, create a new consumer session").Fire()
+
+			// check if context was cancelled, signaling that the consumer should stop
+			if c.ctx.Err() != nil {
+				c.lp.Info().Msg("context was cancelled,stop consumer").Fire()
 				return
 			}
-			consumer.ready = make(chan bool)
+			c.ready = make(chan bool)
 		}
 	}()
 
-	<-consumer.ready
-	for message := range consumer.msg {
-		msg <- message
-	}
-
-	wg.Wait()
+	<-c.ready // Await till the consumer has been set up
+	c.lp.Info().Msg("Sarama consumer up and running!...").Fire()
 }
 
-// Consumer represents a Sarama consumer group consumer
-type Consumer struct {
-	ready chan bool
-	msg   chan *sarama.ConsumerMessage
-}
+type Callback func(sess sarama.ConsumerGroupSession, cc sarama.ConsumerGroupClaim)
 
-func (consumer *Consumer) Setup(sarama.ConsumerGroupSession) error {
-	// Mark the consumer as ready
-	close(consumer.ready)
+func (c *ConsumerGroup) Setup(sarama.ConsumerGroupSession) error {
+	// mark every consumer session as ready and avoid deadlock
+	close(c.ready)
 	return nil
 }
 
-func (consumer *Consumer) Cleanup(sarama.ConsumerGroupSession) error {
+func (c *ConsumerGroup) Cleanup(sarama.ConsumerGroupSession) error {
 	return nil
 }
 
 // ConsumeClaim must start a consumer loop of ConsumerGroupClaim's Messages().
-func (consumer *Consumer) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
-	for message := range claim.Messages() {
-		session.MarkMessage(message, "")
-		consumer.msg <- message
-	}
-
+func (c *ConsumerGroup) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
+	c.cb(session, claim)
 	return nil
+}
+
+// Close wrapper for sarama.ConsumerGroup.Close()
+func (c *ConsumerGroup) Close() {
+	if c == nil {
+		return
+	}
+	// end the sarama.ConsumerGroup.Consume() loop before Close()
+	c.cancel()
+
+	c.lp.Info().Msg("waiting for sarama consumer group stop").Fire()
+	// stops the ConsumerGroup and detaches any running sessions
+	if err := c.Group.Close(); err != nil {
+		c.lp.Error().Error("closing client error", err).Fire()
+	}
+	c.lp.Info().Msg("sarama consumer group stopped").Fire()
 }
