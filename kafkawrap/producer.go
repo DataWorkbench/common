@@ -2,7 +2,6 @@ package kafkawrap
 
 import (
 	"context"
-	"log"
 	"strings"
 
 	"github.com/Shopify/sarama"
@@ -63,6 +62,8 @@ func newAsyncProducer(tracer *ProducerTrace, hosts string) (p sarama.AsyncProduc
 	return p, err
 }
 
+//eg: pid, offset, err := handler.Producer.SyncProduce(ctx, "topicE", []byte(msg))
+
 func (p *Producer) SyncProduce(ctx context.Context, topic string, msg []byte) (pid int32, offset int64, err error) {
 
 	//provide context for opentracing.SpanFromContext
@@ -77,6 +78,8 @@ func (p *Producer) SyncProduce(ctx context.Context, topic string, msg []byte) (p
 	return
 }
 
+//eg: go handler.Producer.AsyncProduce(ctx,"topicE",[]byte(msg))
+
 func (p *Producer) AsyncProduce(ctx context.Context, topic string, msg []byte) {
 
 	p.tracer.ctx = ctx
@@ -86,16 +89,10 @@ func (p *Producer) AsyncProduce(ctx context.Context, topic string, msg []byte) {
 		Value: sarama.ByteEncoder(msg),
 	}
 	p.asyncProducer.Input() <- message
-	// wait response
-	select {
-	case err := <-p.asyncProducer.Errors():
-		log.Println("Produced message failure: ", err)
-	default:
-		log.Println("Produced message default")
-	}
+
 }
 
-// Close wrapper for sarama producer Close()
+// Close wrapper for sarama producer Close(),Call when exit the app
 func (p *Producer) Close() {
 	if p == nil {
 		return

@@ -52,11 +52,18 @@ func NewConsumerGroup(ctx context.Context, cfg *ConsumerConfig, options ...Optio
 	return consumer, err
 }
 
-func (c *ConsumerGroup) ConsumeWithGroup(ctx context.Context, topic string, cbfunc Callback) {
+//eg: consumer.ConsumeWithGroup(ctx, "topicE",func(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) {
+//	   for message := range claim.Messages() {
+//  	 	log.Println("consumer message ",string(message.Value),"Offset",message.Offset,"Partition",message.Partition)
+//	    	session.MarkMessage(message, "")
+//	   }
+//    })
+
+func (c *ConsumerGroup) ConsumeWithGroup(ctx context.Context, topic string, cb Callback) {
 	if c == nil {
 		return
 	}
-	c.cb = cbfunc
+	c.cb = cb
 	c.ready = make(chan bool)
 	c.ctx, c.cancel = context.WithCancel(ctx)
 	go func() {
@@ -99,7 +106,7 @@ func (c *ConsumerGroup) ConsumeClaim(session sarama.ConsumerGroupSession, claim 
 	return nil
 }
 
-// Close wrapper for sarama.ConsumerGroup.Close()
+// Close wrapper for sarama.ConsumerGroup.Close(),Call when exit the app
 func (c *ConsumerGroup) Close() {
 	if c == nil {
 		return
