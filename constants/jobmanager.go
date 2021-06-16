@@ -151,7 +151,7 @@ func doRequest(client *http.Client, method string, status int, api string, body 
 	rep.Body.Close()
 
 	repString = string(repBody)
-	if retJson == true {
+	if retJson {
 		err = json.Unmarshal(repBody, &repJson)
 		if err != nil {
 			rep.Body.Close()
