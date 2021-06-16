@@ -9,5 +9,8 @@ func (s *JSONString) UnmarshalJSON(b []byte) error {
 }
 
 func (s JSONString) MarshalJSON() ([]byte, error) {
+	if s == "" {
+		return []byte("{}"), nil
+	}
 	return []byte(s), nil
 }
