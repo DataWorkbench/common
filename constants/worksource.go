@@ -1,7 +1,6 @@
 package constants
 
 const (
-	EngineTypeFlink        = "Flink"
 	SourceTypeMysql        = "MySQL"
 	SourceTypePostgreSQL   = "PostgreSQL"
 	SourceTypeKafka        = "Kafka"

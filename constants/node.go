@@ -16,39 +16,24 @@ const (
 const (
 	NodeTypeVirtual int32 = iota + 1 // => "virtual"
 	NodeTypeShell                    // => "shell"
-	NodeTypeFlinkJob
-	NodeTypeFlinkSSQL
+	NodeTypeFlink
 )
 
 const (
-	MainRunQuote = "$qc$"
+	RunCommand         = "run"
+	PreviewCommand     = "preview"
+	ExplainCommand     = "explain"
+	SyntaxCheckCommand = "syntax"
 )
 
-// Defines of NodeTypeFlinkSSQL.
-type FlinkSSQL struct {
-	Tables      []string `json:"tables"`
-	Funcs       []string `json:"funcs"`
-	Parallelism int32    `json:"parallelism"`
-	JobMem      int32    `json:"job_mem"` // in MB
-	JobCpu      float32  `json:"job_cpu"`
-	TaskCpu     float32  `json:"task_cpu"`
-	TaskMem     int32    `json:"task_mem"` // in MB
-	TaskNum     int32    `json:"task_num"`
-	MainRun     string   `json:"main_run"` //AccessKey, SecretKey, EndPoint is in sourcemanager
-}
-
-// Defines of NodeTypeFlinkJob.
-type FlinkJob struct {
-	Parallelism int32   `json:"parallelism"`
-	JobMem      int32   `json:"job_mem"` // in MB
-	JobCpu      float32 `json:"job_cpu"`
-	TaskCpu     float32 `json:"task_cpu"`
-	TaskMem     int32   `json:"task_mem"` // in MB
-	TaskNum     int32   `json:"task_num"`
-	JarArgs     string  `json:"jar_args"`  // allow regex `^[a-zA-Z0-9_/. ]+$`
-	JarEntry    string  `json:"jar_entry"` // allow regex `^[a-zA-Z0-9_/. ]+$`
-	MainRun     string  `json:"main_run"`
-	AccessKey   string  `json:"accesskey"`
-	SecretKey   string  `json:"secretkey"`
-	EndPoint    string  `json:"endpoint"`
+type FlinkNode struct {
+	Command     string     `json:"command"`
+	StreamSql   bool       `json:"stream_sql"` //true is flink stream sql. false is flink batch sql
+	Parallelism int32      `json:"parallelism"`
+	JobMem      int32      `json:"job_mem"`  // use in serverless engine // MB
+	JobCpu      float32    `json:"job_cpu"`  // use in serverless engine
+	TaskCpu     float32    `json:"task_cpu"` // use in serverless engine
+	TaskMem     int32      `json:"task_mem"` // use in serverless engine // MB
+	TaskNum     int32      `json:"task_num"` // use in serverless engine
+	Nodes       JSONString `json:"nodes"`
 }
