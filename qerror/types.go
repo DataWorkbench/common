@@ -139,6 +139,34 @@ var (
 	}
 )
 
+// member error
+var (
+	MemberNotExists = &Error{
+		code:   "MemberNotExists",
+		status: 404,
+		enUS:   "The member [%s] does not exists.",
+		zhCN:   "成员[%s]不存在.",
+	}
+	MemberAlreadyExists = &Error{
+		code:   "MemberAlreadyExists",
+		status: 409,
+		enUS:   "The member [%s] has been exists.",
+		zhCN:   "空间成员[%s]已存在.",
+	}
+	SpaceOwnerCannotRemoved = &Error{
+		code:   "SpaceOwnerCannotRemoved",
+		status: 403,
+		enUS:   "The member of workspace owner cannot be removed.",
+		zhCN:   "空间所有者不允许删除.",
+	}
+	SpaceOwnerCannotUpdated = &Error{
+		code:   "SpaceOwnerCannotUpdated",
+		status: 403,
+		enUS:   "The member of workspace owner cannot be updated.",
+		zhCN:   "空间所有者不允许更新",
+	}
+)
+
 // workflow error
 var (
 	FlowAlreadyExists = &Error{
@@ -153,11 +181,23 @@ var (
 		enUS:   "The workflow [%s] does not exists.",
 		zhCN:   "工作流程[%s]不存在.",
 	}
-	CrontabNotExists = &Error{
-		code:   "CrontabNotExists",
-		status: 404,
-		enUS:   "The workflow [%s] not set crontab.",
-		zhCN:   "工作流程[%s]未设置定时任务",
+	ScheduleNotSet = &Error{
+		code:   "ScheduleNotSet",
+		status: 400,
+		enUS:   "The workflow [%s] not set schedule properties.",
+		zhCN:   "工作流程[%s]未设置调度属性",
+	}
+	NodeNotSet = &Error{
+		code:   "NodeNotSet",
+		status: 400,
+		enUS:   "The workflow [%s] not set node task.",
+		zhCN:   "工作流程[%s]未设置节点任务",
+	}
+	EnvNotSet = &Error{
+		code:   "EnvNotSet",
+		status: 400,
+		enUS:   "The workflow [%s] not set environmental parameters ",
+		zhCN:   "工作流程[%s]未设置环境参数",
 	}
 	InvalidFlowName = &Error{
 		code:   "InvalidFlowName",
@@ -167,26 +207,26 @@ var (
 	}
 )
 
-// node error
+// instance error
 var (
-	NodeNotExists = &Error{
-		code:   "NodeNotExists",
+	InstanceNotExists = &Error{
+		code:   "InstanceNotExists",
 		status: 404,
-		enUS:   "The node [%s] does not exists.",
-		zhCN:   "任务节点[%s]不存在.",
+		enUS:   "The instance [%s] does not exists.",
+		zhCN:   "任务实例[%s]不存在.",
 	}
-	NodeAlreadyExists = &Error{
-		code:   "NodeAlreadyExists",
-		status: 409,
-		enUS:   "The node name [%s] has been used.",
-		zhCN:   "任务节点名称[%s]已被使用.",
-	}
-	InvalidNodeName = &Error{
-		code:   "InvalidNodeName",
-		status: 400,
-		enUS:   "The node name is invalid, accepts 0~9、a~z、_ and can't begin or end with _.",
-		zhCN:   "节点名称不符合要求, 只允许数字,小写字母和下划线, 并且不能以下划线开头或者结尾.",
-	}
+	//NodeAlreadyExists = &Error{
+	//	code:   "NodeAlreadyExists",
+	//	status: 409,
+	//	enUS:   "The node name [%s] has been used.",
+	//	zhCN:   "任务节点名称[%s]已被使用.",
+	//}
+	//InvalidNodeName = &Error{
+	//	code:   "InvalidNodeName",
+	//	status: 400,
+	//	enUS:   "The node name is invalid, accepts 0~9、a~z、_ and can't begin or end with _.",
+	//	zhCN:   "节点名称不符合要求, 只允许数字,小写字母和下划线, 并且不能以下划线开头或者结尾.",
+	//}
 )
 
 // sourcemanager
