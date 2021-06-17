@@ -203,7 +203,12 @@ func (ex *HttpClient) CreateParagraph(noteID string, index int32, name string, t
 }
 
 func (ex *HttpClient) RunParagraphSync(noteID string, paragraphID string) (err error) {
+	var status string
 	_, _, err = doRequest(ex.Client, http.MethodPost, http.StatusOK, ex.ZeppelinServer+"/api/notebook/run/"+noteID+"/"+paragraphID, "", false)
+	status, err = ex.GetParagraphStatus(noteID, paragraphID)
+	if status != "OK" && status != "FINISHED" {
+		err = fmt.Errorf("run failed. status is " + status)
+	}
 	return
 }
 
@@ -320,13 +325,10 @@ func FreeJobResources(resources JobResources, EngineType string, logger *glog.Lo
 		}
 		fmt.Println(resp)
 
-		if err = json.Unmarshal([]byte(resp.GetJobResources()), &zeppelinFree); err != nil {
-			fmt.Println("bbbbbbbbb")
-			fmt.Println(resp.GetJobResources())
-			fmt.Println(resp)
-			fmt.Println("bbbbbbbbb---------/lzzhang")
-			return
-		}
+		//if err = json.Unmarshal([]byte(resp.GetJobResources()), &zeppelinFree); err != nil {
+		//	fmt.Println("UNKNOWN where resp is empty---------/lzzhang")
+		//	return
+		//}
 
 		if zeppelinFree.ZeppelinDeleteJar != "" {
 			noteID, err = httpClient.CreateNote(resources.JobID + "_delete_resources")

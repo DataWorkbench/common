@@ -23,7 +23,7 @@ const (
 	RunCommand         = "run"
 	PreviewCommand     = "preview"
 	ExplainCommand     = "explain"
-	SyntaxCheckCommand = "syntax"
+	SyntaxCheckCommand = "syntaxcheck"
 )
 
 type FlinkNode struct {
