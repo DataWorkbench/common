@@ -295,3 +295,20 @@ var (
 		zhCN:   "计算引擎[%s]不存在.",
 	}
 )
+
+// notification error
+var (
+	SendingNotificationFailed = &Error{
+		code:   "SendingNotificationFailed",
+		status: 500,
+		enUS:   "failed to send notification post to user [%s]",
+		zhCN:   "向用户[%s]发送通知失败.",
+	}
+
+	NotificationChannelConfigInvalid = &Error{
+		code:   "NotificationChannelConfigInvalid",
+		status: 500,
+		enUS:   "notification channel config not valid",
+		zhCN:   "通知渠道配置不合法",
+	}
+)
