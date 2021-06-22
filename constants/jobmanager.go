@@ -301,6 +301,7 @@ func FreeJobResources(resources JobResources, EngineType string, logger *glog.Lo
 		var (
 			req          jobdevpb.JobFreeRequest
 			zeppelinFree JobFreeActionFlink
+			resp         *jobdevpb.JobFreeAction
 			noteID       string
 			paragraphID  string
 		)
@@ -318,17 +319,17 @@ func FreeJobResources(resources JobResources, EngineType string, logger *glog.Lo
 		resourcesByte, _ := json.Marshal(resources)
 		req.JobResources = string(resourcesByte)
 
-		resp, tmperr := jobdevClient.Client.JobFree(jobdevClient.Ctx, &req)
-		if tmperr != nil {
-			err = tmperr
+		resp, err = jobdevClient.Client.JobFree(jobdevClient.Ctx, &req)
+		if err != nil {
 			return
 		}
-		fmt.Println(resp)
 
-		//if err = json.Unmarshal([]byte(resp.GetJobResources()), &zeppelinFree); err != nil {
-		//	fmt.Println("UNKNOWN where resp is empty---------/lzzhang")
-		//	return
-		//}
+		respString := resp.GetJobResources()
+		if respString != "" {
+			if err = json.Unmarshal([]byte(respString), &zeppelinFree); err != nil {
+				return
+			}
+		}
 
 		if zeppelinFree.ZeppelinDeleteJar != "" {
 			noteID, err = httpClient.CreateNote(resources.JobID + "_delete_resources")
