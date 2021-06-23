@@ -296,19 +296,19 @@ var (
 	}
 )
 
-// notification error
+// notifier error
 var (
 	SendingNotificationFailed = &Error{
 		code:   "SendingNotificationFailed",
 		status: 500,
-		enUS:   "failed to send notification post to user [%s]",
+		enUS:   "failed to send notifier post to user [%s]",
 		zhCN:   "向用户[%s]发送通知失败.",
 	}
 
 	NotificationChannelConfigInvalid = &Error{
 		code:   "NotificationChannelConfigInvalid",
 		status: 500,
-		enUS:   "notification channel config not valid",
+		enUS:   "notifier channel config not valid",
 		zhCN:   "通知渠道配置不合法",
 	}
 )
