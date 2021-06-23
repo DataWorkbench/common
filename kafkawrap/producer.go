@@ -16,7 +16,7 @@ type ProducerConfig struct {
 type Producer struct {
 	syncProducer  sarama.SyncProducer
 	asyncProducer sarama.AsyncProducer
-	tracer        *ProducerTrace
+	tracer        *producerTrace
 	lp            *glog.Logger
 }
 
@@ -42,7 +42,7 @@ func NewProducerClient(ctx context.Context, cfg *ProducerConfig, options ...Opti
 	return p, nil
 }
 
-func newSyncProducer(tracer *ProducerTrace, hosts string) (p sarama.SyncProducer, err error) {
+func newSyncProducer(tracer *producerTrace, hosts string) (p sarama.SyncProducer, err error) {
 	config := sarama.NewConfig()
 	config.Producer.RequiredAcks = sarama.WaitForAll
 	config.Producer.Partitioner = sarama.NewRandomPartitioner
@@ -52,7 +52,7 @@ func newSyncProducer(tracer *ProducerTrace, hosts string) (p sarama.SyncProducer
 	return p, err
 }
 
-func newAsyncProducer(tracer *ProducerTrace, hosts string) (p sarama.AsyncProducer, err error) {
+func newAsyncProducer(tracer *producerTrace, hosts string) (p sarama.AsyncProducer, err error) {
 	config := sarama.NewConfig()
 	config.Producer.RequiredAcks = sarama.WaitForAll
 	config.Producer.Partitioner = sarama.NewRandomPartitioner
@@ -66,12 +66,10 @@ func newAsyncProducer(tracer *ProducerTrace, hosts string) (p sarama.AsyncProduc
 
 func (p *Producer) SyncProduce(ctx context.Context, topic string, msg []byte) (pid int32, offset int64, err error) {
 
-	//provide context for opentracing.SpanFromContext
-	p.tracer.ctx = ctx
-
 	message := &sarama.ProducerMessage{
-		Topic: topic,
-		Value: sarama.ByteEncoder(msg),
+		Topic:    topic,
+		Value:    sarama.ByteEncoder(msg),
+		Metadata: ctx, //provide context for opentracing.SpanFromContext
 	}
 	pid, offset, err = p.syncProducer.SendMessage(message)
 
@@ -82,11 +80,10 @@ func (p *Producer) SyncProduce(ctx context.Context, topic string, msg []byte) (p
 
 func (p *Producer) AsyncProduce(ctx context.Context, topic string, msg []byte) {
 
-	p.tracer.ctx = ctx
-
 	message := &sarama.ProducerMessage{
-		Topic: topic,
-		Value: sarama.ByteEncoder(msg),
+		Topic:    topic,
+		Value:    sarama.ByteEncoder(msg),
+		Metadata: ctx,
 	}
 	p.asyncProducer.Input() <- message
 

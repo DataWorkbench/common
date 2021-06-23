@@ -2,26 +2,32 @@ package kafkawrap
 
 import (
 	"context"
-
+	"github.com/DataWorkbench/glog"
 	"github.com/Shopify/sarama"
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
-
-	"github.com/DataWorkbench/glog"
+	"google.golang.org/grpc/metadata"
 )
 
-type ProducerTrace struct {
+type producerTrace struct {
 	tracer opentracing.Tracer
 	ctx    context.Context
 }
 
-func (pt *ProducerTrace) OnSend(msg *sarama.ProducerMessage) {
+func (pt *producerTrace) OnSend(msg *sarama.ProducerMessage) {
 
-	lp := glog.FromContext(pt.ctx)
+	lp := glog.FromContext(msg.Metadata.(context.Context))
 	lp.Info().Msg("kafka producer interceptor OnSend").Fire()
 
+	//lp.WithFields().AddString(ctxReqIdKey, reqId)  暂时没找到lp get方法，先从grpc metadata获取rid
+	md, ok := metadata.FromIncomingContext(msg.Metadata.(context.Context))
+	var ids []string
+	if ok {
+		ids = md.Get("rid")
+	}
+
 	var parentCtx opentracing.SpanContext
-	if parent := opentracing.SpanFromContext(pt.ctx); parent != nil {
+	if parent := opentracing.SpanFromContext(msg.Metadata.(context.Context)); parent != nil {
 		parentCtx = parent.Context()
 	}
 	//tags := opentracing.Tags{
@@ -42,13 +48,15 @@ func (pt *ProducerTrace) OnSend(msg *sarama.ProducerMessage) {
 	}
 	msg.Headers = append(msg.Headers, mc.msgHeaders...)
 
-	defer clientSpan.Finish()
+	msg.Headers = append(msg.Headers, sarama.RecordHeader{Key: []byte("rid"), Value: []byte(ids[0])})
+
+	clientSpan.Finish()
 
 }
 
 // NewProducerTrace processes add some headers with the span data.
-func NewProducerTrace(tracer opentracing.Tracer) *ProducerTrace {
-	pt := ProducerTrace{}
+func NewProducerTrace(tracer opentracing.Tracer) *producerTrace {
+	pt := producerTrace{}
 	pt.tracer = tracer
 	return &pt
 }
