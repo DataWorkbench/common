@@ -2,11 +2,13 @@ package kafkawrap
 
 import (
 	"context"
-	"github.com/DataWorkbench/glog"
+
 	"github.com/Shopify/sarama"
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
 	"google.golang.org/grpc/metadata"
+
+	"github.com/DataWorkbench/glog"
 )
 
 type producerTrace struct {

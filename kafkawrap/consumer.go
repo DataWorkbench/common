@@ -2,9 +2,10 @@ package kafkawrap
 
 import (
 	"context"
+	"strings"
+
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
-	"strings"
 
 	"github.com/Shopify/sarama"
 
