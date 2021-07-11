@@ -14,11 +14,11 @@ const (
 
 // Workspace system role id.
 const (
-	RoleIdSpaceOwner     = "rs-1001"
-	RoleIdSpaceAdmin     = "rs-1002"
-	RoleIdSpaceDeveloper = "rs-1003"
-	RoleIdSpaceOperator  = "rs-1004"
-	RoleIdSpaceVisitor   = "rs-1005"
+	RoleIdSpaceOwner     = IdPrefixRoleSystem + "1000000000000001"
+	RoleIdSpaceAdmin     = IdPrefixRoleSystem + "1000000000000002"
+	RoleIdSpaceDeveloper = IdPrefixRoleSystem + "1000000000000003"
+	RoleIdSpaceOperator  = IdPrefixRoleSystem + "1000000000000004"
+	RoleIdSpaceVisitor   = IdPrefixRoleSystem + "1000000000000005"
 )
 
 // Operation type.

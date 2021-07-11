@@ -5,6 +5,12 @@ const (
 	// The Id prefix of workspace.
 	IdPrefixSpace = "wks-"
 
+	// The id prefix of system role.
+	IdPrefixRoleSystem = "wrs-"
+
+	// The id prefix of custom role.
+	IdPrefixRoleCustom = "wrc-"
+
 	// The Id prefix of stream workflow.
 	IdPrefixStreamFlow = "wkf-"
 
