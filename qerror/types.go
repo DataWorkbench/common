@@ -312,3 +312,25 @@ var (
 		zhCN:   "通知渠道配置不合法",
 	}
 )
+
+// account error
+var (
+	AccessKeyNotExist = &Error{
+		code:   "AccessKeyNotExist",
+		status: 404,
+		enUS:   "The access key[%s] not exist.",
+		zhCN:   "Access key[%s]不存在。",
+	}
+	UserNotExist = &Error{
+		code:   "UserNotExist",
+		status: 404,
+		enUS:   "The user[%s] not exist.",
+		zhCN:   "用户[%s]不存在。",
+	}
+	ValidateSignatureFailed = &Error{
+		code:   "ValidateSignatureFailed",
+		status: 400,
+		enUS:   "Validate signature failed, the signature[%s] not match [%s].",
+		zhCN:   "签名验证失败, 签名[%s]与[%s]不匹配。",
+	}
+)
