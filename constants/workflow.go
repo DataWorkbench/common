@@ -56,10 +56,8 @@ const (
 type StreamFlowEnv struct {
 	EngineId    string            `json:"engine_id"`
 	Parallelism int32             `json:"parallelism"`
-	JobMem      int32             `json:"job_mem"` // in MB
-	JobCpu      float32           `json:"job_cpu"`
-	TaskCpu     float32           `json:"task_cpu"`
-	TaskMem     int32             `json:"task_mem"` // in MB
+	JobCU       int32             `json:"job_cu"`
+	TaskCU      int32             `json:"task_cu"`
 	TaskNum     int32             `json:"task_num"`
 	Custom      map[string]string `json:"custom"`
 }
