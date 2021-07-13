@@ -20,8 +20,11 @@ const (
 	// The Id prefix of stream workflow test instance.
 	IdPrefixStreamFlowTestInst = "sti-"
 
-	// The Id prefix of engine
+	// The Id prefix of engine.
 	IdPrefixEngine = "eng-"
+
+	// The Id prefix of monitor rule.
+	IdPrefixMonitorRule = "mor-"
 
 	SourceManagerIDPrefix = "som-"
 	SourceTablesIDPrefix  = "sot-"
