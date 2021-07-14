@@ -8,7 +8,6 @@ import (
 	"github.com/DataWorkbench/glog"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
-	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/reflection"
 
 	"google.golang.org/grpc"
@@ -24,9 +23,6 @@ type GServer = grpc.Server
 type ServerConfig struct {
 	// Listening address of the grpc server.
 	Address string `json:"address" yaml:"address" env:"ADDRESS" validate:"required"`
-	// grpc log level: 1 => info, 2 => waring, 3 => error, 4 => fatal
-	LogLevel     int `json:"log_level"     yaml:"log_level"     env:"LOG_LEVEL,default=2"     validate:"gte=1,lte=4"`
-	LogVerbosity int `json:"log_verbosity" yaml:"log_verbosity" env:"LOG_VERBOSITY,default=1" validate:"required"`
 }
 
 // Server is an wrapper for gRPC server.
@@ -37,7 +33,7 @@ type Server struct {
 }
 
 // NewServer return a new Server
-// NOTICE: Must set glog.Logger into the ctx by glow.WithContext
+// NOTICE: Must set glog.loggerT into the ctx by glow.WithContext
 func NewServer(ctx context.Context, cfg *ServerConfig, options ...ServerOption) (s *Server, err error) {
 	opts := applyServerOptions(options...)
 	lp := glog.FromContext(ctx)
@@ -47,13 +43,6 @@ func NewServer(ctx context.Context, cfg *ServerConfig, options ...ServerOption) 
 			lp.Error().Error("create grpc server error", err).Fire()
 		}
 	}()
-
-	// setup grpc logger
-	grpclog.SetLoggerV2(&Logger{
-		Output:    lp,
-		Verbosity: cfg.LogVerbosity,
-		Level:     cfg.LogLevel,
-	})
 
 	var srvOpts []grpc.ServerOption
 	// Set and add keepalive server parameters

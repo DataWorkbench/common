@@ -2,16 +2,16 @@ package grpcwrap
 
 import "github.com/opentracing/opentracing-go"
 
-// ClientOption is a function that sets some option on the grpc client.
-type ServerOption func(o *ServerOptions)
+// ServerOption is a function that sets some option on the grpc client.
+type ServerOption func(o *serverOptions)
 
-// ClientOptions control behavior of the client.
-type ServerOptions struct {
+// serverOptions control behavior of the client.
+type serverOptions struct {
 	tracer opentracing.Tracer
 }
 
-func applyServerOptions(options ...ServerOption) ServerOptions {
-	opts := ServerOptions{}
+func applyServerOptions(options ...ServerOption) serverOptions {
+	opts := serverOptions{}
 	for _, option := range options {
 		option(&opts)
 	}
@@ -22,7 +22,7 @@ func applyServerOptions(options ...ServerOption) ServerOptions {
 }
 
 func ServerWithTracer(tracer opentracing.Tracer) ServerOption {
-	return func(o *ServerOptions) {
+	return func(o *serverOptions) {
 		o.tracer = tracer
 	}
 }

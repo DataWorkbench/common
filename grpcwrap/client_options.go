@@ -3,15 +3,15 @@ package grpcwrap
 import "github.com/opentracing/opentracing-go"
 
 // ClientOption is a function that sets some option on the grpc client.
-type ClientOption func(o *ClientOptions)
+type ClientOption func(o *clientOptions)
 
-// ClientOptions control behavior of the client.
-type ClientOptions struct {
+// clientOptions control behavior of the client.
+type clientOptions struct {
 	tracer opentracing.Tracer
 }
 
-func applyClientOptions(options ...ClientOption) ClientOptions {
-	opts := ClientOptions{}
+func applyClientOptions(options ...ClientOption) clientOptions {
+	opts := clientOptions{}
 	for _, option := range options {
 		option(&opts)
 	}
@@ -22,7 +22,7 @@ func applyClientOptions(options ...ClientOption) ClientOptions {
 }
 
 func ClientWithTracer(tracer opentracing.Tracer) ClientOption {
-	return func(o *ClientOptions) {
+	return func(o *clientOptions) {
 		o.tracer = tracer
 	}
 }

@@ -205,6 +205,9 @@ func (ex *HttpClient) CreateParagraph(noteID string, index int32, name string, t
 func (ex *HttpClient) RunParagraphSync(noteID string, paragraphID string) (err error) {
 	var status string
 	_, _, err = doRequest(ex.Client, http.MethodPost, http.StatusOK, ex.ZeppelinServer+"/api/notebook/run/"+noteID+"/"+paragraphID, "", false)
+	if err != nil {
+		return
+	}
 	status, err = ex.GetParagraphStatus(noteID, paragraphID)
 	if status != "OK" && status != "FINISHED" {
 		err = fmt.Errorf("run failed. status is " + status)
@@ -277,9 +280,7 @@ func NewJobdevClient(serverAddr string) (c JobdevClient, err error) {
 
 	ctx := glog.WithContext(context.Background(), glog.NewDefault())
 	conn, err = grpcwrap.NewConn(ctx, &grpcwrap.ClientConfig{
-		Address:      serverAddr,
-		LogLevel:     2,
-		LogVerbosity: 99,
+		Address: serverAddr,
 	})
 	if err != nil {
 		return
