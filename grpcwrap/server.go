@@ -8,6 +8,8 @@ import (
 	"github.com/DataWorkbench/glog"
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
+	"google.golang.org/grpc/health"
+	"google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/reflection"
 
 	"google.golang.org/grpc"
@@ -52,7 +54,7 @@ func NewServer(ctx context.Context, cfg *ServerConfig, options ...ServerOption) 
 			MaxConnectionIdle:     time.Second * 30,
 			MaxConnectionAge:      time.Second * 30,
 			MaxConnectionAgeGrace: time.Second * 30,
-			Time:                  time.Second,
+			Time:                  time.Second * 1,
 			Timeout:               time.Second * 10,
 		}))
 
@@ -75,7 +77,15 @@ func NewServer(ctx context.Context, cfg *ServerConfig, options ...ServerOption) 
 
 	// TODO: Impls and add Stream Server Interceptor
 
-	s = &Server{lp: lp, cfg: cfg, gRPC: grpc.NewServer(srvOpts...)}
+	s = &Server{
+		lp:   lp,
+		cfg:  cfg,
+		gRPC: grpc.NewServer(srvOpts...),
+	}
+
+	// Register the health server that used by k8s health probe.
+	grpc_health_v1.RegisterHealthServer(s.gRPC, health.NewServer())
+
 	return s, nil
 }
 
