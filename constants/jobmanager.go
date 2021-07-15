@@ -19,18 +19,16 @@ import (
 )
 
 type EngineRequestOptions struct {
-	JobID       string  `json:"jobid"`
-	EngineID    string  `json:"engineid"`
-	WorkspaceID string  `json:"workspaceid"`
-	Parallelism int32   `json:"parallelism"`
-	JobMem      int32   `json:"job_mem"` // in MB
-	JobCpu      float32 `json:"job_cpu"`
-	TaskCpu     float32 `json:"task_cpu"`
-	TaskMem     int32   `json:"task_mem"` // in MB
-	TaskNum     int32   `json:"task_num"`
-	AccessKey   string  `json:"accesskey"`
-	SecretKey   string  `json:"secretkey"`
-	EndPoint    string  `json:"endpoint"`
+	JobID       string `json:"jobid"`
+	EngineID    string `json:"engineid"`
+	WorkspaceID string `json:"workspaceid"`
+	Parallelism int32  `json:"parallelism"`
+	JobCU       int32  `json:"jobcu"`
+	TaskCU      int32  `json:"taskcu"`
+	TaskNum     int32  `json:"tasknum"`
+	AccessKey   string `json:"accesskey"`
+	SecretKey   string `json:"secretkey"`
+	EndPoint    string `json:"endpoint"`
 }
 
 type EngineResponseOptions struct {
