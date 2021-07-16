@@ -2,6 +2,7 @@ package grpcwrap
 
 import (
 	"context"
+	"math"
 	"net"
 	"time"
 
@@ -60,11 +61,11 @@ func NewServer(ctx context.Context, cfg *ServerConfig, options ...ServerOption) 
 	// TODO: set keepalive parameters by config
 	srvOpts = append(srvOpts, grpc.KeepaliveParams(
 		keepalive.ServerParameters{
-			MaxConnectionIdle: time.Second * 30,
-			//MaxConnectionAge:      time.Second * 30,
-			//MaxConnectionAgeGrace: time.Second * 5,
-			Time:    time.Second * 10,
-			Timeout: time.Second * 5,
+			MaxConnectionIdle:     time.Second * 30,
+			MaxConnectionAge:      time.Duration(math.MaxInt64), // Sets to infinity to avoid connection accidentally closed.
+			MaxConnectionAgeGrace: time.Duration(math.MaxInt64), // Sets to infinity to avoid connection accidentally closed.
+			Time:                  time.Second * 10,
+			Timeout:               time.Second * 5,
 		}))
 
 	// Set and add Unary Server Interceptor
