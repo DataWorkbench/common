@@ -47,23 +47,24 @@ func NewServer(ctx context.Context, cfg *ServerConfig, options ...ServerOption) 
 	}()
 
 	var srvOpts []grpc.ServerOption
-	// Set and add keepalive server parameters
-	// TODO: set keepalive parameters by config
-	srvOpts = append(srvOpts, grpc.KeepaliveParams(
-		keepalive.ServerParameters{
-			MaxConnectionIdle:     time.Second * 30,
-			MaxConnectionAge:      time.Second * 30,
-			MaxConnectionAgeGrace: time.Second * 30,
-			Time:                  time.Second * 1,
-			Timeout:               time.Second * 10,
-		}))
 
 	// Set and add keepalive enforcement policy
 	// TODO: set keepalive parameters by config
 	srvOpts = append(srvOpts, grpc.KeepaliveEnforcementPolicy(
 		keepalive.EnforcementPolicy{
-			MinTime:             time.Second * 10,
+			MinTime:             time.Second * 5,
 			PermitWithoutStream: true,
+		}))
+
+	// Set and add keepalive server parameters
+	// TODO: set keepalive parameters by config
+	srvOpts = append(srvOpts, grpc.KeepaliveParams(
+		keepalive.ServerParameters{
+			MaxConnectionIdle: time.Second * 30,
+			//MaxConnectionAge:      time.Second * 30,
+			//MaxConnectionAgeGrace: time.Second * 5,
+			Time:    time.Second * 10,
+			Timeout: time.Second * 5,
 		}))
 
 	// Set and add Unary Server Interceptor

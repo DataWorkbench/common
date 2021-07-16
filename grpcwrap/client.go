@@ -59,7 +59,7 @@ func NewConn(ctx context.Context, cfg *ClientConfig, options ...ClientOption) (c
 			BaseDelay:  time.Millisecond * 100, // Default was 1s.
 			Multiplier: 1.6,                    // Default
 			Jitter:     0.2,                    // Default
-			MaxDelay:   time.Second * 3,        // Default was 120s.
+			MaxDelay:   time.Second * 30,       // Default was 120s.
 		},
 		MinConnectTimeout: time.Second * 5,
 	}))
@@ -67,8 +67,8 @@ func NewConn(ctx context.Context, cfg *ClientConfig, options ...ClientOption) (c
 	// Setup keepalive params
 	dialOpts = append(dialOpts, grpc.WithKeepaliveParams(
 		keepalive.ClientParameters{
-			Time:                time.Second * 30,
-			Timeout:             time.Second * 10,
+			Time:                time.Second * 10,
+			Timeout:             time.Second * 5,
 			PermitWithoutStream: true,
 		},
 	))

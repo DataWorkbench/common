@@ -76,12 +76,12 @@ func basicUnaryServerInterceptor() grpc.UnaryServerInterceptor {
 	}
 }
 
-type ctxStreamServer struct {
+type ctxServerStream struct {
 	grpc.ServerStream
 	ctx context.Context
 }
 
-func (s *ctxStreamServer) Context() context.Context {
+func (s *ctxServerStream) Context() context.Context {
 	return s.ctx
 }
 
@@ -98,7 +98,7 @@ func ctxStreamServerInterceptor(lp *glog.Logger) grpc.StreamServerInterceptor {
 
 		ctx = ContextWithRequest(ctx, nl, reqId)
 
-		err := handler(srv, &ctxStreamServer{ServerStream: ss, ctx: ctx})
+		err := handler(srv, &ctxServerStream{ServerStream: ss, ctx: ctx})
 
 		// Close the logger instances
 		_ = nl.Close()
@@ -130,7 +130,7 @@ func recoverStreamServerInterceptor() grpc.StreamServerInterceptor {
 	}
 }
 
-// basicStreamServerInterceptor do print log
+// basicStreamServerInterceptor do print log.
 func basicStreamServerInterceptor() grpc.StreamServerInterceptor {
 	return func(srv interface{}, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
 		ctx := ss.Context()
