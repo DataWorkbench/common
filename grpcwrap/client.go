@@ -80,14 +80,18 @@ func NewConn(ctx context.Context, cfg *ClientConfig, options ...ClientOption) (c
 		grpc_retry.WithBackoff(grpc_retry.BackoffLinear(time.Second*1)),
 		grpc_retry.WithCodes(codes.Unavailable, codes.Aborted, codes.DeadlineExceeded, codes.ResourceExhausted),
 	)))
-
 	dialOpts = append(dialOpts, grpc.WithChainUnaryInterceptor(
 		otgrpc.OpenTracingClientInterceptor(opts.tracer),
 		grpc_prometheus.UnaryClientInterceptor,
 		basicUnaryClientInterceptor(),
 	))
 
-	// TODO: Impls and add Stream Client Interceptor
+	// Set and add Stream Client Interceptor
+	dialOpts = append(dialOpts, grpc.WithChainStreamInterceptor(
+		otgrpc.OpenTracingStreamClientInterceptor(opts.tracer),
+		grpc_prometheus.StreamClientInterceptor,
+		basicStreamClientInterceptor(),
+	))
 
 	conn, err = grpc.DialContext(ctx, hosts[0], dialOpts...)
 	return
