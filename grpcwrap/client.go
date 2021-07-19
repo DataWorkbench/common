@@ -59,7 +59,7 @@ func NewConn(ctx context.Context, cfg *ClientConfig, options ...ClientOption) (c
 			BaseDelay:  time.Millisecond * 100, // Default was 1s.
 			Multiplier: 1.6,                    // Default
 			Jitter:     0.2,                    // Default
-			MaxDelay:   time.Second * 3,        // Default was 120s.
+			MaxDelay:   time.Second * 30,       // Default was 120s.
 		},
 		MinConnectTimeout: time.Second * 5,
 	}))
@@ -67,8 +67,8 @@ func NewConn(ctx context.Context, cfg *ClientConfig, options ...ClientOption) (c
 	// Setup keepalive params
 	dialOpts = append(dialOpts, grpc.WithKeepaliveParams(
 		keepalive.ClientParameters{
-			Time:                time.Second * 30,
-			Timeout:             time.Second * 10,
+			Time:                time.Second * 10,
+			Timeout:             time.Second * 5,
 			PermitWithoutStream: true,
 		},
 	))
@@ -80,14 +80,18 @@ func NewConn(ctx context.Context, cfg *ClientConfig, options ...ClientOption) (c
 		grpc_retry.WithBackoff(grpc_retry.BackoffLinear(time.Second*1)),
 		grpc_retry.WithCodes(codes.Unavailable, codes.Aborted, codes.DeadlineExceeded, codes.ResourceExhausted),
 	)))
-
 	dialOpts = append(dialOpts, grpc.WithChainUnaryInterceptor(
 		otgrpc.OpenTracingClientInterceptor(opts.tracer),
 		grpc_prometheus.UnaryClientInterceptor,
 		basicUnaryClientInterceptor(),
 	))
 
-	// TODO: Impls and add Stream Client Interceptor
+	// Set and add Stream Client Interceptor
+	dialOpts = append(dialOpts, grpc.WithChainStreamInterceptor(
+		otgrpc.OpenTracingStreamClientInterceptor(opts.tracer),
+		grpc_prometheus.StreamClientInterceptor,
+		basicStreamClientInterceptor(),
+	))
 
 	conn, err = grpc.DialContext(ctx, hosts[0], dialOpts...)
 	return
