@@ -4,7 +4,7 @@ go 1.15
 
 require (
 	github.com/DataWorkbench/glog v0.0.0-20201114060240-9471edb2b8cf
-	github.com/DataWorkbench/gproto v0.0.0-20210616083110-dd0ed74c2552
+	github.com/DataWorkbench/gproto v0.0.0-20210719082127-d4d3e4afbeab
 	github.com/HdrHistogram/hdrhistogram-go v1.0.1 // indirect
 	github.com/golang/protobuf v1.4.3
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.2
