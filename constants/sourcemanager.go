@@ -6,8 +6,7 @@ const (
 	SourceTypeKafka        = "Kafka"
 	SourceTypeS3           = "S3"
 	SourceTypeClickHouse   = "ClickHouse"
-	TableTypeDimension     = "d"
-	TableTypeCommon        = "c"
+	SourceTypeHbase        = "Hbase"
 	DirectionSource        = "s"
 	DirectionDestination   = "d"
 	SourceConnectedSuccess = "t"
@@ -52,6 +51,17 @@ type SourceClickHouseParams struct {
 	Host             string   `json:"host"`
 	Port             int32    `json:"port"`
 	Database         string   `json:"database"`
+	ConnectorOptions []string `json:"connector_options"`
+}
+
+type SourceHbaseParams struct {
+	Zookeeper string `json:"zookeeper"`
+	Znode     string `json:"znode"`
+	Hosts     string `json:"hosts"`
+}
+
+type FlinkTableDefineHbase struct {
+	SqlColumn        []string `json:"sql_column"`
 	ConnectorOptions []string `json:"connector_options"`
 }
 

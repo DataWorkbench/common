@@ -150,12 +150,13 @@ type UDTTFNodeProperty struct {
 }
 
 type JarNodeProperty struct {
-	JarArgs   string `json:"jar_args"`  // allow regex `^[a-zA-Z0-9_/. ]+$`
-	JarEntry  string `json:"jar_entry"` // allow regex `^[a-zA-Z0-9_/. ]+$`
-	JarPath   string `json:"jar_path"`
-	AccessKey string `json:"accesskey"`
-	SecretKey string `json:"secretkey"`
-	EndPoint  string `json:"endpoint"`
+	JarArgs    string `json:"jar_args"`  // allow regex `^[a-zA-Z0-9_/. ]+$`
+	JarEntry   string `json:"jar_entry"` // allow regex `^[a-zA-Z0-9_/. ]+$`
+	JarPath    string `json:"jar_path"`
+	AccessKey  string `json:"accesskey"`
+	SecretKey  string `json:"secretkey"`
+	EndPoint   string `json:"endpoint"`
+	HbaseHosts string `json:"hbasehosts"`
 }
 
 const (
@@ -181,6 +182,7 @@ type JobElementFlink struct {
 	ZeppelinFuncScala string         `json:"funcscala"`
 	ZeppelinMainRun   string         `json:"mainrun"`
 	S3info            SourceS3Params `json:"s3"`
+	HbaseHosts        string         `json:"hbasehosts"`
 	Resources         JobResources   `json:"resource"`
 }
 
