@@ -315,17 +315,17 @@ var (
 
 // account error
 var (
-	AccessKeyNotExist = &Error{
+	AccessKeyNotExists = &Error{
 		code:   "AccessKeyNotExist",
 		status: 404,
 		enUS:   "The access key[%s] not exist.",
 		zhCN:   "Access key[%s]不存在。",
 	}
-	UserNotExist = &Error{
+	UserNotExists = &Error{
 		code:   "UserNotExist",
 		status: 404,
 		enUS:   "The user[%s] not exist.",
-		zhCN:   "用户[%s]不存在。",
+		zhCN:   "User[%s]不存在。",
 	}
 	ValidateSignatureFailed = &Error{
 		code:   "ValidateSignatureFailed",

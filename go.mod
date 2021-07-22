@@ -7,6 +7,7 @@ require (
 	github.com/DataWorkbench/gproto v0.0.0-20210719082127-d4d3e4afbeab
 	github.com/HdrHistogram/hdrhistogram-go v1.0.1 // indirect
 	github.com/Shopify/sarama v1.29.0
+	github.com/go-redis/redis/v8 v8.11.0
 	github.com/golang/protobuf v1.4.3
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.2
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
