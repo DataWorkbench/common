@@ -60,36 +60,44 @@ type SourceHbaseParams struct {
 	Hosts     string `json:"hosts"`
 }
 
+type SqlColumnType struct {
+	Name       string `json:"column"`
+	Type       string `json:"type"`
+	Length     string `json:"length"`
+	Comment    string `json:"comment"`
+	PrimaryKey string `json:"primarykey"`
+}
+
 type FlinkTableDefineHbase struct {
-	SqlColumn        []string `json:"sql_column"`
-	ConnectorOptions []string `json:"connector_options"`
+	SqlColumn        []SqlColumnType `json:"sql_column"`
+	ConnectorOptions []string        `json:"connector_options"`
 }
 
 type FlinkTableDefineClickHouse struct {
-	SqlColumn        []string `json:"sql_column"`
-	ConnectorOptions []string `json:"connector_options"`
+	SqlColumn        []SqlColumnType `json:"sql_column"`
+	ConnectorOptions []string        `json:"connector_options"`
 }
 
 type FlinkTableDefineS3 struct {
-	SqlColumn        []string `json:"sql_column"`
-	Path             string   `json:"path"`
-	Format           string   `json:"format"`
-	ConnectorOptions []string `json:"connector_options"`
+	SqlColumn        []SqlColumnType `json:"sql_column"`
+	Path             string          `json:"path"`
+	Format           string          `json:"format"`
+	ConnectorOptions []string        `json:"connector_options"`
 }
 
 type FlinkTableDefineKafka struct {
-	SqlColumn        []string `json:"sql_column"`
-	Topic            string   `json:"topic"`
-	Format           string   `json:"format"`
-	ConnectorOptions []string `json:"connector_options"`
+	SqlColumn        []SqlColumnType `json:"sql_column"`
+	Topic            string          `json:"topic"`
+	Format           string          `json:"format"`
+	ConnectorOptions []string        `json:"connector_options"`
 }
 
 type FlinkTableDefineMysql struct {
-	SqlColumn        []string `json:"sql_column"`
-	ConnectorOptions []string `json:"connector_options"`
+	SqlColumn        []SqlColumnType `json:"sql_column"`
+	ConnectorOptions []string        `json:"connector_options"`
 }
 
 type FlinkTableDefinePostgreSQL struct {
-	SqlColumn        []string `json:"sql_column"`
-	ConnectorOptions []string `json:"connector_options"`
+	SqlColumn        []SqlColumnType `json:"sql_column"`
+	ConnectorOptions []string        `json:"connector_options"`
 }
