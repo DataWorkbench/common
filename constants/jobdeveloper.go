@@ -29,6 +29,7 @@ const (
 type DagNode struct {
 	NodeType      string     `json:"nodetype"`
 	NodeID        string     `json:"nodeid"`
+	NodeName      string     `json:"nodename"`
 	UpStream      string     `json:"upstream"`
 	UpStreamRight string     `json:"upstreamright"`
 	DownStream    string     `json:"downstream"`
