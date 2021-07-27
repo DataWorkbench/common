@@ -3,7 +3,11 @@ package trace
 import "context"
 
 const (
-	IdKey = "tid" // The key string of trace id.
+	// The key string format of trace id.
+	IdKey = "tid"
+
+	// Used when no trace id found or generated failed.
+	DefaultTraceIdValue = "none"
 )
 
 type ctxKey struct{}
