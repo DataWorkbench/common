@@ -8,7 +8,8 @@ import (
 	"github.com/uber/jaeger-client-go/config"
 )
 
-type Tracer opentracing.Tracer
+type Tracer = opentracing.Tracer
+type SpanContext = jaeger.SpanContext
 
 type Config struct {
 	ServiceName string `json:"service_name" yaml:"service_name" env:"service_name" validate:"required"`
