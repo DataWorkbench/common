@@ -13,6 +13,8 @@ const (
 	SourceConnectedFailed  = "f"
 	CreatorWorkBench       = "workbench" //can't drop by custom,  workbench is auto create when spark/other engine created
 	CreatorCustom          = "custom"
+	SourceEnableState      = "enable"
+	SourceDisableState     = "disable"
 )
 
 type SourceMysqlParams struct {
