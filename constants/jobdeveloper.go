@@ -24,6 +24,8 @@ const (
 	UDTTFNode     = "UDTTF"  //don't print Upstream node
 	ArraysNode    = "Arrays" //don't print Upstream node
 	JarNode       = "Jar"
+	ScalaNode     = "Scala"
+	PythonNode    = "Python"
 )
 
 type DagNode struct {
@@ -119,6 +121,14 @@ type WindowNodeProperty struct {
 
 type SqlNodeProperty struct {
 	Sql string `json:"sql"`
+}
+
+type ScalaNodeProperty struct {
+	Code string `json:"code"`
+}
+
+type PythonNodeProperty struct {
+	Code string `json:"code"`
 }
 
 type UDTFNodeProperty struct {
