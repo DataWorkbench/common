@@ -249,11 +249,11 @@ var (
 		enUS:   "invalid name. can't use '.'",
 		zhCN:   "无效名字，不能使用'.'",
 	}
-	InvalidDimensionSource = &Error{
-		code:   "InvalidDimensionSource",
+	SourceIsDisable = &Error{
+		code:   "SourceIsDisable",
 		status: http.StatusInternalServerError,
-		enUS:   "dimension just use in relation database",
-		zhCN:   "维表只能在关系型数据库使用",
+		enUS:   "source is disable",
+		zhCN:   "数据源是禁用状态",
 	}
 	ConnectSourceFailed = &Error{
 		code:   "ConnectSourceFailed",
