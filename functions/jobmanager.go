@@ -158,7 +158,7 @@ func (ex *HttpClient) StopAllParagraphs(noteID string) (err error) {
 func (ex *HttpClient) CreateParagraph(noteID string, index int32, name string, text string) (paragraphID string, err error) {
 	var repJson map[string]string
 
-	repJson, _, err = doRequest(ex.Client, http.MethodPost, http.StatusOK, ex.ZeppelinServer+"/api/notebook/"+noteID+"/paragraph", fmt.Sprintf("{\"title\": \"%s\", \"text\": \"%s\", \"index\": %d}", name, strconv.Quote(text), index), true)
+	repJson, _, err = doRequest(ex.Client, http.MethodPost, http.StatusOK, ex.ZeppelinServer+"/api/notebook/"+noteID+"/paragraph", fmt.Sprintf("{\"title\": \"%s\", \"text\": %s, \"index\": %d}", name, strconv.Quote(text), index), true)
 	if err != nil {
 		return
 	}
