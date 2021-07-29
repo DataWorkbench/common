@@ -384,3 +384,20 @@ var (
 		zhCN:   "签名验证失败, 签名[%s]与[%s]不匹配。",
 	}
 )
+
+// logmanager error
+var (
+	LogFileNotExists = &Error{
+		code:   "LogFileNotExists",
+		status: 405,
+		enUS:   "Log file [%s] not exists",
+		zhCN:   "日志文件 [%s] 不存在",
+	}
+
+	RequestForFlinkFailed = &Error{
+		code:   "RequestForFlinkFailed",
+		status: 406,
+		enUS:   "fail to request flink api [%s]",
+		zhCN:   "调用Flink Web Api [%s] 失败",
+	}
+)
