@@ -14,8 +14,11 @@ type ctxKey struct{}
 
 // ContextWithId store the trace id in context.Value.
 func ContextWithId(ctx context.Context, id string) context.Context {
-	// Do not store duplicate.
-	if val := ctx.Value(ctxKey{}); val != nil {
+	if id == "" {
+		return ctx
+	}
+	// Do not store duplicate id.
+	if tid, ok := ctx.Value(ctxKey{}).(string); ok && tid == id {
 		return ctx
 	}
 	return context.WithValue(ctx, ctxKey{}, id)
@@ -26,7 +29,7 @@ func IdFromContext(ctx context.Context) (id string) {
 	var ok bool
 	id, ok = ctx.Value(ctxKey{}).(string)
 	if !ok {
-		id = "none"
+		id = ""
 	}
 	return
 }
