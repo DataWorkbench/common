@@ -161,6 +161,7 @@ type UDTTFNodeProperty struct {
 }
 
 type JarNodeProperty struct {
+	JarId      string `json:"jar_id"`
 	JarArgs    string `json:"jar_args"`  // allow regex `^[a-zA-Z0-9_/. ]+$`
 	JarEntry   string `json:"jar_entry"` // allow regex `^[a-zA-Z0-9_/. ]+$`
 	JarPath    string `json:"jar_path"`
