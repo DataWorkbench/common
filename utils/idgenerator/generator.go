@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"hash/crc32"
+	"log"
 	"math/rand"
 	"net"
 	"time"
@@ -52,6 +53,7 @@ func (g *IDGenerator) encode(x int64) string {
 func (g *IDGenerator) Take() (string, error) {
 	id, err := g.worker.Next()
 	if err != nil {
+		log.Printf("IDGenerator: take new id from worker error: %v\n", err)
 		return "", err
 	}
 	return g.encode(id), nil
