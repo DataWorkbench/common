@@ -56,6 +56,7 @@ func NewMySQLConn(ctx context.Context, cfg *MySQLConfig, options ...Option) (db 
 	)
 
 	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
+		SkipDefaultTransaction: true,
 		Logger: &Logger{
 			Level:         LogLevel(cfg.LogLevel),
 			SlowThreshold: cfg.SlowThreshold,
