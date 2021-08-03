@@ -7,21 +7,21 @@ const (
 	IdKey = "tid"
 
 	// Used when no trace id found or generated failed.
-	DefaultTraceIdValue = "none"
+	//DefaultTraceIdValue = "none"
 )
 
 type ctxKey struct{}
 
 // ContextWithId store the trace id in context.Value.
-func ContextWithId(ctx context.Context, id string) context.Context {
-	if id == "" {
+func ContextWithId(ctx context.Context, tid string) context.Context {
+	if tid == "" {
 		return ctx
 	}
 	// Do not store duplicate id.
-	if tid, ok := ctx.Value(ctxKey{}).(string); ok && tid == id {
+	if _id, ok := ctx.Value(ctxKey{}).(string); ok && _id == tid {
 		return ctx
 	}
-	return context.WithValue(ctx, ctxKey{}, id)
+	return context.WithValue(ctx, ctxKey{}, tid)
 }
 
 // IdFromContext get the trace id from context.Value.

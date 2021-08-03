@@ -8,21 +8,35 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
+	"github.com/DataWorkbench/common/trace"
 )
 
-// ctxUnaryServerInterceptor create an new logger object with requestId.
-// You can get logger by glog.FromContext(cxt) after.
-func ctxUnaryServerInterceptor(lp *glog.Logger) grpc.UnaryServerInterceptor {
+// traceUnaryServerInterceptor for trace the request.
+// - extract trace id from incoming metadata and store it to context.
+// - creates an new logger object with trace id and store it to context.
+// - validate argument where are request and reply.
+func traceUnaryServerInterceptor(lp *glog.Logger) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
-		reqId := ReqIdFromContext(ctx)
-
-		// Copy a new logger
+		tid := extractTraceContext(ctx)
 		nl := lp.Clone()
-		nl.WithFields().AddString(ctxReqIdKey, reqId)
+		nl.WithFields().AddString(trace.IdKey, tid)
 
-		ctx = ContextWithRequest(ctx, nl, reqId)
+		nl.Debug().String("unary receive", info.FullMethod).RawString("request", pbMsgToString(nl, req)).Fire()
 
+		// Validated request parameters
+		if err := validateRequestArgument(req, nl); err != nil {
+			return nil, err
+		}
+
+		ctx = trace.ContextWithId(ctx, tid)
+		ctx = glog.WithContext(ctx, nl)
 		resp, err = handler(ctx, req)
+		if err != nil {
+			nl.Error().Error("unary handle error", err).Fire()
+		} else {
+			nl.Debug().RawString("unary reply", pbMsgToString(nl, resp)).Fire()
+		}
 
 		// Close the logger instances
 		_ = nl.Close()
@@ -41,7 +55,7 @@ func recoverUnaryServerInterceptor() grpc.UnaryServerInterceptor {
 
 				buf := make([]byte, 2048)
 				n := runtime.Stack(buf, true)
-				lg.Error().RawString("error trace", string(buf[0:n])).Fire()
+				lg.Error().RawString("error stack trace", string(buf[0:n])).Fire()
 
 				err = status.Errorf(codes.Internal, "unary server panic: %v", r)
 			}
@@ -53,52 +67,41 @@ func recoverUnaryServerInterceptor() grpc.UnaryServerInterceptor {
 	}
 }
 
-// basicUnaryServerInterceptor do validate the argument and print log
-func basicUnaryServerInterceptor() grpc.UnaryServerInterceptor {
-	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
-		lg := glog.FromContext(ctx)
-
-		lg.Debug().String("unary receive", info.FullMethod).RawString("request", pbMsgToString(lg, req)).Fire()
-
-		// Validated request parameters
-		if err := validateRequestArgument(req, lg); err != nil {
-			return nil, err
-		}
-		reply, err := handler(ctx, req)
-
-		if err != nil {
-			lg.Error().Error("unary serve error", err).Fire()
-			return nil, err
-		}
-
-		lg.Debug().RawString("unary reply", pbMsgToString(lg, reply)).Fire()
-		return reply, err
-	}
-}
-
-type ctxServerStream struct {
+// wraps for override the context.
+type serverStreamWrap struct {
 	grpc.ServerStream
 	ctx context.Context
 }
 
-func (s *ctxServerStream) Context() context.Context {
+func (s *serverStreamWrap) Context() context.Context {
 	return s.ctx
 }
 
-// ctxStreamServerInterceptor create an new logger object with requestId.
-// You can get logger by glog.FromContext(cxt) after.
-func ctxStreamServerInterceptor(lp *glog.Logger) grpc.StreamServerInterceptor {
+// traceStreamServerInterceptor for trace the request.
+// - extract trace id from incoming metadata and store it to context.
+// - creates an new logger object with trace id and store it to context.
+func traceStreamServerInterceptor(lp *glog.Logger) grpc.StreamServerInterceptor {
 	return func(srv interface{}, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
 		ctx := ss.Context()
-
-		reqId := ReqIdFromContext(ctx)
+		tid := extractTraceContext(ctx)
 
 		nl := lp.Clone()
-		nl.WithFields().AddString(ctxReqIdKey, reqId)
+		nl.WithFields().AddString(trace.IdKey, tid)
 
-		ctx = ContextWithRequest(ctx, nl, reqId)
+		nl.Debug().
+			String("stream receive", info.FullMethod).
+			Bool("ClientStream", info.IsClientStream).
+			Bool("ServerStream", info.IsServerStream).
+			Fire()
 
-		err := handler(srv, &ctxServerStream{ServerStream: ss, ctx: ctx})
+		ctx = trace.ContextWithId(ctx, tid)
+		ctx = glog.WithContext(ctx, nl)
+		err := handler(srv, &serverStreamWrap{ServerStream: ss, ctx: ctx})
+		if err != nil {
+			nl.Error().Error("stream error", err).Fire()
+		} else {
+			nl.Debug().String("stream done", info.FullMethod).Fire()
+		}
 
 		// Close the logger instances
 		_ = nl.Close()
@@ -118,7 +121,7 @@ func recoverStreamServerInterceptor() grpc.StreamServerInterceptor {
 
 				buf := make([]byte, 2048)
 				n := runtime.Stack(buf, true)
-				lg.Error().RawString("error trace", string(buf[0:n])).Fire()
+				lg.Error().RawString("error stack trace", string(buf[0:n])).Fire()
 
 				err = status.Errorf(codes.Internal, "stream server panic: %v", r)
 			}
@@ -127,24 +130,5 @@ func recoverStreamServerInterceptor() grpc.StreamServerInterceptor {
 		err = handler(srv, ss)
 		panicked = false
 		return
-	}
-}
-
-// basicStreamServerInterceptor do print log.
-func basicStreamServerInterceptor() grpc.StreamServerInterceptor {
-	return func(srv interface{}, ss grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
-		ctx := ss.Context()
-		lg := glog.FromContext(ctx)
-
-		lg.Debug().String("stream receive", info.FullMethod).Bool("ClientStream", info.IsClientStream).Bool("ServerStream", info.IsServerStream).Fire()
-
-		err := handler(srv, ss)
-		if err != nil {
-			lg.Error().Error("stream server error", err).Fire()
-			return err
-		}
-
-		lg.Debug().String("stream done", info.FullMethod).Fire()
-		return nil
 	}
 }
