@@ -56,7 +56,7 @@ func (s *Server) ListenAndServe() (err error) {
 		},
 	))
 
-	s.lp.Info().String("prometheus metrics server listening", s.cfg.Address).Fire()
+	s.lp.Info().String("prometheus metrics server listening", s.cfg.Address+s.cfg.URLPath).Fire()
 
 	s.h = &http.Server{Addr: s.cfg.Address, Handler: mux}
 
