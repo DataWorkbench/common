@@ -17,11 +17,12 @@ import (
 // receive the exit signal if you implementation is resident.
 //
 // The function parameter is:
-//  - ctx: The `ctx` is created with `context.WithCancel`;
+//  - ctx: The `ctx` is created with `context.WithCancel`.
+//  - wg:
 //  - topics: The list of topics that currently qualified.
 //  - increases: The list of topics added compared to the previous cycle.
 //  - decreases: The list of topics reduced compared to the previous cycle
-type TopicHandler func(ctx context.Context, topics []string, increases []string, decreases []string) error
+type TopicHandler func(ctx context.Context, wg *sync.WaitGroup, topics []string, increases []string, decreases []string) error
 
 // TopicWatcher used to watch the specified topics changed.
 type TopicWatcher struct {
@@ -142,22 +143,18 @@ func (c *TopicWatcher) chenAndRun() {
 		return
 	}
 
-	c.wg.Add(1)
-	go func() {
-		lg.Debug().Msg("TopicWatcher: call handler").
-			Strings("topics", topics).
-			Strings("increases", increases).
-			Strings("decreases", decreases).
-			Fire()
+	lg.Debug().Msg("TopicWatcher: call handler").
+		Strings("topics", topics).
+		Strings("increases", increases).
+		Strings("decreases", decreases).
+		Fire()
 
-		err := c.handler(c.ctx, topics, increases, decreases)
-		if err != nil {
-			lg.Error().Error("TopicWatcher: handler error", err).Fire()
-		} else {
-			lg.Debug().Msg("TopicWatcher: handler done").Fire()
-		}
-		c.wg.Done()
-	}()
+	err = c.handler(c.ctx, c.wg, topics, increases, decreases)
+	if err != nil {
+		lg.Error().Error("TopicWatcher: handler error", err).Fire()
+	} else {
+		lg.Debug().Msg("TopicWatcher: handler done").Fire()
+	}
 }
 
 // Watch for start watch the topics changes

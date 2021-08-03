@@ -46,7 +46,7 @@ func (c *ConsumerDynamic) getTopics() (topics []string) {
 	return
 }
 
-func (c *ConsumerDynamic) topicHandler(ctx context.Context, topics []string, _ []string, _ []string) error {
+func (c *ConsumerDynamic) topicHandler(ctx context.Context, _ *sync.WaitGroup, topics []string, _ []string, _ []string) error {
 	select {
 	case c.carrier <- topics:
 	case <-c.group.closed:
