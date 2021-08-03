@@ -21,7 +21,7 @@ type ConsumerConfig struct {
 
 	// Consumer.Group.Rebalance.Strategy.
 	// Optional values: "sticky", "range", "roundRobin".
-	// Defaults "sticky".
+	// Defaults "roundRobin".
 	BalanceStrategy string `json:"balance_strategy" yaml:"balance_strategy" env:"BALANCE_STRATEGY,default=sticky" validate:"oneof=sticky range roundRobin"`
 }
 
@@ -57,7 +57,7 @@ func (c *ConsumerConfig) convert() *sarama.Config {
 	case "roundRobin":
 		config.Consumer.Group.Rebalance.Strategy = sarama.BalanceStrategyRoundRobin
 	default:
-		config.Consumer.Group.Rebalance.Strategy = sarama.BalanceStrategySticky
+		config.Consumer.Group.Rebalance.Strategy = sarama.BalanceStrategyRoundRobin
 	}
 
 	return config
