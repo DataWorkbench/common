@@ -3,6 +3,7 @@ package kafka
 import (
 	"context"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/DataWorkbench/glog"
@@ -18,8 +19,8 @@ type ConsumerGroup struct {
 
 	// Initialize by inside.
 	handler sarama.ConsumerGroupHandler
-
-	closed chan struct{}
+	closed  chan struct{}
+	wg      *sync.WaitGroup
 }
 
 // NewConsumerGroup creates a new ConsumerGroup.
@@ -27,11 +28,15 @@ func NewConsumerGroup(ctx context.Context, groupId string, cfg *ConsumerConfig, 
 	if groupId == "" {
 		panic("ConsumerGroup: groupId can not be empty")
 	}
+	if handler == nil {
+		panic("ConsumerGroup: handler can not be nil")
+	}
 
-	lp := glog.FromContext(ctx)
+	// Create a new logger objects.
+	lp := glog.FromContext(ctx).Clone()
+	lp.WithFields().AddString("groupId", groupId)
 
 	lp.Info().Msg("ConsumerGroup: initializing new kafka client").String("hosts", cfg.Hosts).Fire()
-
 	client, err := sarama.NewClient(strings.Split(cfg.Hosts, ","), cfg.convert())
 	if err != nil {
 		lp.Error().Error("ConsumerGroup: initializes kafka client error", err).Fire()
@@ -51,8 +56,8 @@ func NewConsumerGroup(ctx context.Context, groupId string, cfg *ConsumerConfig, 
 		group:   group,
 		handler: newConsumerHandler(ctx, handler, options...),
 		closed:  make(chan struct{}),
+		wg:      new(sync.WaitGroup),
 	}
-
 	lp.Debug().Msg("ConsumerGroup: successfully initialized consumer group").Fire()
 	return c, nil
 }
@@ -60,11 +65,11 @@ func NewConsumerGroup(ctx context.Context, groupId string, cfg *ConsumerConfig, 
 func (c *ConsumerGroup) consume(ctx context.Context, topics []string) (err error) {
 	lg := c.lp
 
-	lg.Debug().Msg("ConsumerGroup: group consume started").Strings("topics", topics).Fire()
+	lg.Debug().Msg("ConsumerGroup: consumer group started").Strings("topics", topics).Fire()
 
 	// when re-balance happens, the consume session will need to be recreated to get the new claims.
 	if err = c.group.Consume(ctx, topics, c.handler); err != nil {
-		lg.Error().Error("ConsumerGroup: group consume error", err).Strings("topics", topics).Fire()
+		lg.Error().Error("ConsumerGroup: consumer group error", err).Strings("topics", topics).Fire()
 		return
 	}
 
@@ -81,7 +86,7 @@ LOOP:
 					continue LOOP
 				}
 			}
-			lg.Error().Error("ConsumerGroup: consumer returns error", err).Strings("topics", topics).Fire()
+			lg.Error().Error("ConsumerGroup: consumer group returns error", err).Strings("topics", topics).Fire()
 		default:
 			break LOOP
 		}
@@ -94,31 +99,40 @@ LOOP:
 // The loop will stop if the consumer closed or any unexpected errors happen.
 //
 // This function does not allow concurrent calls.
-func (c *ConsumerGroup) Consume(topics []string) {
-	lg := c.lp
+func (c *ConsumerGroup) Consume(topics []string) (err error) {
+	if len(topics) == 0 {
+		panic("ConsumerGroup: must specified at least one topic")
+	}
 
+	c.wg.Add(1)
+	defer c.wg.Done()
+
+	lg := c.lp
 	lg.Debug().Msg("ConsumerGroup: loop up and running").Strings("topics", topics).Fire()
 
 LOOP:
 	for {
-		if err := c.consume(c.ctx, topics); err != nil {
+		if err = c.consume(c.ctx, topics); err != nil {
 			break LOOP
 		}
 
 		// Check if the consumer group was closed.
 		select {
-		case <-c.closed:
+		case <-c.ctx.Done():
 			break LOOP
+		case <-c.closed:
+			return
 		default:
 		}
 
-		lg.Debug().Msg("ConsumerGroup: re-balance happens, topics or partitions or consumers changed").Strings("topics", topics).Fire()
+		lg.Debug().Msg("ConsumerGroup: re-balance happens, partitions or consumers changed").Fire()
 
 		// To prevent dead cycle.
 		time.Sleep(time.Millisecond * 100)
 	}
 
-	lg.Debug().Msg("ConsumerGroup: consumer was closed, stops").Strings("topics", topics).Fire()
+	lg.Debug().Msg("ConsumerGroup: consumer was closed, stops").Fire()
+	return
 }
 
 // Close wrapper for sarama.ConsumerGroup.Close(), Calls before exit the app.
@@ -134,6 +148,16 @@ func (c *ConsumerGroup) Close() (err error) {
 		c.lp.Error().Error("ConsumerGroup: close consumer error", err).Fire()
 		return
 	}
+
+	err = c.client.Close()
+	if err != nil && err != sarama.ErrClosedClient {
+		c.lp.Error().Error("TopicWatcher: close watcher error", err).Fire()
+		return
+	}
+
+	c.wg.Wait()
+
 	c.lp.Debug().Msg("ConsumerGroup: consumer successful closed").Fire()
+	_ = c.lp.Close()
 	return
 }

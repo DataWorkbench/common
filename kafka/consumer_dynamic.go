@@ -2,23 +2,22 @@ package kafka
 
 import (
 	"context"
-	"regexp"
+	"sync"
 	"time"
-
-	"github.com/DataWorkbench/glog"
-	"github.com/Shopify/sarama"
 )
 
 // ConsumerDynamic used to consume the topics with dynamic.
 type ConsumerDynamic struct {
-	group   *ConsumerGroup
-	regexps map[string]*regexp.Regexp
+	group *ConsumerGroup
+
+	carrier chan []string
+	topics  []string
+
+	mux *sync.Mutex // protects access to the topics.
 }
 
 // NewConsumerDynamic creates new ConsumerDynamic.
 func NewConsumerDynamic(ctx context.Context, groupId string, cfg *ConsumerConfig, handler MessageHandler, options ...Option) (*ConsumerDynamic, error) {
-	lp := glog.FromContext(ctx)
-
 	group, err := NewConsumerGroup(ctx, groupId, cfg, handler, options...)
 	if err != nil {
 		return nil, err
@@ -26,11 +25,51 @@ func NewConsumerDynamic(ctx context.Context, groupId string, cfg *ConsumerConfig
 
 	c := &ConsumerDynamic{
 		group:   group,
-		regexps: make(map[string]*regexp.Regexp),
+		carrier: make(chan []string),
+		topics:  nil,
+		mux:     new(sync.Mutex),
 	}
-
-	lp.Debug().Msg("ConsumerDynamic: successfully initialized consumer watcher").Fire()
+	group.lp.Debug().Msg("ConsumerDynamic: successfully initialized consumer dynamic").Fire()
 	return c, nil
+}
+
+func (c *ConsumerDynamic) setTopics(topics []string) {
+	c.mux.Lock()
+	c.topics = topics
+	c.mux.Unlock()
+}
+
+func (c *ConsumerDynamic) getTopics() (topics []string) {
+	c.mux.Lock()
+	topics = c.topics
+	c.mux.Unlock()
+	return
+}
+
+func (c *ConsumerDynamic) topicHandler(ctx context.Context, topics []string, _ []string, _ []string) error {
+	select {
+	case c.carrier <- topics:
+	case <-c.group.closed:
+	case <-ctx.Done():
+	}
+	return nil
+}
+
+func (c *ConsumerDynamic) watchTopics(ctx context.Context, cancel context.CancelFunc) {
+	lg := c.group.lp
+	lg.Debug().Msg("ConsumerDynamic: watch for the topics changes").Fire()
+
+	select {
+	case topics := <-c.carrier:
+		lg.Debug().Msg("ConsumerDynamic: qualified topics changed").
+			Strings("current", c.getTopics()).
+			Strings("new", topics).
+			Fire()
+		c.setTopics(topics)
+	case <-c.group.closed:
+	case <-ctx.Done():
+	}
+	cancel()
 }
 
 // Consume for start consumer in a loop.
@@ -40,61 +79,81 @@ func NewConsumerDynamic(ctx context.Context, groupId string, cfg *ConsumerConfig
 // The loop will stop if the consumer closed or any unexpected errors happen.
 //
 // This function does not allow concurrent calls.
-func (c *ConsumerDynamic) Consume(regexTopics []string) {
-	c.initTopics(regexTopics)
+func (c *ConsumerDynamic) Consume(regexTopics []string) (err error) {
+	c.group.wg.Add(1)
+	defer c.group.wg.Done()
 
 	lg := c.group.lp
+
 	lg.Debug().Msg("ConsumerDynamic: loop up and running").Strings("regexTopics", regexTopics).Fire()
 
-	var err error
-	var topics []string
+	var watcher *TopicWatcher
+	watcher, err = newTopicWatcherFromClient(c.group.ctx, c.group.client, regexTopics, c.topicHandler)
+	if err != nil {
+		return
+	}
+
+	go func() {
+		_ = watcher.Watch()
+	}()
+
+	defer func() {
+		lg.Debug().Msg("ConsumerDynamic: consumer was closed, stops").Fire()
+		_ = watcher.Close()
+	}()
+
+	lg.Debug().Msg("ConsumerDynamic: wait for the topics to join").Fire()
+
+	// start watch topics
+	select {
+	case topics := <-c.carrier:
+		c.topics = topics
+	case <-c.group.ctx.Done():
+		return
+	case <-c.group.closed:
+		return
+	}
 
 LOOP:
 	for {
 		// CHeck if the consumer group was closed.
 		select {
-		case <-c.group.closed:
+		case <-c.group.ctx.Done():
 			break LOOP
+		case <-c.group.closed:
+			return
 		default:
 		}
 
-		// Fetch currently available topics.
-		topics, err = c.fetchTopics()
-		if err != nil {
-			lg.Error().Error("ConsumerDynamic: fetch current topics error", err).Fire()
-			if err == sarama.ErrClosedClient {
-				break LOOP
-			}
-			time.Sleep(time.Second * 1)
-			continue LOOP
-		}
-
 		roundCtx, roundCancel := context.WithCancel(c.group.ctx)
-		go c.watchTopics(roundCtx, roundCancel, topics)
+		go c.watchTopics(roundCtx, roundCancel)
 
 		// No qualified topics, waits for new topic joined..
-		if len(topics) == 0 {
-			lg.Debug().Msg("ConsumerDynamic: No qualified topics currently, wait for new topics to join").Fire()
+		if len(c.getTopics()) == 0 {
+			lg.Debug().Msg("ConsumerDynamic: No qualified topics currently").Fire()
 			<-roundCtx.Done()
 			continue LOOP
 		}
 
-		if err = c.group.consume(roundCtx, topics); err != nil {
+		if err = c.group.consume(roundCtx, c.getTopics()); err != nil {
 			break LOOP
 		}
 
 		// CHeck if the consumer group was closed.
 		select {
-		case <-c.group.closed:
+		case <-c.group.ctx.Done():
 			break LOOP
+		case <-c.group.closed:
+			return
 		default:
 		}
+
+		lg.Debug().Msg("ConsumerDynamic: re-balance happens, topics or partitions or consumers changed").Fire()
 
 		// To prevent dead cycle.
 		time.Sleep(time.Millisecond * 100)
 	}
-
-	lg.Debug().Msg("ConsumerDynamic: consumer was closed, stops").Strings("regexTopics", regexTopics).Fire()
+	return
 }
 
 // Close for close the consume group.
@@ -103,89 +162,4 @@ func (c *ConsumerDynamic) Close() (err error) {
 		return
 	}
 	return c.group.Close()
-}
-
-func (c *ConsumerDynamic) initTopics(regexTopics []string) {
-	for _, topic := range regexTopics {
-		re := regexp.MustCompile(topic)
-		c.regexps[topic] = re
-	}
-}
-
-// fetchTopics to fetch the qualified topics.
-func (c *ConsumerDynamic) fetchTopics() (topics []string, err error) {
-	var availTopics []string
-	// Get current available topics.
-	availTopics, err = c.group.client.Topics()
-	if err != nil {
-		return
-	}
-
-	for _, topic := range availTopics {
-		for _, re := range c.regexps {
-			if re.MatchString(topic) {
-				topics = append(topics, topic)
-			}
-		}
-	}
-	return
-}
-
-// watchTopics watching the subscription topics.
-// This function exits and calls the `cancel` when the topics changed.
-func (c *ConsumerDynamic) watchTopics(ctx context.Context, cancel context.CancelFunc, curTopics []string) {
-	lg := c.group.lp
-	ticker := time.NewTicker(c.group.client.Config().Metadata.RefreshFrequency)
-
-	lg.Debug().Msg("ConsumerDynamic: watch for the topics changes").Fire()
-
-	curMap := make(map[string]struct{}, len(curTopics))
-	for _, topic := range curTopics {
-		curMap[topic] = struct{}{}
-	}
-
-	var newTopics []string
-	var err error
-	var changed bool
-
-LOOP:
-	for {
-		select {
-		case <-ticker.C:
-			newTopics, err = c.fetchTopics()
-			if err != nil {
-				if err == sarama.ErrClosedClient {
-					lg.Error().Msg("ConsumerDynamic: client has been closed, exits...").Fire()
-					break LOOP
-				}
-				lg.Error().Error("ConsumerDynamic: fetch new topics error", err).Fire()
-				continue LOOP
-			}
-
-			if len(newTopics) != len(curTopics) {
-				changed = true
-				break LOOP
-			}
-
-			for _, topic := range newTopics {
-				if _, ok := curMap[topic]; !ok {
-					changed = true
-					break LOOP
-				}
-			}
-		case <-ctx.Done():
-			lg.Debug().Msg("ConsumerDynamic: context was done, exits...").Fire()
-			break LOOP
-		}
-	}
-
-	if changed {
-		lg.Debug().Msg("ConsumerDynamic: qualified topics changed").
-			Strings("current", curTopics).
-			Strings("new", newTopics).
-			Fire()
-	}
-
-	ticker.Stop()
-	cancel()
 }
