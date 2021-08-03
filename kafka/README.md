@@ -136,18 +136,18 @@ func main() {
 
 ### Consumer process many message at a time.
 ```go
-watcher, err := kafka.NewConsumerGroup(ctx, "group1", cfg, ConsumeHandler, kafka.WithTracer(nil), kafka.WithBatchMode(true))
+consumer, err := kafka.NewConsumerGroup(ctx, "group1", cfg, ConsumeHandler, kafka.WithTracer(nil), kafka.WithBatchMode(true))
 ```
 
-### Consumer monitor regex format topics.
+### Consumer process the dynamic topic lists.
 
 If sets topics with a regular expression, The consumer will monitor the kafka's topics changes, 
 When qualified topics changes, The automatic re-balance will be triggers.
 
 ```go
-watcher, err := kafka.NewConsumerWatcher(ctx, "group1", cfg, ConsumeHandler, kafka.WithTracer(nil))
+consumer, err := kafka.NewConsumerDynamic(ctx, "group1", cfg, ConsumeHandler, kafka.WithTracer(nil))
 if err != nil {
     return
 }
-go watcher.Consume([]string{"^space.*$", "^flow-.*"})
+go consumer.Consume([]string{"^space.*$", "^flow-.*"})
 ```
