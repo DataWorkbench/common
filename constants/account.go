@@ -1,6 +1,7 @@
 package constants
 
 const (
+	Account                        = "account"
 	QingcloudSource                = "qingcloud"
 	LocalSource                    = "local"
 	AccessKeyTableName             = "access_key"
@@ -30,6 +31,20 @@ var UserColumns = []string{
 	"role",
 	"currency",
 	"gravatar_email",
+	"privilege",
 	"create_time",
 	"status_time",
 }
+
+// redis
+const (
+	UserPrefix          = UserTableName
+	RedisSeparator      = ":"
+	QingcloudUserPrefix = Account + RedisSeparator + QingcloudSource + RedisSeparator + UserPrefix + RedisSeparator
+	LocalUserPrefix     = Account + RedisSeparator + LocalSource + RedisSeparator + UserPrefix + RedisSeparator
+	DefaultUserPrefix   = LocalUserPrefix
+
+	ResourceCacheMinimumSeconds  = 300
+	ResourceCacheRandomSeconds   = 120
+	NotExistResourceCacheSeconds = 30
+)

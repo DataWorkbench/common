@@ -7,8 +7,10 @@ import (
 	"google.golang.org/grpc"
 )
 
-// basicUnaryClientInterceptor do validate the argument and print log.
-func basicUnaryClientInterceptor() grpc.UnaryClientInterceptor {
+// traceUnaryClientInterceptor for trace the request.
+// - inject trace id to outgoing metadata.
+// - validate argument where are request and reply.
+func traceUnaryClientInterceptor() grpc.UnaryClientInterceptor {
 	return func(ctx context.Context, method string, req, reply interface{}, cc *grpc.ClientConn, invoker grpc.UnaryInvoker, opts ...grpc.CallOption) error {
 		lg := glog.FromContext(ctx)
 
@@ -19,7 +21,7 @@ func basicUnaryClientInterceptor() grpc.UnaryClientInterceptor {
 			return err
 		}
 
-		// Invoker to the grpc server
+		ctx = injectTraceContext(ctx)
 		err := invoker(ctx, method, req, reply, cc, opts...)
 		if err != nil {
 			lg.Error().Error("invoker error", err).Fire()
@@ -36,13 +38,15 @@ func basicUnaryClientInterceptor() grpc.UnaryClientInterceptor {
 	}
 }
 
-// basicStreamClientInterceptor do print log.
-func basicStreamClientInterceptor() grpc.StreamClientInterceptor {
+// traceStreamClientInterceptor for trace the request.
+// - inject trace id to metadata.
+func traceStreamClientInterceptor() grpc.StreamClientInterceptor {
 	return func(ctx context.Context, desc *grpc.StreamDesc, cc *grpc.ClientConn, method string, streamer grpc.Streamer, opts ...grpc.CallOption) (stream grpc.ClientStream, err error) {
 		lg := glog.FromContext(ctx)
 
 		lg.Debug().String("stream invoker", method).Bool("ClientStreams", desc.ClientStreams).Bool("ServerStreams", desc.ServerStreams).Fire()
 
+		ctx = injectTraceContext(ctx)
 		stream, err = streamer(ctx, desc, cc, method, opts...)
 		if err != nil {
 			lg.Error().Error("invoker error", err).Fire()

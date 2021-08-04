@@ -24,11 +24,14 @@ const (
 	UDTTFNode     = "UDTTF"  //don't print Upstream node
 	ArraysNode    = "Arrays" //don't print Upstream node
 	JarNode       = "Jar"
+	ScalaNode     = "Scala"
+	PythonNode    = "Python"
 )
 
 type DagNode struct {
 	NodeType      string     `json:"nodetype"`
 	NodeID        string     `json:"nodeid"`
+	NodeName      string     `json:"nodename"`
 	UpStream      string     `json:"upstream"`
 	UpStreamRight string     `json:"upstreamright"`
 	DownStream    string     `json:"downstream"`
@@ -120,6 +123,14 @@ type SqlNodeProperty struct {
 	Sql string `json:"sql"`
 }
 
+type ScalaNodeProperty struct {
+	Code string `json:"code"`
+}
+
+type PythonNodeProperty struct {
+	Code string `json:"code"`
+}
+
 type UDTFNodeProperty struct {
 	ID           string     `json:"id"`
 	FuncName     string     `json:"funcname"`
@@ -150,6 +161,7 @@ type UDTTFNodeProperty struct {
 }
 
 type JarNodeProperty struct {
+	JarId      string `json:"jar_id"`
 	JarArgs    string `json:"jar_args"`  // allow regex `^[a-zA-Z0-9_/. ]+$`
 	JarEntry   string `json:"jar_entry"` // allow regex `^[a-zA-Z0-9_/. ]+$`
 	JarPath    string `json:"jar_path"`

@@ -249,11 +249,11 @@ var (
 		enUS:   "invalid name. can't use '.'",
 		zhCN:   "无效名字，不能使用'.'",
 	}
-	InvalidDimensionSource = &Error{
-		code:   "InvalidDimensionSource",
+	SourceIsDisable = &Error{
+		code:   "SourceIsDisable",
 		status: http.StatusInternalServerError,
-		enUS:   "dimension just use in relation database",
-		zhCN:   "维表只能在关系型数据库使用",
+		enUS:   "source is disable",
+		zhCN:   "数据源是禁用状态",
 	}
 	ConnectSourceFailed = &Error{
 		code:   "ConnectSourceFailed",
@@ -308,17 +308,17 @@ var (
 
 // account error
 var (
-	AccessKeyNotExist = &Error{
+	AccessKeyNotExists = &Error{
 		code:   "AccessKeyNotExist",
 		status: 404,
 		enUS:   "The access key[%s] not exist.",
 		zhCN:   "Access key[%s]不存在。",
 	}
-	UserNotExist = &Error{
+	UserNotExists = &Error{
 		code:   "UserNotExist",
 		status: 404,
 		enUS:   "The user[%s] not exist.",
-		zhCN:   "用户[%s]不存在。",
+		zhCN:   "User[%s]不存在。",
 	}
 	ValidateSignatureFailed = &Error{
 		code:   "ValidateSignatureFailed",

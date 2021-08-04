@@ -3,10 +3,13 @@
 A common library for DataWorkbench.
 
 ## Package index
-* gormwrap:
-* grpcwrap
-* metrics:
-* utils:
+- [kafka](kafka/README.md)
+- [gormwrap](gormwrap)
+- [rediswrap](rediswrap)
+- [grpcwrap](grpcwrap)
+- [metrics](metrics)
+- [utils](utils)
+- [trace](trace)
 
 ## Installation
 
