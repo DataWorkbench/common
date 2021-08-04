@@ -7,6 +7,7 @@ const (
 	SourceTypeS3           = "S3"
 	SourceTypeClickHouse   = "ClickHouse"
 	SourceTypeHbase        = "Hbase"
+	SourceTypeFtp          = "Ftp"
 	DirectionSource        = "s"
 	DirectionDestination   = "d"
 	SourceConnectedSuccess = "t"
@@ -62,6 +63,11 @@ type SourceHbaseParams struct {
 	Hosts     string `json:"hosts"`
 }
 
+type SourceFtpParams struct {
+	Host             string   `json:"host"`
+	ConnectorOptions []string `json:"connector_options"`
+}
+
 type SqlColumnType struct {
 	Name       string `json:"column"`
 	Type       string `json:"type"`
@@ -101,5 +107,12 @@ type FlinkTableDefineMysql struct {
 
 type FlinkTableDefinePostgreSQL struct {
 	SqlColumn        []SqlColumnType `json:"sql_column"`
+	ConnectorOptions []string        `json:"connector_options"`
+}
+
+type FlinkTableDefineFtp struct {
+	SqlColumn        []SqlColumnType `json:"sql_column"`
+	Path             string          `json:"path"`
+	Format           string          `json:"format"`
 	ConnectorOptions []string        `json:"connector_options"`
 }
