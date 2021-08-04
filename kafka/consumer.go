@@ -28,6 +28,8 @@ type ConsumerConfig struct {
 // convert the ConsumerConfig to sarama.Config
 func (c *ConsumerConfig) convert() *sarama.Config {
 	config := sarama.NewConfig()
+
+	config.MetricRegistry = metricRegistry
 	config.Consumer.Return.Errors = true
 
 	// Sets follows parameters by `ConsumerConfig` if necessary.

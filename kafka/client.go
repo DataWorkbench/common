@@ -19,6 +19,7 @@ type ClientConfig struct {
 // convert the ConsumerConfig to sarama.Config
 func (c *ClientConfig) convert() *sarama.Config {
 	config := sarama.NewConfig()
+	config.MetricRegistry = metricRegistry
 
 	if c.RefreshFrequency <= 0 {
 		config.Metadata.RefreshFrequency = time.Minute * 10 // defaults 10min.

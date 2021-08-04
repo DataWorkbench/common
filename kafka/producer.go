@@ -42,6 +42,8 @@ type ProducerConfig struct {
 // convert the ProducerConfig to sarama.Config
 func (c *ProducerConfig) convert() *sarama.Config {
 	config := sarama.NewConfig()
+
+	config.MetricRegistry = metricRegistry
 	config.Producer.Return.Successes = true
 	config.Producer.Return.Errors = true
 
