@@ -19,7 +19,16 @@ import (
 // ClientConn is an type aliases to make caller don't have to introduce "google.golang.org/grpc"
 // into its project go.mod files. And can keep the grpc version in other project consistent
 // with this library at all times.
-type ClientConn = grpc.ClientConn
+type ClientConn struct {
+	*grpc.ClientConn
+}
+
+func (cc *ClientConn) Close() error {
+	if cc == nil {
+		return nil
+	}
+	return cc.ClientConn.Close()
+}
 
 // ClientConfig used to create an connection to grpc server
 type ClientConfig struct {
@@ -93,6 +102,12 @@ func NewConn(ctx context.Context, cfg *ClientConfig, options ...ClientOption) (c
 		traceStreamClientInterceptor(),
 	))
 
-	conn, err = grpc.DialContext(ctx, hosts[0], dialOpts...)
+	var c *grpc.ClientConn
+	c, err = grpc.DialContext(ctx, hosts[0], dialOpts...)
+	if err != nil {
+		return
+	}
+
+	conn = &ClientConn{ClientConn: c}
 	return
 }
