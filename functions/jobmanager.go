@@ -175,7 +175,8 @@ func (ex *HttpClient) RunParagraphSync(noteID string, paragraphID string) (err e
 	}
 	status, err = ex.GetParagraphStatus(noteID, paragraphID)
 	if status != "OK" && status != "FINISHED" {
-		err = fmt.Errorf("run failed. status is " + status)
+		msg, _ = GetParagraphResultOutput(noteID, paragraphID)
+		err = fmt.Errorf("run failed. status is ." + status + ". the output message: " + msg)
 	}
 	return
 }
