@@ -11,8 +11,8 @@ const (
 	RetSucc = 0
 
 	// Table const
-	EngineTable        = "engine"
-	EngingInBuildTable = "engine_in_build_info"
+	TableEngine        = "engine"
+	TableEngineInBuild = "engine_in_build_info"
 
 	// Engine status
 	EngineStatusDisable = "disable"
@@ -26,11 +26,18 @@ const (
 	// Engine server Type
 	EngineTypeFlink = "flink"
 	EngineTypeSpark = "spark"
+
+	// engine helm chart
+	HelmFlink = "flink-1.12.3.tgz"
+
 )
 
-var EngineTypes = utils.StrArray{
+var InbuildEngineTypes = utils.StrArray{
 	EngineTypeFlink,
-	EngineTypeSpark,
+}
+
+var EngineTypeHelmChartMap = map[string]string{
+	EngineTypeFlink: HelmFlink,
 }
 
 var EngineColumns = []string{
