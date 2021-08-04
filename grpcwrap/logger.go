@@ -31,7 +31,7 @@ func SetLogger(output *glog.Logger, cfg *LogConfig) {
 
 type LogConfig struct {
 	// grpc log level: 1 => info, 2 => waring, 3 => error, 4 => fatal
-	Level     int `json:"level"     yaml:"level"     env:"LEVEL,default=2"     validate:"gte=1,lte=4"`
+	Level     int `json:"level"     yaml:"level"     env:"LEVEL,default=3"     validate:"gte=1,lte=4"`
 	Verbosity int `json:"verbosity" yaml:"verbosity" env:"VERBOSITY,default=99" validate:"required"`
 }
 
