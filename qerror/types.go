@@ -281,13 +281,6 @@ var (
 
 // enginemanager error
 var (
-	EngineNameAlreadyExist = &Error{
-		code:   "EngineNameAlreadyExist",
-		status: 409,
-		enUS:   "The engine name[%s] has been used.",
-		zhCN:   "计算引擎名称[%s]已占用.",
-	}
-
 	EngineNotExist = &Error{
 		code:   "EngineNotExist",
 		status: 404,

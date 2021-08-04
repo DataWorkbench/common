@@ -1,5 +1,7 @@
 package constants
 
+import "github.com/DataWorkbench/common/utils"
+
 const (
 	EngineFlinkDefaultId = IdPrefixEngine + "0000000000000000"
 )
@@ -9,37 +11,26 @@ const (
 	RetSucc = 0
 
 	// Table const
-	EngineIDPrefix = "eng-"
-	EngineTable    = "engine"
+	EngineTable        = "engine"
+	EngingInBuildTable = "engine_in_build_info"
 
 	// Engine status
-	EngineStatusDisable int8 = iota
-	EngineStatusEnable
-	EngineStatusDeleted
+	EngineStatusDisable = "disable"
+	EngineStatusEnable = "enable"
+	EngineStatusDeleted = "deleted"
+
+	EngineTransitionStatusCreating = "creating"
+	EngineTransitionStatusUpdating = "updating"
+	EngineTransitionStatusDeleting = "deleting"
 
 	// Engine server Type
-	ServerTypeFlink = "flink"
-	ServerTypeSpark = "spark"
-
-	// Engine build Type
-	InBuilt  = 1
-	External = 0
+	EngineTypeFlink = "flink"
+	EngineTypeSpark = "spark"
 )
 
-var ServerTypes = []string{
-	ServerTypeFlink,
-	ServerTypeSpark,
-}
-
-var StatusCode = map[int8]string{
-	EngineStatusEnable:  "enable",
-	EngineStatusDisable: "disable",
-	EngineStatusDeleted: "deleted",
-}
-
-var BuildTypeCode = map[int8]string{
-	InBuilt:  "inbuilt",
-	External: "external",
+var EngineTypes = utils.StrArray{
+	EngineTypeFlink,
+	EngineTypeSpark,
 }
 
 var EngineColumns = []string{
