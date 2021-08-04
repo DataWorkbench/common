@@ -246,7 +246,7 @@ func NewJobdevClient(conn *grpcwrap.ClientConn) (c JobdevClient, err error) {
 }
 
 func FreeJobResources(ctx context.Context, resources constants.JobResources, EngineType string, logger *glog.Logger, httpClient HttpClient, jobdevClient JobdevClient) (err error) {
-	if EngineType == constants.ServerTypeFlink {
+	if EngineType == constants.EngineTypeFlink {
 		var (
 			req          jobdevpb.JobFreeRequest
 			zeppelinFree constants.JobFreeActionFlink
