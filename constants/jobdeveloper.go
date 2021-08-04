@@ -191,7 +191,8 @@ type JobResources struct {
 type JobElementFlink struct {
 	ZeppelinConf      string         `json:"conf"`
 	ZeppelinDepends   string         `json:"depends"`
-	ZeppelinFuncScala string         `json:"funcscala"`
+	ZeppelinScalaUDF  string         `json:"scalaudf"`
+	ZeppelinPythonUDF string         `json:"pythonudf"`
 	ZeppelinMainRun   string         `json:"mainrun"`
 	S3info            SourceS3Params `json:"s3"`
 	HbaseHosts        string         `json:"hbasehosts"`
@@ -201,7 +202,8 @@ type JobElementFlink struct {
 type FlinkParagraphsInfo struct {
 	Conf      string `json:"conf"`
 	Depends   string `json:"depends"`
-	FuncScala string `json:"funcscala"` //jar in zeppelin flink.conf
+	ScalaUDF  string `json:"scalaudf"`  //jar in zeppelin flink.conf
+	PythonUDF string `json:"pythonudf"` //jar in zeppelin flink.conf
 	MainRun   string `json:"mainrun"`
 }
 
