@@ -22,7 +22,7 @@ type MySQLConfig struct {
 	MaxIdleConn int    `json:"max_idle_conn" yaml:"max_idle_conn" env:"MAX_IDLE_CONN,default=16"  validate:"required"`
 	MaxOpenConn int    `json:"max_open_conn" yaml:"max_open_conn" env:"MAX_OPEN_CONN,default=128" validate:"required"`
 	// gorm log level: 1 => Silent, 2 => Error, 3 => Warn, 4 => Info
-	LogLevel int `json:"log_level" yaml:"log_level" env:"LOG_LEVEL,default=3" validate:"gte=1,lte=4"`
+	LogLevel int `json:"log_level" yaml:"log_level" env:"LOG_LEVEL,default=4" validate:"gte=1,lte=4"`
 	// ConnMaxLifetime unit seconds
 	ConnMaxLifetime time.Duration `json:"conn_max_lifetime" yaml:"conn_max_lifetime" env:"CONN_MAX_LIFETIME,default=10m" validate:"required"`
 	// SlowThreshold time 0 indicates disabled

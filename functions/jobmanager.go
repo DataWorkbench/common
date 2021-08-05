@@ -175,7 +175,8 @@ func (ex *HttpClient) RunParagraphSync(noteID string, paragraphID string) (err e
 	}
 	status, err = ex.GetParagraphStatus(noteID, paragraphID)
 	if status != "OK" && status != "FINISHED" {
-		err = fmt.Errorf("run failed. status is " + status)
+		msg, _ := ex.GetParagraphResultOutput(noteID, paragraphID)
+		err = fmt.Errorf("run failed. status is ." + status + ". the output message: " + msg)
 	}
 	return
 }
@@ -245,7 +246,7 @@ func NewJobdevClient(conn *grpcwrap.ClientConn) (c JobdevClient, err error) {
 }
 
 func FreeJobResources(ctx context.Context, resources constants.JobResources, EngineType string, logger *glog.Logger, httpClient HttpClient, jobdevClient JobdevClient) (err error) {
-	if EngineType == constants.ServerTypeFlink {
+	if EngineType == constants.EngineTypeFlink {
 		var (
 			req          jobdevpb.JobFreeRequest
 			zeppelinFree constants.JobFreeActionFlink
