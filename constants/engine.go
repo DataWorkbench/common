@@ -28,16 +28,12 @@ const (
 	EngineTypeSpark = "spark"
 
 	// engine helm chart
-	HelmFlink = "flink-1.12.3.tgz"
+	HelmFlink = "flink-0.1.0.tgz"
 
 )
 
 var InbuildEngineTypes = utils.StrArray{
 	EngineTypeFlink,
-}
-
-var EngineTypeHelmChartMap = map[string]string{
-	EngineTypeFlink: HelmFlink,
 }
 
 var EngineColumns = []string{
