@@ -21,7 +21,7 @@ const (
 	IdPrefixStreamFlowTestInst = "sti-"
 
 	// The Id prefix of engine.
-	IdPrefixEngine = "eng-"
+	IdPrefixEngine        = "eng-"
 	IdPrefixEngineInBuild = "inbuild-"
 
 	// The Id prefix of monitor rule.

@@ -5,8 +5,8 @@ github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
 github.com/DataWorkbench/glog v0.0.0-20210727202626-c7845b2d263d h1:pWg9ECxpHlXCkyau9lAclD4lEOwph6fz5AgNPwbagRs=
 github.com/DataWorkbench/glog v0.0.0-20210727202626-c7845b2d263d/go.mod h1:zymxJLXn162xdWYUqIb729S3ZzRQpdTj/LwnW+xxru4=
-github.com/DataWorkbench/gproto v0.0.0-20210719082127-d4d3e4afbeab h1:etqZnDaJD+6p1vV+mTZzd77CDp4ELzuXIkv7gQj4mgE=
-github.com/DataWorkbench/gproto v0.0.0-20210719082127-d4d3e4afbeab/go.mod h1:ZCyz1BvwA0kGnybpNCnBRfFqgDKu73YFQ9yE/rUSRfo=
+github.com/DataWorkbench/gproto v0.0.0-20210806005855-b75bd884db05 h1:ZgN4GEzNQMjhBSAEVahhWSpXPryqNcZGxkvZI6xRyR8=
+github.com/DataWorkbench/gproto v0.0.0-20210806005855-b75bd884db05/go.mod h1:ZCyz1BvwA0kGnybpNCnBRfFqgDKu73YFQ9yE/rUSRfo=
 github.com/HdrHistogram/hdrhistogram-go v1.0.1 h1:GX8GAYDuhlFQnI2fRDHQhTlkHMz8bEn0jTI6LJU0mpw=
 github.com/HdrHistogram/hdrhistogram-go v1.0.1/go.mod h1:BWJ+nMSHY3L41Zj7CA3uXnloDp7xxV0YvstAE7nKTaM=
 github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible/go.mod h1:r7JcOSlj0wfOMncg0iLm8Leh48TZaKVeNIfJntJ2wa0=

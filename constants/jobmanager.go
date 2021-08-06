@@ -1,5 +1,7 @@
 package constants
 
+import "github.com/DataWorkbench/gproto/pkg/model"
+
 type EngineRequestOptions struct {
 	JobID       string `json:"jobid"`
 	EngineID    string `json:"engineid"`
@@ -22,11 +24,11 @@ type EngineResponseOptions struct {
 }
 
 const (
-	StatusFailed        = InstanceStateFailed
+	StatusFailed        = model.StreamFlowInst_Failed
 	StatusFailedString  = "failed"
-	StatusFinish        = InstanceStateSucceed
+	StatusFinish        = model.StreamFlowInst_Succeed
 	StatusFinishString  = "finish"
-	StatusRunning       = InstanceStateRunning
+	StatusRunning       = model.StreamFlowInst_Running
 	StatusRunningString = "running"
 	JobSuccess          = "success"
 	JobAbort            = "job abort"

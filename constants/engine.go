@@ -16,7 +16,7 @@ const (
 
 	// Engine status
 	EngineStatusDisable = "disable"
-	EngineStatusEnable = "enable"
+	EngineStatusEnable  = "enable"
 	EngineStatusDeleted = "deleted"
 
 	EngineTransitionStatusCreating = "creating"
@@ -29,7 +29,6 @@ const (
 
 	// engine helm chart
 	HelmFlink = "flink-0.1.0.tgz"
-
 )
 
 var InbuildEngineTypes = utils.StrArray{
