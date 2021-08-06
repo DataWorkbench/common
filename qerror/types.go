@@ -153,10 +153,10 @@ var (
 		enUS:   "The member [%s] has been exists.",
 		zhCN:   "空间成员[%s]已存在.",
 	}
-	SpaceOwnerCannotRemoved = &Error{
-		code:   "SpaceOwnerCannotRemoved",
+	SpaceOwnerCannotDelete = &Error{
+		code:   "SpaceOwnerCannotDelete",
 		status: 403,
-		enUS:   "The member of workspace owner cannot be removed.",
+		enUS:   "The member of workspace owner cannot be deleted.",
 		zhCN:   "空间所有者不允许删除.",
 	}
 	SpaceOwnerCannotUpdated = &Error{
