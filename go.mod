@@ -7,9 +7,14 @@ require (
 	github.com/DataWorkbench/gproto v0.0.0-20210806005855-b75bd884db05
 	github.com/HdrHistogram/hdrhistogram-go v1.0.1 // indirect
 	github.com/Shopify/sarama v1.29.1
+	github.com/creasty/defaults v1.5.1
 	github.com/deathowl/go-metrics-prometheus v0.0.0-20200518174047-74482eab5bfb
+	github.com/gin-contrib/cors v1.3.1
+	github.com/gin-gonic/gin v1.7.3
+	github.com/go-playground/validator/v10 v10.4.1
 	github.com/go-redis/redis/v8 v8.11.0
 	github.com/golang/protobuf v1.4.3
+	github.com/gorilla/websocket v1.4.2
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.2
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
 	github.com/grpc-ecosystem/grpc-opentracing v0.0.0-20180507213350-8e809c8a8645
