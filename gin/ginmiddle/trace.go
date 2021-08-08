@@ -10,7 +10,7 @@ import (
 	"github.com/opentracing/opentracing-go/ext"
 	tracerLog "github.com/opentracing/opentracing-go/log"
 
-	"github.com/DataWorkbench/common/trace"
+	"github.com/DataWorkbench/common/gtrace"
 	"github.com/DataWorkbench/common/utils/idgenerator"
 )
 
@@ -34,7 +34,7 @@ var (
 //
 // Value in standard library's context.Context:
 //   - span:    Get it by opentracing.SpanFromContext(ctx).
-//	 - traceId: Get it by trace.IdFromContext(ctx).
+//	 - traceId: Get it by gtrace.IdFromContext(ctx).
 //	 - logger:  Get it by glog.FromContext(ctx).
 func Trace(ctx context.Context, tracer opentracing.Tracer) gin.HandlerFunc {
 	idGen := idgenerator.New("")
@@ -72,7 +72,7 @@ func Trace(ctx context.Context, tracer opentracing.Tracer) gin.HandlerFunc {
 		tid = c.Request.Header.Get(ReqIdHeaderKey)
 		if tid == "" {
 			// Try to use trace id as the request id.
-			sp, ok := span.Context().(trace.SpanContext)
+			sp, ok := span.Context().(gtrace.SpanContext)
 			if ok {
 				tid = sp.TraceID().String()
 			} else {
@@ -85,12 +85,12 @@ func Trace(ctx context.Context, tracer opentracing.Tracer) gin.HandlerFunc {
 		// Insert trace id to response headers.
 		c.Writer.Header().Set(ReqIdHeaderKey, tid)
 		// Make exists field clear.
-		nl.ResetFields().AddString(trace.IdKey, tid)
+		nl.ResetFields().AddString(gtrace.IdKey, tid)
 
 		// Init a new context with span.
 		ctx := opentracing.ContextWithSpan(context.Background(), span)
 		// Insert trace id to context.Context.
-		ctx = trace.ContextWithId(ctx, tid)
+		ctx = gtrace.ContextWithId(ctx, tid)
 		// Insert logger object to context.Context.
 		ctx = glog.WithContext(ctx, nl)
 

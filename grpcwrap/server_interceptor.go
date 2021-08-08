@@ -9,7 +9,7 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
-	"github.com/DataWorkbench/common/trace"
+	"github.com/DataWorkbench/common/gtrace"
 )
 
 // traceUnaryServerInterceptor for trace the request.
@@ -20,7 +20,7 @@ func traceUnaryServerInterceptor(lp *glog.Logger) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
 		tid := extractTraceContext(ctx)
 		nl := lp.Clone()
-		nl.WithFields().AddString(trace.IdKey, tid)
+		nl.WithFields().AddString(gtrace.IdKey, tid)
 
 		nl.Debug().String("unary receive", info.FullMethod).RawString("request", pbMsgToString(nl, req)).Fire()
 
@@ -29,7 +29,7 @@ func traceUnaryServerInterceptor(lp *glog.Logger) grpc.UnaryServerInterceptor {
 			return nil, err
 		}
 
-		ctx = trace.ContextWithId(ctx, tid)
+		ctx = gtrace.ContextWithId(ctx, tid)
 		ctx = glog.WithContext(ctx, nl)
 		resp, err = handler(ctx, req)
 		if err != nil {
@@ -86,7 +86,7 @@ func traceStreamServerInterceptor(lp *glog.Logger) grpc.StreamServerInterceptor 
 		tid := extractTraceContext(ctx)
 
 		nl := lp.Clone()
-		nl.WithFields().AddString(trace.IdKey, tid)
+		nl.WithFields().AddString(gtrace.IdKey, tid)
 
 		nl.Debug().
 			String("stream receive", info.FullMethod).
@@ -94,7 +94,7 @@ func traceStreamServerInterceptor(lp *glog.Logger) grpc.StreamServerInterceptor 
 			Bool("ServerStream", info.IsServerStream).
 			Fire()
 
-		ctx = trace.ContextWithId(ctx, tid)
+		ctx = gtrace.ContextWithId(ctx, tid)
 		ctx = glog.WithContext(ctx, nl)
 		err := handler(srv, &serverStreamWrap{ServerStream: ss, ctx: ctx})
 		if err != nil {

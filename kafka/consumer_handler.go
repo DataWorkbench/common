@@ -13,7 +13,7 @@ import (
 	tracerLog "github.com/opentracing/opentracing-go/log"
 	"github.com/pkg/errors"
 
-	"github.com/DataWorkbench/common/trace"
+	"github.com/DataWorkbench/common/gtrace"
 	"github.com/DataWorkbench/common/utils/idgenerator"
 )
 
@@ -203,7 +203,7 @@ func (h *consumerHandler) prepareHandler(ctx context.Context, messages []*sarama
 
 	tid := h.getTraceId(ctx, messages)
 	if tid != "" {
-		ctx = trace.ContextWithId(ctx, tid)
+		ctx = gtrace.ContextWithId(ctx, tid)
 		nl.WithFields().AddString("tid", tid)
 	}
 
@@ -290,14 +290,14 @@ func (h *consumerHandler) getTraceId(ctx context.Context, messages []*sarama.Con
 
 	// Get the trace id from `message.Headers` that producer passed.
 	for _, h := range msg.Headers {
-		if string(h.Key) == trace.IdKey {
+		if string(h.Key) == gtrace.IdKey {
 			tid = string(h.Value)
 			return
 		}
 	}
 
 	// No trace id in `message.Headers` or in `batchMode`, check whether contains in Context.
-	tid = trace.IdFromContext(ctx)
+	tid = gtrace.IdFromContext(ctx)
 
 	// Generate a new trace id if not found in any where.
 	if tid == "" {

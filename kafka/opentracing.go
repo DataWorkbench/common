@@ -8,7 +8,7 @@ import (
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
 
-	"github.com/DataWorkbench/common/trace"
+	"github.com/DataWorkbench/common/gtrace"
 )
 
 type msgHeadersCarrier struct {
@@ -33,9 +33,9 @@ func (c *msgHeadersCarrier) ForeachKey(handler func(key, val string) error) erro
 }
 
 // producerTraceSpan start a span for producer.
-func producerTraceSpan(ctx context.Context, tracer trace.Tracer, opName string) (span opentracing.Span, headers []sarama.RecordHeader) {
-	if tid := trace.IdFromContext(ctx); tid != "" {
-		headers = append(headers, sarama.RecordHeader{Key: []byte(trace.IdKey), Value: []byte(tid)})
+func producerTraceSpan(ctx context.Context, tracer gtrace.Tracer, opName string) (span opentracing.Span, headers []sarama.RecordHeader) {
+	if tid := gtrace.IdFromContext(ctx); tid != "" {
+		headers = append(headers, sarama.RecordHeader{Key: []byte(gtrace.IdKey), Value: []byte(tid)})
 	}
 
 	var parentCtx opentracing.SpanContext
