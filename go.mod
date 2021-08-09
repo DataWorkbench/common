@@ -3,7 +3,7 @@ module github.com/DataWorkbench/common
 go 1.15
 
 require (
-	github.com/DataWorkbench/glog v0.0.0-20210808122851-7854cb245227
+	github.com/DataWorkbench/glog v0.0.0-20210809050640-4960fd6de6ab
 	github.com/DataWorkbench/gproto v0.0.0-20210806005855-b75bd884db05
 	github.com/HdrHistogram/hdrhistogram-go v1.0.1 // indirect
 	github.com/Shopify/sarama v1.29.1
