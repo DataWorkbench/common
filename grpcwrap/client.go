@@ -14,6 +14,8 @@ import (
 	"google.golang.org/grpc/backoff"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/keepalive"
+
+	"github.com/DataWorkbench/common/gtrace"
 )
 
 // ClientConn is an type aliases to make caller don't have to introduce "google.golang.org/grpc"
@@ -39,7 +41,6 @@ type ClientConfig struct {
 // NewConn return an new grpc.ClientConn
 // NOTICE: Must set glog.loggerT into the ctx by glow.WithContext
 func NewConn(ctx context.Context, cfg *ClientConfig, options ...ClientOption) (conn *ClientConn, err error) {
-	opts := applyClientOptions(options...)
 	lp := glog.FromContext(ctx)
 
 	defer func() {
@@ -57,6 +58,8 @@ func NewConn(ctx context.Context, cfg *ClientConfig, options ...ClientOption) (c
 		err = fmt.Errorf("invalid address: %s", cfg.Address)
 		return
 	}
+
+	tracer := gtrace.TracerFromContext(ctx)
 
 	var dialOpts []grpc.DialOption
 	// Set and add insecure
@@ -90,14 +93,14 @@ func NewConn(ctx context.Context, cfg *ClientConfig, options ...ClientOption) (c
 		grpc_retry.WithCodes(codes.Unavailable, codes.Aborted, codes.DeadlineExceeded, codes.ResourceExhausted),
 	)))
 	dialOpts = append(dialOpts, grpc.WithChainUnaryInterceptor(
-		otgrpc.OpenTracingClientInterceptor(opts.tracer),
+		otgrpc.OpenTracingClientInterceptor(tracer),
 		grpc_prometheus.UnaryClientInterceptor,
 		traceUnaryClientInterceptor(),
 	))
 
 	// Set and add Stream Client Interceptor
 	dialOpts = append(dialOpts, grpc.WithChainStreamInterceptor(
-		otgrpc.OpenTracingStreamClientInterceptor(opts.tracer),
+		otgrpc.OpenTracingStreamClientInterceptor(tracer),
 		grpc_prometheus.StreamClientInterceptor,
 		traceStreamClientInterceptor(),
 	))
