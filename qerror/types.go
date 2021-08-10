@@ -111,6 +111,28 @@ var (
 	}
 )
 
+// Error for Global API
+var (
+	RegionNotSpecified = &Error{
+		code:   "RegionNotSpecified",
+		status: 400,
+		enUS:   "A valid region id must be specified in you request path",
+		zhCN:   "无效的请求, 未指定 regionId",
+	}
+	RegionNotExists = &Error{
+		code:   "RegionNotExists",
+		status: 404,
+		enUS:   "The region [%s] you access not exists.",
+		zhCN:   "访问的区域[%s]不存在.",
+	}
+	RegionAccessDenied = &Error{
+		code:   "RegionAccessDenied",
+		status: 403,
+		enUS:   "The user [%s] is not allowed to access region [%s].",
+		zhCN:   "用户 [%s] 没有访问区域 [%s] 的权限",
+	}
+)
+
 // workspace error
 var (
 	SpaceNotExists = &Error{
