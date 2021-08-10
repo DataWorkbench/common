@@ -11,6 +11,7 @@ import (
 type Tracer = opentracing.Tracer
 type SpanContext = jaeger.SpanContext
 
+// Config for create a new tracer.
 type Config struct {
 	ServiceName string `json:"service_name" yaml:"service_name" env:"service_name" validate:"required"`
 	LocalAgent  string `json:"local_agent"  yaml:"local_agent"  env:"local_agent"  validate:"required"`
