@@ -6,6 +6,9 @@ const (
 	// The key string format of trace id.
 	IdKey = "tid"
 
+	// The request id key in http header.
+	HeaderKey = "X-Request-Id"
+
 	// Used when no trace id found or generated failed.
 	//DefaultTraceIdValue = "none"
 )

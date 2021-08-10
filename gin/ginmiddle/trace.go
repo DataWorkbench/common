@@ -14,8 +14,6 @@ import (
 	"github.com/DataWorkbench/common/utils/idgenerator"
 )
 
-const ReqIdHeaderKey = "x-request-id"
-
 var (
 	// Morally a const:
 	ginComponentTag = opentracing.Tag{Key: string(ext.Component), Value: "gin"}
@@ -69,7 +67,7 @@ func Trace(ctx context.Context, tracer opentracing.Tracer) gin.HandlerFunc {
 		}
 
 		// Inherit or generate trace id.
-		tid = c.Request.Header.Get(ReqIdHeaderKey)
+		tid = c.Request.Header.Get(gtrace.HeaderKey)
 		if tid == "" {
 			// Try to use trace id as the request id.
 			sp, ok := span.Context().(gtrace.SpanContext)
@@ -83,7 +81,7 @@ func Trace(ctx context.Context, tracer opentracing.Tracer) gin.HandlerFunc {
 			}
 		}
 		// Insert trace id to response headers.
-		c.Writer.Header().Set(ReqIdHeaderKey, tid)
+		c.Writer.Header().Set(gtrace.HeaderKey, tid)
 		// Make exists field clear.
 		nl.ResetFields().AddString(gtrace.IdKey, tid)
 
