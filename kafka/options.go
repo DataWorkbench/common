@@ -2,15 +2,11 @@ package kafka
 
 import (
 	"time"
-
-	"github.com/opentracing/opentracing-go"
 )
 
 type Option func(o *Options)
 
 type Options struct {
-	tracer opentracing.Tracer
-
 	// option for consumerHandler.
 	batchMode     bool
 	batchMax      int
@@ -19,7 +15,6 @@ type Options struct {
 
 func applyOptions(options ...Option) Options {
 	opts := Options{
-		tracer:        opentracing.NoopTracer{},
 		batchMode:     false,
 		batchMax:      256,
 		retryInterval: time.Second * 5,
@@ -29,16 +24,6 @@ func applyOptions(options ...Option) Options {
 		option(&opts)
 	}
 	return opts
-}
-
-// WithTracer set the tracer object into options.
-// And the opentracing will be disabled if the tracer is nil.
-func WithTracer(tracer opentracing.Tracer) Option {
-	return func(o *Options) {
-		if tracer != nil {
-			o.tracer = tracer
-		}
-	}
 }
 
 // WithBatchMode controls the consumerHandler whether enable the `batchMode`

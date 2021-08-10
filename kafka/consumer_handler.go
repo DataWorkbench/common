@@ -62,7 +62,7 @@ func newConsumerHandler(ctx context.Context, handler MessageHandler, options ...
 	h := &consumerHandler{
 		lp:            glog.FromContext(ctx),
 		handler:       handler,
-		tracer:        opts.tracer,
+		tracer:        gtrace.TracerFromContext(ctx),
 		retryInterval: opts.retryInterval,
 		batchMode:     opts.batchMode,
 		batchMax:      opts.batchMax,
