@@ -5,12 +5,14 @@ import (
 	"strings"
 	"time"
 
-	"github.com/DataWorkbench/glog"
-
 	grpc_prometheus "github.com/grpc-ecosystem/go-grpc-prometheus"
 	"github.com/grpc-ecosystem/grpc-opentracing/go/otgrpc"
 	etcdv3 "go.etcd.io/etcd/client/v3"
 	"google.golang.org/grpc"
+
+	"github.com/DataWorkbench/glog"
+
+	"github.com/DataWorkbench/common/gtrace"
 )
 
 type Client = etcdv3.Client
@@ -24,17 +26,17 @@ type Config struct {
 }
 
 // NewClient creates a new etcd Client.
-func NewClient(ctx context.Context, cfg *Config, options ...Option) (cli *Client, err error) {
-	opts := applyOptions(options...)
+func NewClient(ctx context.Context, cfg *Config) (cli *Client, err error) {
 	lg := glog.FromContext(ctx)
+	tracer := gtrace.TracerFromContext(ctx)
 
 	var dialOpts []grpc.DialOption
 	dialOpts = append(dialOpts, grpc.WithChainUnaryInterceptor(
-		otgrpc.OpenTracingClientInterceptor(opts.tracer),
+		otgrpc.OpenTracingClientInterceptor(tracer),
 		grpc_prometheus.UnaryClientInterceptor,
 	))
 	dialOpts = append(dialOpts, grpc.WithChainStreamInterceptor(
-		otgrpc.OpenTracingStreamClientInterceptor(opts.tracer),
+		otgrpc.OpenTracingStreamClientInterceptor(tracer),
 		grpc_prometheus.StreamClientInterceptor,
 	))
 
