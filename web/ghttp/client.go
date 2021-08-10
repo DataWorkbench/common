@@ -1,11 +1,15 @@
 package ghttp
 
 import (
-	"crypto/tls"
+	"context"
 	"net"
 	"net/http"
-	"net/url"
 	"time"
+
+	"github.com/DataWorkbench/glog"
+	"github.com/opentracing/opentracing-go"
+
+	"github.com/DataWorkbench/common/gtrace"
 )
 
 // ClientConfig for configuration http transport
@@ -16,9 +20,6 @@ type ClientConfig struct {
 	IdleConnTimeout       time.Duration `json:"idle_conn_timeout"       yaml:"idle_conn_timeout"       env:"IDLE_CONN_TIMEOUT,default=30s"       validate:"required"`
 	MaxIdleConns          int           `json:"max_idle_conns"          yaml:"max_idle_conns"          env:"MAX_IDLE_CONNS,default=128"          validate:"required"`
 	MaxIdleConnsPerHost   int           `json:"max_idle_conns_per_host" yaml:"max_idle_conns_per_host" env:"MAX_IDLE_CONNS_PER_HOST,default=128" validate:"required"`
-	// TODO:
-	TLSClientConfig *tls.Config                           `json:"-" yaml:"-" env:"-" validate:"-"`
-	Proxy           func(*http.Request) (*url.URL, error) `json:"-" yaml:"-" env:"-" validate:"-"`
 }
 
 // defaultClientConfig return a ClientConfig that can be used in most scenarios;
@@ -31,13 +32,16 @@ func NewClientConfig() *ClientConfig {
 		IdleConnTimeout:       time.Second * 30,
 		MaxIdleConns:          128,
 		MaxIdleConnsPerHost:   128,
-		TLSClientConfig:       nil,
-		Proxy:                 nil,
 	}
 }
 
+type Client struct {
+	*http.Client
+	tracer opentracing.Tracer
+}
+
 // NewClient creating a new http.Client using the provided NetDialer
-func NewClient(cfg *ClientConfig) *http.Client {
+func NewClient(ctx context.Context, cfg *ClientConfig) *Client {
 	if cfg == nil {
 		cfg = NewClientConfig()
 	}
@@ -53,8 +57,8 @@ func NewClient(cfg *ClientConfig) *http.Client {
 	}
 
 	transport := &http.Transport{
-		Proxy:                 cfg.Proxy,
-		TLSClientConfig:       cfg.TLSClientConfig,
+		Proxy:                 nil,
+		TLSClientConfig:       nil,
 		DialContext:           dialer.DialContext,
 		ExpectContinueTimeout: cfg.ExpectContinueTimeout,
 		ResponseHeaderTimeout: cfg.ResponseHeaderTimeout,
@@ -64,10 +68,36 @@ func NewClient(cfg *ClientConfig) *http.Client {
 		MaxIdleConnsPerHost:   cfg.MaxIdleConnsPerHost,
 	}
 
-	client := &http.Client{
-		Transport: transport,
-		Timeout:   0,
+	cli := &Client{
+		Client: &http.Client{
+			Transport: transport,
+			Timeout:   0,
+		},
+		tracer: gtrace.TracerFromContext(ctx),
+	}
+	return cli
+}
+
+// Send is wrapper for http.Client.Do. To support opentracing span.
+func (cli *Client) Send(ctx context.Context, req *http.Request) (resp *http.Response, err error) {
+	lg := glog.FromContext(ctx)
+
+	if tid := gtrace.IdFromContext(ctx); tid != "" {
+		req.Header.Set(gtrace.HeaderKey, tid)
+	}
+	if span := opentracing.SpanFromContext(ctx); span != nil {
+		err = cli.tracer.Inject(span.Context(), opentracing.HTTPHeaders, opentracing.HTTPHeadersCarrier(req.Header))
+		if err != nil {
+			lg.Error().Error("inject span to request header error", err).Fire()
+		}
 	}
 
-	return client
+	lg.Debug().String("sending request to url", req.URL.String()).Fire()
+	resp, err = cli.Client.Do(req)
+	if err != nil {
+		lg.Error().Error("send request error", err).Fire()
+		return
+	}
+	lg.Debug().Int("successful request with status", resp.StatusCode).Fire()
+	return
 }

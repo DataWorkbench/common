@@ -24,7 +24,7 @@ func New() binding.StructValidator {
 	return sv
 }
 
-// structValidator for impls gin/binding.StructValidator to set default and validate struct
+// structValidator for impls web/binding.StructValidator to set default and validate struct
 // see: https://github.com/gin-gonic/gin/blob/master/binding/binding.go#L52
 type structValidator struct {
 	validate *validator.Validate
