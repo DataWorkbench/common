@@ -11,6 +11,8 @@ import (
 	"github.com/DataWorkbench/common/gtrace"
 )
 
+var traceComponentTag = opentracing.Tag{Key: string(ext.Component), Value: "sarama"}
+
 type msgHeadersCarrier struct {
 	msgHeaders []sarama.RecordHeader
 }
@@ -47,6 +49,7 @@ func producerTraceSpan(ctx context.Context, tracer gtrace.Tracer, opName string)
 		opName,
 		opentracing.ChildOf(parentCtx),
 		ext.SpanKindProducer,
+		traceComponentTag,
 	)
 
 	mc := &msgHeadersCarrier{}

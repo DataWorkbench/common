@@ -267,6 +267,7 @@ func (h *consumerHandler) spanHandler(ctx context.Context, messages []*sarama.Co
 		opentracing.ChildOf(producerSpan),
 		opentracing.ChildOf(parentSpan),
 		ext.SpanKindConsumer,
+		traceComponentTag,
 		opentracing.Tags{"topic": msg.Topic, "partition": msg.Partition, "offset": msg.Offset, "message.num": len(messages)},
 	)
 
