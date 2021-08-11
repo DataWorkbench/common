@@ -30,12 +30,14 @@ func NewUpgrader(ctx context.Context) *Upgrader {
 		Subprotocols:     nil,
 		Error: func(w http.ResponseWriter, r *http.Request, status int, reason error) {
 			//http.Error(w, reason.Error(), status)
-			resp := qerror.Response{
+			resp := &qerror.Response{
 				Code:      "WebSocketError",
-				EnUS:      reason.Error(),
-				ZhCN:      reason.Error(),
 				Status:    status,
 				RequestID: w.Header().Get(gtrace.HeaderKey),
+				Detail: qerror.Detail{
+					EnUs: reason.Error(),
+					ZhCn: reason.Error(),
+				},
 			}
 			b, err := json.Marshal(resp)
 			if err != nil {

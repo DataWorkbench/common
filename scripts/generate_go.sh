@@ -22,6 +22,6 @@ if ! type protoc > /dev/null 2>&1; then
 fi
 
 # generate code
-protoc -I=. -I="${GOPATH}"/src --go_out=. qerror/errors.proto
+#protoc -I=. -I="${GOPATH}"/src --go_out=. qerror/errors.proto
 
 exit $?

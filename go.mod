@@ -4,7 +4,7 @@ go 1.15
 
 require (
 	github.com/DataWorkbench/glog v0.0.0-20210809050640-4960fd6de6ab
-	github.com/DataWorkbench/gproto v0.0.0-20210806005855-b75bd884db05
+	github.com/DataWorkbench/gproto v0.0.0-20210811093804-86762ac04a76
 	github.com/HdrHistogram/hdrhistogram-go v1.0.1 // indirect
 	github.com/Shopify/sarama v1.29.1
 	github.com/creasty/defaults v1.5.1
@@ -13,7 +13,6 @@ require (
 	github.com/gin-gonic/gin v1.7.3
 	github.com/go-playground/validator/v10 v10.4.1
 	github.com/go-redis/redis/v8 v8.11.0
-	github.com/golang/protobuf v1.5.2
 	github.com/gorilla/websocket v1.4.2
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.2
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
