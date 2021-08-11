@@ -14,10 +14,7 @@ const (
 	callBackAfterName  = "OpenTracing:After"
 )
 
-var (
-	// Morally a const:
-	gormComponentTag = opentracing.Tag{Key: string(ext.Component), Value: "gorm"}
-)
+var traceComponentTag = opentracing.Tag{Key: string(ext.Component), Value: "gorm"}
 
 type openTracingPlugin struct {
 	tracer opentracing.Tracer
@@ -101,10 +98,11 @@ func (pl *openTracingPlugin) before(db *gorm.DB) {
 	opName := strings.Split(sql, " ")[0]
 
 	span := pl.tracer.StartSpan(
-		db.Name()+" "+opName,
+		db.Name()+opName,
 		opentracing.ChildOf(parentCtx),
+		ext.SpanKindRPCClient,
+		traceComponentTag,
 		opentracing.Tag{Key: string(ext.DBType), Value: db.Name()},
-		gormComponentTag,
 	)
 
 	span.LogFields(tracerLog.String("sql", db.Dialector.Explain(sql, db.Statement.Vars...)))
@@ -116,8 +114,9 @@ func (pl *openTracingPlugin) after(db *gorm.DB) {
 	span := opentracing.SpanFromContext(db.Statement.Context)
 
 	// Error
-	if db.Error != nil {
-		span.LogFields(tracerLog.Error(db.Error))
+	if err := db.Error; err != nil {
+		ext.Error.Set(span, true)
+		span.LogFields(tracerLog.Error(err))
 	}
 	span.Finish()
 }
