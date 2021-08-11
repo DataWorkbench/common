@@ -8,27 +8,16 @@ const (
 
 // Strategy of schedule depends of workflow.
 const (
-	ScheduleDependStrategyNone int32 = iota + 1 // => "none"
-	ScheduleDependStrategyLast                  // => "last"
-	ScheduleDependStrategyStop                  // => "stop"
+	ScheduleConcurrencyPolicyAllow   int32 = iota + 1 // => "allow"
+	ScheduleConcurrencyPolicyForbid                   // => "forbid"
+	ScheduleConcurrencyPolicyReplace                  // => "replace"
 )
 
 // Strategy of schedule retry of workflow.
 const (
-	ScheduleRetryStrategyNone int32 = iota + 1
-	ScheduleRetryStrategyAuto
+	ScheduleRetryPolicyNone int32 = iota + 1
+	ScheduleRetryPolicyAuto
 )
-
-//// Strategy of notify of workflow.
-//const (
-//	FlowNotifyStrategyFlowStarted int32 = iota + 1
-//	FlowNotifyStrategyFlowSucceed
-//	FlowNotifyStrategyFlowFailed
-//	FlowNotifyStrategyNodeStarted
-//	FlowNotifyStrategyNodeSucceed
-//	FlowNotifyStrategyNodeRetried
-//	FlowNotifyStrategyNodeFailed
-//)
 
 // The environmental parameters for Flink.
 type StreamFlowEnv struct {
@@ -45,12 +34,16 @@ type StreamFlowSchedule struct {
 	Started int64 `json:"started"`
 	// Timestamp of end time of the validity period, unit in seconds.
 	Ended int64 `json:"ended"`
-	// Strategy of dependency. 1 => "none", 2 => "last".
-	DependStrategy int32 `json:"depend_strategy"`
-	RetryStrategy  int32 `json:"retry_strategy"`
-	RetryLimit     int32 `json:"retry_limit"`
-	RetryInterval  int32 `json:"retry_interval"`
-	Timeout        int32 `json:"timeout"`
+	// Concurrency policy. 1 => "allow", 2 => "forbid", 3 => "replace"
+	// - allow: Multiple task instances are allowed at the same time.
+	// - forbid: No new instances will be created, and this schedule cycle will be skipped,
+	// - replace: Force stop the old running instances and create new.
+	ConcurrencyPolicy int32 `json:"concurrency_policy"`
+	// Retry policy when task failed. 1 => "not retry" 2 => "auto retry"
+	RetryPolicy   int32 `json:"retry_policy"`
+	RetryLimit    int32 `json:"retry_limit"`
+	RetryInterval int32 `json:"retry_interval"`
+	Timeout       int32 `json:"timeout"`
 	// Express is the standard unix crontab express.
 	Express string `json:"express"`
 }
