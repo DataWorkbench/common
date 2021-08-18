@@ -15,7 +15,11 @@ func New() binding.StructValidator {
 	}
 	sv.validate.SetTagName("binding")
 	sv.validate.RegisterTagNameFunc(func(field reflect.StructField) string {
-		name := strings.SplitN(field.Tag.Get("params"), ",", 2)[0]
+		tag := field.Tag.Get("params")
+		if tag == "" {
+			tag = field.Tag.Get("json")
+		}
+		name := strings.SplitN(tag, ",", 2)[0]
 		if name == "-" {
 			return ""
 		}
