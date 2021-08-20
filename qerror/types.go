@@ -43,6 +43,13 @@ var (
 		zhCN:   "JSON 格式错误",
 	}
 
+	UnknownField = &Error{
+		code:   "UnknownField",
+		status: 400,
+		enUS:   "Found unknown field [%s] in you request body",
+		zhCN:   "请求体中包含不支持字段[%s]",
+	}
+
 	InvalidRequest = &Error{
 		code:   "InvalidRequest",
 		status: 400,
