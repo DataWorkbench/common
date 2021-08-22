@@ -10,12 +10,15 @@ import (
 )
 
 var (
-	protojsonMarshal = protojson.MarshalOptions{EmitUnpopulated: true}
+	protoJSONMarshal = protojson.MarshalOptions{
+		EmitUnpopulated: true,
+		UseEnumNumbers:  true,
+	}
 )
 
 func pbMsgToString(logger *glog.Logger, i interface{}) string {
 	if p, ok := i.(proto.Message); ok {
-		b, err := protojsonMarshal.Marshal(p)
+		b, err := protoJSONMarshal.Marshal(p)
 		if err == nil {
 			return *(*string)(unsafe.Pointer(&b))
 		}

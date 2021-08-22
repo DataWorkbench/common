@@ -15,6 +15,8 @@ import (
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/keepalive"
+
+	"github.com/DataWorkbench/common/gtrace"
 )
 
 // GServer is an type aliases to make caller don't have to introduce "google.golang.org/grpc"
@@ -38,7 +40,6 @@ type Server struct {
 // NewServer return a new Server
 // NOTICE: Must set glog.loggerT into the ctx by glow.WithContext
 func NewServer(ctx context.Context, cfg *ServerConfig, options ...ServerOption) (s *Server, err error) {
-	opts := applyServerOptions(options...)
 	lp := glog.FromContext(ctx)
 
 	defer func() {
@@ -46,6 +47,8 @@ func NewServer(ctx context.Context, cfg *ServerConfig, options ...ServerOption) 
 			lp.Error().Error("create grpc server error", err).Fire()
 		}
 	}()
+
+	tracer := gtrace.TracerFromContext(ctx)
 
 	var srvOpts []grpc.ServerOption
 
@@ -70,7 +73,7 @@ func NewServer(ctx context.Context, cfg *ServerConfig, options ...ServerOption) 
 
 	// Set and add Unary Server Interceptor
 	srvOpts = append(srvOpts, grpc.ChainUnaryInterceptor(
-		otgrpc.OpenTracingServerInterceptor(opts.tracer),
+		otgrpc.OpenTracingServerInterceptor(tracer),
 		traceUnaryServerInterceptor(lp),
 		recoverUnaryServerInterceptor(),
 		grpc_prometheus.UnaryServerInterceptor,
@@ -78,7 +81,7 @@ func NewServer(ctx context.Context, cfg *ServerConfig, options ...ServerOption) 
 
 	// Set and add Stream Server Interceptor
 	srvOpts = append(srvOpts, grpc.ChainStreamInterceptor(
-		otgrpc.OpenTracingStreamServerInterceptor(opts.tracer),
+		otgrpc.OpenTracingStreamServerInterceptor(tracer),
 		traceStreamServerInterceptor(lp),
 		recoverStreamServerInterceptor(),
 		grpc_prometheus.StreamServerInterceptor,

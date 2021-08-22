@@ -65,6 +65,7 @@ type SourceHbaseParams struct {
 
 type SourceFtpParams struct {
 	Host             string   `json:"host"`
+	Port             int32    `json:"port"`
 	ConnectorOptions []string `json:"connector_options"`
 }
 

@@ -9,6 +9,8 @@ import (
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
 	tracerLog "github.com/opentracing/opentracing-go/log"
+
+	"github.com/DataWorkbench/common/gtrace"
 )
 
 // syncProducer is wraps for sarama.SyncProducer.
@@ -19,8 +21,7 @@ type syncProducer struct {
 }
 
 // NewSyncProducer creates Producer with syncProducer.
-func NewSyncProducer(ctx context.Context, cfg *ProducerConfig, options ...Option) (Producer, error) {
-	opts := applyOptions(options...)
+func NewSyncProducer(ctx context.Context, cfg *ProducerConfig) (Producer, error) {
 	lp := glog.FromContext(ctx)
 
 	lp.Info().Msg("syncProducer: initializing new sync producer").String("hosts", cfg.Hosts).Fire()
@@ -34,7 +35,7 @@ func NewSyncProducer(ctx context.Context, cfg *ProducerConfig, options ...Option
 	p := &syncProducer{
 		producer: producer,
 		lp:       lp,
-		tracer:   opts.tracer,
+		tracer:   gtrace.TracerFromContext(ctx),
 	}
 
 	lp.Debug().Msg("syncProducer: successfully initialized sync producer").Fire()

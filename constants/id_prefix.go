@@ -21,7 +21,7 @@ const (
 	IdPrefixStreamFlowTestInst = "sti-"
 
 	// The Id prefix of engine.
-	IdPrefixEngine = "eng-"
+	IdPrefixEngine        = "eng-"
 	IdPrefixEngineInBuild = "inbuild-"
 
 	// The Id prefix of monitor rule.
@@ -31,5 +31,5 @@ const (
 	SourceTablesIDPrefix  = "sot-"
 	JobIDPrefix           = "job-"
 	UdfManagerIDPrefix    = "udf-"
-	FileMangerIDPrefix    = "file-"
+	FileMangerIDPrefix    = "fil-"
 )

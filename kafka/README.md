@@ -22,7 +22,7 @@ func main() {
 	ctx := glog.WithContext(context.Background(), lp)
 
 	// Initializes a producer.
-	producer, err := kafka.NewAsyncProducer(ctx, cfg, kafka.WithTracer(nil))
+	producer, err := kafka.NewAsyncProducer(ctx, cfg)
 	if err != nil {
 		return
 	}
@@ -58,7 +58,7 @@ func main() {
 	ctx := glog.WithContext(context.Background(), lp)
 
 	// Initializes a producer.
-	producer, err := kafka.NewAsyncProducer(ctx, cfg, kafka.WithTracer(nil))
+	producer, err := kafka.NewAsyncProducer(ctx, cfg)
 	if err != nil {
 		return
 	}
@@ -108,7 +108,7 @@ func main() {
 		BalanceStrategy:  "sticky",
 	}
 
-	watcher, err := kafka.NewConsumerGroup(ctx, "group1", cfg, ConsumeHandler, kafka.WithTracer(nil))
+	watcher, err := kafka.NewConsumerGroup(ctx, "group1", cfg, ConsumeHandler)
 	if err != nil {
 		return
 	}
@@ -136,7 +136,7 @@ func main() {
 
 ### Consumer process many message at a time.
 ```go
-consumer, err := kafka.NewConsumerGroup(ctx, "group1", cfg, ConsumeHandler, kafka.WithTracer(nil), kafka.WithBatchMode(true))
+consumer, err := kafka.NewConsumerGroup(ctx, "group1", cfg, ConsumeHandler, kafka.WithBatchMode(true))
 ```
 
 ### Consumer process the dynamic topic lists.
@@ -145,7 +145,7 @@ If sets topics with a regular expression, The consumer will monitor the kafka's 
 When qualified topics changes, The automatic re-balance will be triggers.
 
 ```go
-consumer, err := kafka.NewConsumerDynamic(ctx, "group1", cfg, ConsumeHandler, kafka.WithTracer(nil))
+consumer, err := kafka.NewConsumerDynamic(ctx, "group1", cfg, ConsumeHandler)
 if err != nil {
     return
 }
@@ -220,7 +220,6 @@ func main() {
 
 	handler := ConsumerWatcherHandler(
 		cfg, MessageHandler,
-		kafka.WithTracer(nil),
 		kafka.WithBatchMode(true),
 	)
 

@@ -4,6 +4,8 @@ import (
 	"context"
 
 	"github.com/go-redis/redis/v8"
+
+	"github.com/DataWorkbench/common/gtrace"
 )
 
 type RedisConfig struct {
@@ -19,6 +21,6 @@ func NewRedisConn(ctx context.Context, cfg *RedisConfig) (*redis.Client, error) 
 		Password: cfg.Password,
 		DB:       cfg.Database,
 	})
+	rdb.AddHook(&hookTrace{tracer: gtrace.TracerFromContext(ctx)})
 	return rdb, nil
-
 }

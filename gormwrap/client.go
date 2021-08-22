@@ -11,6 +11,8 @@ import (
 	"github.com/DataWorkbench/glog"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+
+	"github.com/DataWorkbench/common/gtrace"
 )
 
 type MySQLConfig struct {
@@ -32,7 +34,6 @@ type MySQLConfig struct {
 // NewMySQLConn return a grom.DB by mysql driver
 // NOTICE: Must set glog.Logger into the ctx by glow.WithContext
 func NewMySQLConn(ctx context.Context, cfg *MySQLConfig, options ...Option) (db *gorm.DB, err error) {
-	opts := applyOptions(options...)
 	lp := glog.FromContext(ctx)
 
 	defer func() {
@@ -76,7 +77,8 @@ func NewMySQLConn(ctx context.Context, cfg *MySQLConfig, options ...Option) (db 
 	sqlDB.SetMaxOpenConns(cfg.MaxOpenConn)
 	sqlDB.SetConnMaxLifetime(cfg.ConnMaxLifetime)
 
-	if err = db.Use(newOpenTracingPlugin(opts.tracer)); err != nil {
+	tracer := gtrace.TracerFromContext(ctx)
+	if err = db.Use(newOpenTracingPlugin(tracer)); err != nil {
 		return
 	}
 

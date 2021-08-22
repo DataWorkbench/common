@@ -3,13 +3,12 @@ package qerror
 import (
 	"fmt"
 
+	"github.com/DataWorkbench/gproto/pkg/model"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-
-	"github.com/DataWorkbench/common/qerror/internal/qerror"
 )
 
-type pbError = qerror.Error
+type pbError = model.Error
 
 type Error struct {
 	code   string // error code
@@ -49,8 +48,8 @@ func (e *Error) GRPCStatus() *status.Status {
 	sd, err := s.WithDetails(&pbError{
 		Code:   e.code,
 		Status: int32(e.status),
-		EnUS:   e.enUS,
-		ZhCN:   e.zhCN,
+		EnUs:   e.enUS,
+		ZhCn:   e.zhCN,
 	})
 	if err == nil {
 		return sd
@@ -79,7 +78,7 @@ func FromGRPC(err error) *Error {
 	return &Error{
 		code:   pe.Code,
 		status: int(pe.Status),
-		enUS:   pe.EnUS,
-		zhCN:   pe.ZhCN,
+		enUS:   pe.EnUs,
+		zhCN:   pe.ZhCn,
 	}
 }

@@ -10,7 +10,7 @@ import (
 	"github.com/opentracing/opentracing-go/ext"
 	tracerLog "github.com/opentracing/opentracing-go/log"
 
-	"github.com/DataWorkbench/common/trace"
+	"github.com/DataWorkbench/common/gtrace"
 )
 
 // asyncProducer is wraps for sarama.AsyncProducer.
@@ -27,8 +27,7 @@ type asyncMetadata struct {
 }
 
 // NewAsyncProducer creates Producer with asyncProducer.
-func NewAsyncProducer(ctx context.Context, cfg *ProducerConfig, options ...Option) (Producer, error) {
-	opts := applyOptions(options...)
+func NewAsyncProducer(ctx context.Context, cfg *ProducerConfig) (Producer, error) {
 	lp := glog.FromContext(ctx)
 
 	lp.Info().Msg("asyncProducer: initializing new async producer").String("hosts", cfg.Hosts).Fire()
@@ -42,7 +41,7 @@ func NewAsyncProducer(ctx context.Context, cfg *ProducerConfig, options ...Optio
 	p := &asyncProducer{
 		producer: producer,
 		lp:       lp,
-		tracer:   opts.tracer,
+		tracer:   gtrace.TracerFromContext(ctx),
 	}
 
 	go p.checkSuccesses()
@@ -61,7 +60,7 @@ func (p *asyncProducer) Send(ctx context.Context, topic string, key Encoder, val
 		Key:      key,
 		Value:    value,
 		Headers:  headers,
-		Metadata: &asyncMetadata{span: span, tid: trace.IdFromContext(ctx)},
+		Metadata: &asyncMetadata{span: span, tid: gtrace.IdFromContext(ctx)},
 	}
 
 	p.producer.Input() <- message
@@ -91,7 +90,7 @@ func (p *asyncProducer) checkSuccesses() {
 			String("topic", msg.Topic).
 			Int32("partition", msg.Partition).
 			Int64("offset", msg.Offset).
-			String(trace.IdKey, meta.tid).
+			String(gtrace.IdKey, meta.tid).
 			Fire()
 
 		span := meta.span
@@ -114,7 +113,7 @@ func (p *asyncProducer) checkErrors() {
 		p.lp.Error().Msg("asyncProducer: send message failed").
 			String("topic", msg.Topic).
 			Error("error", pe.Err).
-			String(trace.IdKey, meta.tid).
+			String(gtrace.IdKey, meta.tid).
 			Fire()
 
 		span := meta.span

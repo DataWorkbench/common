@@ -59,21 +59,21 @@ type JobWatchInfo struct {
 
 func StringStatusToInt32(s string) (r int32) {
 	if s == constants.StatusRunningString {
-		r = constants.StatusRunning
+		r = int32(constants.StatusRunning.Number())
 	} else if s == constants.StatusFinishString {
-		r = constants.StatusFinish
+		r = int32(constants.StatusFinish.Number())
 	} else if s == constants.StatusFailedString {
-		r = constants.StatusFailed
+		r = int32(constants.StatusFailed.Number())
 	}
 	return r
 }
 
 func Int32StatusToString(i int32) (r string) {
-	if i == constants.StatusRunning {
+	if i == int32(constants.StatusRunning.Number()) {
 		r = constants.StatusRunningString
-	} else if i == constants.StatusFinish {
+	} else if i == int32(constants.StatusFinish.Number()) {
 		r = constants.StatusFinishString
-	} else if i == constants.StatusFailed {
+	} else if i == int32(constants.StatusFailed) {
 		r = constants.StatusFailedString
 	}
 	return r
@@ -315,7 +315,7 @@ func ModifyStatus(ctx context.Context, ID string, status int32, message string, 
 		return
 	}
 
-	if status == constants.StatusFinish || status == constants.StatusFailed {
+	if status == int32(constants.StatusFinish.Number()) || status == int32(constants.StatusFailed.Number()) {
 		err = FreeJobResources(ctx, resources, EngineType, logger, httpClient, jobdevClient)
 		if err != nil {
 			logger.Warn().String("can't delete jar", resources.Jar).String("can't FreeEngine", resources.JobID).Fire()

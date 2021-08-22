@@ -34,9 +34,22 @@ func NewServer(ctx context.Context, cfg *Config) (*Server, error) {
 	}
 
 	lp := glog.FromContext(ctx)
+
+	mux := http.NewServeMux()
+	// Expose the registered metrics via HTTP.
+	mux.Handle(cfg.URLPath, promhttp.HandlerFor(
+		prometheus.DefaultGatherer,
+		promhttp.HandlerOpts{
+			// Opt into OpenMetrics to support exemplars.
+			EnableOpenMetrics: true,
+			ErrorLog:          &Logger{Output: lp},
+		},
+	))
+
 	s := &Server{
 		lp:  lp,
 		cfg: cfg,
+		h:   &http.Server{Addr: cfg.Address, Handler: mux},
 	}
 	return s, nil
 }
@@ -45,20 +58,8 @@ func (s *Server) ListenAndServe() (err error) {
 	if s == nil {
 		return
 	}
-	mux := http.NewServeMux()
-	// Expose the registered metrics via HTTP.
-	mux.Handle(s.cfg.URLPath, promhttp.HandlerFor(
-		prometheus.DefaultGatherer,
-		promhttp.HandlerOpts{
-			// Opt into OpenMetrics to support exemplars.
-			EnableOpenMetrics: true,
-			ErrorLog:          &Logger{Output: s.lp},
-		},
-	))
 
 	s.lp.Info().String("prometheus metrics server listening", s.cfg.Address+s.cfg.URLPath).Fire()
-
-	s.h = &http.Server{Addr: s.cfg.Address, Handler: mux}
 
 	err = s.h.ListenAndServe()
 	if err != nil && err != http.ErrServerClosed {

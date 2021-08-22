@@ -43,6 +43,13 @@ var (
 		zhCN:   "JSON 格式错误",
 	}
 
+	UnknownField = &Error{
+		code:   "UnknownField",
+		status: 400,
+		enUS:   "Found unknown field [%s] in you request body",
+		zhCN:   "请求体中包含不支持字段[%s]",
+	}
+
 	InvalidRequest = &Error{
 		code:   "InvalidRequest",
 		status: 400,
@@ -111,6 +118,28 @@ var (
 	}
 )
 
+// Error for Global API
+var (
+	RegionNotSpecified = &Error{
+		code:   "RegionNotSpecified",
+		status: 400,
+		enUS:   "A valid region id must be specified in you request path",
+		zhCN:   "无效的请求, 未指定 regionId",
+	}
+	RegionNotExists = &Error{
+		code:   "RegionNotExists",
+		status: 404,
+		enUS:   "The region [%s] you access not exists.",
+		zhCN:   "访问的区域[%s]不存在.",
+	}
+	RegionAccessDenied = &Error{
+		code:   "RegionAccessDenied",
+		status: 403,
+		enUS:   "The user [%s] is not allowed to access region [%s].",
+		zhCN:   "用户 [%s] 没有访问区域 [%s] 的权限",
+	}
+)
+
 // workspace error
 var (
 	SpaceNotExists = &Error{
@@ -153,10 +182,10 @@ var (
 		enUS:   "The member [%s] has been exists.",
 		zhCN:   "空间成员[%s]已存在.",
 	}
-	SpaceOwnerCannotRemoved = &Error{
-		code:   "SpaceOwnerCannotRemoved",
+	SpaceOwnerCannotDelete = &Error{
+		code:   "SpaceOwnerCannotDelete",
 		status: 403,
-		enUS:   "The member of workspace owner cannot be removed.",
+		enUS:   "The member of workspace owner cannot be deleted.",
 		zhCN:   "空间所有者不允许删除.",
 	}
 	SpaceOwnerCannotUpdated = &Error{

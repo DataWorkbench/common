@@ -13,7 +13,7 @@ const (
 	EngineStatusDeleted = "deleted"
 
 	EngineStatusDisable = "disable"
-	EngineStatusEnable = "enable"
+	EngineStatusEnable  = "enable"
 
 	EngineTransactionStatusCreating = "creating"
 	EngineTransactionStatusUpdating = "updating"

@@ -1,25 +1,32 @@
 package qerror
 
-// Response used to return http error response body
-type Response struct {
-	// The error summary.
-	Code string `json:"code"`
+type Detail struct {
 	// The error description format with en_us.
-	EnUS string `json:"en_us"`
+	EnUs string `json:"en_us"`
 	// The error description format with zh_cn.
-	ZhCN string `json:"zh_cn"`
+	ZhCn string `json:"zh_cn"`
+}
+
+// Response used to http error response body
+type Response struct {
+	// The is summary information of error.
+	Code string `json:"code"`
 	// The http status code.
 	Status int `json:"status"`
 	// The request id that same as Header "X-Request-Id".
 	RequestID string `json:"request_id"`
+	// detail is detail information of error.
+	Detail Detail `json:"detail"`
 }
 
 func NewResponse(err *Error, reqId string) *Response {
 	return &Response{
 		Code:      err.code,
-		EnUS:      err.enUS,
-		ZhCN:      err.zhCN,
 		Status:    err.status,
 		RequestID: reqId,
+		Detail: Detail{
+			EnUs: err.enUS,
+			ZhCn: err.zhCN,
+		},
 	}
 }

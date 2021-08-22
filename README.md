@@ -9,7 +9,7 @@ A common library for DataWorkbench.
 - [grpcwrap](grpcwrap)
 - [metrics](metrics)
 - [utils](utils)
-- [trace](trace)
+- [gtrace](gtrace)
 
 ## Installation
 
