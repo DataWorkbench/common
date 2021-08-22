@@ -287,6 +287,34 @@ var (
 		enUS:   "The engine[%s] not exist.",
 		zhCN:   "计算引擎[%s]不存在.",
 	}
+
+	EngineNameInUse = &Error{
+		code:   "EngineNameInUse",
+		status: 400,
+		enUS:   "The engine name[%s] is in use.",
+		zhCN:   "计算引擎名称[%s]已存在.",
+	}
+
+	EngineNameError = &Error{
+		code:   "EngineNameError",
+		status: 400,
+		enUS:   "The name[%s] is not support.",
+		zhCN:   "命名[%s]错误.",
+	}
+
+	EngineInTransaction = &Error{
+		code:   "EngineInTransaction",
+		status: 403,
+		enUS:   "The engine[%s] is in transaction[%s].",
+		zhCN:   "计算引擎[%s]正在[%s]中.",
+	}
+
+	EngineCreateTimeout = &Error{
+		code:   "EngineCreateTimeout",
+		status: 500,
+		enUS:   "Create Engine[%s] timeout.",
+		zhCN:   "创建引擎[%s]超时.",
+	}
 )
 
 // notifier error
