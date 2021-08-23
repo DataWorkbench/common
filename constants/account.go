@@ -32,6 +32,8 @@ var UserColumns = []string{
 	"currency",
 	"gravatar_email",
 	"privilege",
+	"zones",
+	"regions",
 	"create_time",
 	"status_time",
 }
