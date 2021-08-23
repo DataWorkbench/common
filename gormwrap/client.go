@@ -88,15 +88,14 @@ func NewMySQLConn(ctx context.Context, cfg *MySQLConfig, options ...Option) (db 
 }
 
 // conditions: column: values(string, int or slice)
-func BuildQuery(conditions map[string]interface{}) (query string, args []interface{}) {
+func BuildQueryArgs(conditions map[string]interface{}) (query string, args []interface{}) {
 	var q string
 	var a []interface{}
 	identifier := " "
 	operator := " = "
 	for k, v := range conditions {
 		switch v.(type) {
-		case types.Slice:
-		case types.Array:
+		case types.Slice, types.Array, []string, []int:
 			operator = " in "
 		default:
 			operator = " = "
@@ -104,7 +103,7 @@ func BuildQuery(conditions map[string]interface{}) (query string, args []interfa
 
 		q = q + identifier + k + operator + Placeholder
 		a = append(a, v)
-		identifier = "and"
+		identifier = " and "
 	}
 	return q, a
 }
