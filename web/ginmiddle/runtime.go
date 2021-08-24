@@ -41,3 +41,8 @@ func IsWekSocket(c *gin.Context) bool {
 	upgrade := c.GetHeader("Upgrade")
 	return upgrade == "websocket"
 }
+
+// IsFromConsole check the request whether from Qingcloud's web console.
+func IsFromConsole(c *gin.Context) bool {
+	return c.GetHeader("user-agent") == "QingCloud-Web-Console"
+}
