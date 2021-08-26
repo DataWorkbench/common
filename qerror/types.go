@@ -116,6 +116,12 @@ var (
 		enUS:   "The value of [%s] must be [%s %s] and you provides value is [%v].",
 		zhCN:   "参数[%s]必须 [%s %s], 请求参数值 [%v].",
 	}
+	DependenceParamNotExist = &Error{
+		code:   "DependenceParamNotExist",
+		status: 400,
+		enUS:   "The param[s] [%s] is[are] dependence of param [%s] not exist.",
+		zhCN:   "参数[%s]不存在，被参数[%s]依赖.",
+	}
 )
 
 // Error for Global API
@@ -265,12 +271,6 @@ var (
 		status: http.StatusInternalServerError,
 		enUS:   "not support source type[%s]",
 		zhCN:   "不支持的数据源类型[%s]",
-	}
-	NotSupportEngineType = &Error{
-		code:   "NotSupportEngineType",
-		status: http.StatusInternalServerError,
-		enUS:   "not support engine type[%s]",
-		zhCN:   "不支持的引擎类型[%s]",
 	}
 	InvalidSourceName = &Error{
 		code:   "InvalidSourceName",

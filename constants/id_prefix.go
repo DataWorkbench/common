@@ -22,7 +22,6 @@ const (
 
 	// The Id prefix of engine.
 	IdPrefixEngine        = "eng-"
-	IdPrefixEngineInBuild = "inbuild-"
 
 	// The Id prefix of monitor rule.
 	IdPrefixMonitorRule = "mor-"
