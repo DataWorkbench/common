@@ -2,7 +2,6 @@ package ginmiddle
 
 import (
 	"context"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -23,13 +22,6 @@ func GetStdContext(c *gin.Context) context.Context {
 		panic("no context set, you should use ginmiddle.Trace with *web.Engine.")
 	}
 	return v.(context.Context)
-}
-
-// ParseRequestAction parse the operation(action) name from request.
-func ParseRequestAction(c *gin.Context) string {
-	fields := strings.Split(c.HandlerName(), "/")
-	action := strings.Split(fields[len(fields)-1], ".")[1]
-	return action
 }
 
 // IsWekSocket check whether the request want to upgrade to websocket.
