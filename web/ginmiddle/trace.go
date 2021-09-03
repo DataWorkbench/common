@@ -58,7 +58,7 @@ func Trace(ctx context.Context) gin.HandlerFunc {
 		}
 		// Start a new span for this request.
 		span := tracer.StartSpan(
-			ParseRequestAction(c), opentracing.ChildOf(parentSpan),
+			ParseOpName(c.Handler()), opentracing.ChildOf(parentSpan),
 			spanKindTag, ginComponentTag,
 		)
 		// Inherit or generate trace id.

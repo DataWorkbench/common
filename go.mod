@@ -4,7 +4,7 @@ go 1.15
 
 require (
 	github.com/DataWorkbench/glog v0.0.0-20210809050640-4960fd6de6ab
-	github.com/DataWorkbench/gproto v0.0.0-20210811093804-86762ac04a76
+	github.com/DataWorkbench/gproto v0.0.0-20210902074306-7a2eb74520f3
 	github.com/HdrHistogram/hdrhistogram-go v1.0.1 // indirect
 	github.com/Shopify/sarama v1.29.1
 	github.com/creasty/defaults v1.5.1
@@ -27,7 +27,7 @@ require (
 	github.com/yu31/snowflake v0.0.0-20210309213122-580647caa2bb
 	go.etcd.io/etcd/client/v3 v3.5.0
 	google.golang.org/grpc v1.38.0
-	google.golang.org/protobuf v1.26.0
+	google.golang.org/protobuf v1.27.1
 	gorm.io/driver/mysql v1.0.3
 	gorm.io/gorm v1.20.6
 )

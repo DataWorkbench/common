@@ -2,7 +2,6 @@ package ginmiddle
 
 import (
 	"context"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -25,13 +24,6 @@ func GetStdContext(c *gin.Context) context.Context {
 	return v.(context.Context)
 }
 
-// ParseRequestAction parse the operation(action) name from request.
-func ParseRequestAction(c *gin.Context) string {
-	fields := strings.Split(c.HandlerName(), "/")
-	action := strings.Split(fields[len(fields)-1], ".")[1]
-	return action
-}
-
 // IsWekSocket check whether the request want to upgrade to websocket.
 func IsWekSocket(c *gin.Context) bool {
 	connection := c.GetHeader("Connection")
@@ -40,4 +32,9 @@ func IsWekSocket(c *gin.Context) bool {
 	}
 	upgrade := c.GetHeader("Upgrade")
 	return upgrade == "websocket"
+}
+
+// IsFromConsole check the request whether from Qingcloud's web console.
+func IsFromConsole(c *gin.Context) bool {
+	return c.GetHeader("user-agent") == "QingCloud-Web-Console"
 }

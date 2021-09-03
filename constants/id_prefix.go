@@ -30,5 +30,5 @@ const (
 	SourceTablesIDPrefix  = "sot-"
 	JobIDPrefix           = "job-"
 	UdfManagerIDPrefix    = "udf-"
-	FileMangerIDPrefix    = "fil-"
+	FileMangerIDPrefix    = "res-"
 )

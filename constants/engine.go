@@ -7,9 +7,9 @@ const (
 const (
 
 	// Engine status
-	EngineStatusInit = "initialized"
-	EngineStatusFail = "failed"
-	EngineStatusActive = "active"
+	EngineStatusInit    = "initialized"
+	EngineStatusFail    = "failed"
+	EngineStatusActive  = "active"
 	EngineStatusDeleted = "deleted"
 
 	EngineTransactionStatusCreating = "creating"
