@@ -13,7 +13,7 @@ type EngineRequestOptions struct {
 	AccessKey   string `json:"accesskey"`
 	SecretKey   string `json:"secretkey"`
 	EndPoint    string `json:"endpoint"`
-	HbaseHosts  string `json:"hbasehosts"`
+	//TODOHbaseHosts  []HostType `json:"hbasehosts"`
 }
 
 type EngineResponseOptions struct {

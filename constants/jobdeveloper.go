@@ -2,10 +2,10 @@ package constants
 
 const (
 	EmptyNode     = "Empty"
-	UDFNode       = "UDF"
 	ValuesNode    = "Values"
 	ConstNode     = "Const"
 	SourceNode    = "Source"
+	DimensionNode = "Dimension"
 	DestNode      = "Dest"
 	OrderByNode   = "OrderBy"
 	LimitNode     = "Limit"
@@ -20,9 +20,8 @@ const (
 	WindowNode    = "Window"
 	JoinNode      = "Join"
 	SqlNode       = "Sql"
-	UDTFNode      = "UDTF"   //don't print Upstream node
-	UDTTFNode     = "UDTTF"  //don't print Upstream node
-	ArraysNode    = "Arrays" //don't print Upstream node
+	UDTFNode      = "UDTF"  //don't print Upstream node
+	UDTTFNode     = "UDTTF" //don't print Upstream node
 	JarNode       = "Jar"
 	ScalaNode     = "Scala"
 	PythonNode    = "Python"
@@ -41,43 +40,55 @@ type DagNode struct {
 }
 
 type DestNodeProperty struct {
-	Table  string   `json:"table"` //sourceID, parser as $qc$sot-0123456789012363$qc$
 	Column []string `json:"column"`
 	ID     string   `json:"id"`
 }
 
-type ValuesNodeProperty struct {
-	Row []string `json:"row"`
+type ValuesType struct {
+	Values []string `json:"values"`
 }
 
-type UDFNodeProperty struct {
-	ID       string `json:"id"`
-	FuncName string `json:"funcname"`
+type ValuesNodeProperty struct {
+	Rows []ValuesType `json:"rows"`
 }
 
 type ColumnAs struct {
-	Field string `json:"field"`
-	As    string `json:"as"`
+	Field       string `json:"field"`
+	Func        string `json:"func"`
+	WindowsName string `json:"windowsname"`
+	Type        string `json:"type"`
+	As          string `json:"as"`
 }
 
 type ConstNodeProperty struct {
+	Table  string     `json:"table"`
 	Column []ColumnAs `json:"column"`
 }
 
 type SourceNodeProperty struct {
-	ID       string     `json:"id"`
-	Table    string     `json:"table"`    //sourceid, $qc$som-xxxx$qc$
-	Distinct string     `json:"distinct"` //Distinct or ALL
-	Column   []ColumnAs `json:"column"`
+	ID           string     `json:"id"`
+	TableAS      string     `json:"table"`
+	Distinct     string     `json:"distinct"`
+	Column       []ColumnAs `json:"column"`
+	CustomColumn []ColumnAs `json:"customcolumn"`
+}
+
+type DimensionNodeProperty struct {
+	ID           string     `json:"id"`
+	TableAS      string     `json:"table"`    //not null.
+	Distinct     string     `json:"distinct"` //Distinct or ALL
+	Column       []ColumnAs `json:"column"`
+	CustomColumn []ColumnAs `json:"customcolumn"`
+	TimeColumu   []ColumnAs `json:"timecolumn"`
 }
 
 type OrderByColumn struct {
 	Field string `json:"field"`
-	Order string `json:"order"` //asc or desc
+	Order string `json:"order"` //asc or desc.
 }
 
 type OrderByNodeProperty struct {
-	Column []OrderByColumn `json:"column"`
+	Column []OrderByColumn `json:"column"` // order column must have serial number. source table selected column.
 }
 
 type LimitNodeProperty struct {
@@ -93,13 +104,13 @@ type FetchNodeProperty struct {
 }
 
 type FilterNodeProperty struct {
-	Filter string `json:"filter"`
-	In     string `json:"in"`
-	Exists string `json:"exists"`
+	Where  string `json:"where"`  //left/right node
+	In     string `json:"in"`     //left column
+	Exists string `json:"exists"` //left column
 }
 
 type UnionNodeProperty struct {
-	All string `json:"all"`
+	All bool `json:"all"`
 }
 
 type GroupByNodeProperty struct {
@@ -133,24 +144,20 @@ type PythonNodeProperty struct {
 
 type UDTFNodeProperty struct {
 	ID           string     `json:"id"`
-	FuncName     string     `json:"funcname"`
 	Args         string     `json:"args"`
-	As           string     `json:"as"`
+	TableAs      string     `json:"tableas"`
 	SelectColumn []ColumnAs `json:"selectcolumn"`
 	Column       []ColumnAs `json:"column"`
 }
 
 type JoinNodeProperty struct {
-	Join       string     `json:"join"`
-	Expression string     `json:"expression"`
-	Column     []ColumnAs `json:"column"`
-}
-
-type ArraysNodeProperty struct {
-	Args         string     `json:"args"`
-	As           string     `json:"as"`
-	SelectColumn []ColumnAs `json:"selectcolumn"`
-	Column       []ColumnAs `json:"column"`
+	Join           string     `json:"join"`
+	Expression     string     `json:"expression"`
+	Column         []ColumnAs `json:"column"`
+	TableAs        string     `json:"tableas"`
+	TableAsRight   string     `json:"tableasright"`
+	Args           string     `json:"args"`
+	GenerateColumn []ColumnAs `json:"generatecolumn"`
 }
 
 type UDTTFNodeProperty struct {
@@ -161,14 +168,13 @@ type UDTTFNodeProperty struct {
 }
 
 type JarNodeProperty struct {
-	JarId      string `json:"jar_id"`
-	JarArgs    string `json:"jar_args"`  // allow regex `^[a-zA-Z0-9_/. ]+$`
-	JarEntry   string `json:"jar_entry"` // allow regex `^[a-zA-Z0-9_/. ]+$`
-	JarPath    string `json:"jar_path"`
-	AccessKey  string `json:"accesskey"`
-	SecretKey  string `json:"secretkey"`
-	EndPoint   string `json:"endpoint"`
-	HbaseHosts string `json:"hbasehosts"`
+	JarId     string `json:"jar_id"`
+	JarArgs   string `json:"jar_args"`  // allow regex `^[a-zA-Z0-9_/. ]+$`
+	JarEntry  string `json:"jar_entry"` // allow regex `^[a-zA-Z0-9_/. ]+$`
+	AccessKey string `json:"accesskey"`
+	SecretKey string `json:"secretkey"`
+	EndPoint  string `json:"endpoint"`
+	//TODO HbaseHosts []HostType `json:"hbasehosts"`
 }
 
 const (
@@ -177,7 +183,8 @@ const (
 	RIGHT_JOIN        = "RIGHT JOIN"
 	FULL_OUT_JOIN     = "FULL OUTER JOIN"
 	CROSS_JOIN        = "CROSS JOIN"
-	DISTINCT_ALL      = "ALL"
+	INTERVAL_JOIN     = "WHERE"
+	DISTINCT_ALL      = ""
 	DISTINCT_DISTINCT = "DISTINCT"
 )
 
@@ -189,14 +196,14 @@ type JobResources struct {
 }
 
 type JobElementFlink struct {
-	ZeppelinConf      string         `json:"conf"`
-	ZeppelinDepends   string         `json:"depends"`
-	ZeppelinScalaUDF  string         `json:"scalaudf"`
-	ZeppelinPythonUDF string         `json:"pythonudf"`
-	ZeppelinMainRun   string         `json:"mainrun"`
-	S3info            SourceS3Params `json:"s3"`
-	HbaseHosts        string         `json:"hbasehosts"`
-	Resources         JobResources   `json:"resource"`
+	ZeppelinConf      string `json:"conf"`
+	ZeppelinDepends   string `json:"depends"`
+	ZeppelinScalaUDF  string `json:"scalaudf"`
+	ZeppelinPythonUDF string `json:"pythonudf"`
+	ZeppelinMainRun   string `json:"mainrun"`
+	//TODOS3info            SourceS3Params `json:"s3"`
+	//TODO HbaseHosts        []HostType     `json:"hbasehosts"`
+	Resources JobResources `json:"resource"`
 }
 
 type FlinkParagraphsInfo struct {
