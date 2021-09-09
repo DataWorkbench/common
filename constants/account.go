@@ -46,7 +46,9 @@ const (
 	LocalUserPrefix     = Account + RedisSeparator + LocalSource + RedisSeparator + UserPrefix + RedisSeparator
 	DefaultUserPrefix   = LocalUserPrefix
 
-	ResourceCacheMinimumSeconds  = 300
-	ResourceCacheRandomSeconds   = 120
+	UserCacheBaseSeconds         = 300
+	UserCacheRandomSeconds       = 120
 	NotExistResourceCacheSeconds = 30
+
+	AccessKeyCacheBaseSeconds = 30
 )
