@@ -294,16 +294,16 @@ var (
 
 // udfmanager
 var (
-	InvalidUdfName = &Error{
-		code:   "InvalidUdfName",
+	InvalidUDFName = &Error{
+		code:   "InvalidUDFName",
 		status: http.StatusInternalServerError,
 		enUS:   "invalid name. can't use '.'",
 		zhCN:   "无效名字，不能使用'.'",
 	}
-	NotSupportUdfType = &Error{
-		code:   "NotSupportUdfType",
+	NotSupportUDFType = &Error{
+		code:   "NotSupportUDFType",
 		status: http.StatusInternalServerError,
-		enUS:   "not support udf type[%s]",
+		enUS:   "not support UDF type[%s]",
 		zhCN:   "不支持的自定义函数类型[%s]",
 	}
 )

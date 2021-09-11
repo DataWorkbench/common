@@ -9,4 +9,5 @@ const (
 	JarUDTTF   = "JarUDTTF"
 	PythonUDF  = "PythonUDF"
 	PythonUDTF = "PythonUDTF"
+	Dir        = "Dir"
 )
