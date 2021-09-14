@@ -18,16 +18,3 @@ const (
 	NodeTypeShell                    // => "shell"
 	NodeTypeFlink
 )
-
-const (
-	RunCommand         = "run"
-	PreviewCommand     = "preview"
-	ExplainCommand     = "explain"
-	SyntaxCheckCommand = "syntaxcheck"
-)
-
-type FlinkNode struct {
-	StreamSql bool       `json:"stream_sql"` //true is flink stream sql. false is flink batch sql
-	Env       JSONString `json:"env"`
-	Nodes     JSONString `json:"nodes"`
-}

@@ -15,23 +15,48 @@ import (
 	"github.com/DataWorkbench/common/grpcwrap"
 	"github.com/DataWorkbench/glog"
 	"github.com/DataWorkbench/gproto/pkg/jobdevpb"
+	"github.com/DataWorkbench/gproto/pkg/model"
+	"github.com/DataWorkbench/gproto/pkg/request"
+	"github.com/DataWorkbench/gproto/pkg/response"
 	"gorm.io/gorm"
 )
 
 const (
-	ParagraphUnknown    = "UNKNOWN"
-	ParagraphFinish     = "FINISHED"
-	ParagraphRunning    = "RUNNING"
-	ParagraphReady      = "READY"
-	ParagraphError      = "ERROR"
-	ParagraphPending    = "PENDING"
-	ParagraphAbort      = "ABORT"
-	JobmanagerTableName = "jobmanager"
-	MaxStatusFailedNum  = 100
+	ParagraphUnknown = "UNKNOWN"
+	ParagraphFinish  = "FINISHED"
+	ParagraphRunning = "RUNNING"
+	ParagraphReady   = "READY"
+	ParagraphError   = "ERROR"
+	ParagraphPending = "PENDING"
+	ParagraphAbort   = "ABORT"
+
+	MaxStatusFailedNum = 30
+
+	JobTableName = "jobmanager"
 )
 
+type JobQueueType struct {
+	Watch           JobWatchInfo
+	StatusFailedNum int32
+	HttpClient      HttpClient
+}
+
+type JobWatchInfo struct {
+	JobID             string                        `json:"id"`
+	NoteID            string                        `json:"noteid"`
+	ServerAddr        string                        `json:"serveraddr"`
+	FlinkParagraphIDs constants.FlinkParagraphsInfo `json:"flinkparagraphids"`
+	FlinkResources    model.JobResources            `json:"jobresources"`
+	JobState          response.JobState
+}
+
+type JobdevClient struct {
+	Client jobdevpb.JobdeveloperClient
+}
+
 type JobmanagerInfo struct {
-	ID             string `gorm:"column:id;primaryKey"`
+	JobID          string `gorm:"column:jobid;primaryKey"`
+	SpaceID        string `gorm:"column:spaceid;"`
 	NoteID         string `gorm:"column:noteid;"`
 	Status         string `gorm:"column:status;"`
 	Message        string `gorm:"column:message;"`
@@ -39,44 +64,16 @@ type JobmanagerInfo struct {
 	CreateTime     string `gorm:"column:createtime;"`
 	UpdateTime     string `gorm:"column:updatetime;"`
 	Resources      string `gorm:"column:resources;"`
-	SpaceID        string `gorm:"column:spaceid;"`
-	EngineType     string `gorm:"column:enginetype;"`
 	ZeppelinServer string `gorm:"column:zeppelinserver;"`
 }
 
 func (smi JobmanagerInfo) TableName() string {
-	return JobmanagerTableName
+	return JobTableName
 }
 
-type JobWatchInfo struct {
-	ID                string                        `json:"id"`
-	EngineType        string                        `json:"enginetype"`
-	NoteID            string                        `json:"noteid"`
-	ServerAddr        string                        `json:"serveraddr"`
-	FlinkParagraphIDs constants.FlinkParagraphsInfo `json:"flinkparagraphids"`
-	FlinkResources    constants.JobResources        `json:"jobresources"`
-}
-
-func StringStatusToInt32(s string) (r int32) {
-	if s == constants.StatusRunningString {
-		r = int32(constants.StatusRunning.Number())
-	} else if s == constants.StatusFinishString {
-		r = int32(constants.StatusFinish.Number())
-	} else if s == constants.StatusFailedString {
-		r = int32(constants.StatusFailed.Number())
-	}
-	return r
-}
-
-func Int32StatusToString(i int32) (r string) {
-	if i == int32(constants.StatusRunning.Number()) {
-		r = constants.StatusRunningString
-	} else if i == int32(constants.StatusFinish.Number()) {
-		r = constants.StatusFinishString
-	} else if i == int32(constants.StatusFailed) {
-		r = constants.StatusFailedString
-	}
-	return r
+func NewJobdevClient(conn *grpcwrap.ClientConn) (c JobdevClient, err error) {
+	c.Client = jobdevpb.NewJobdeveloperClient(conn)
+	return c, nil
 }
 
 type HttpClient struct {
@@ -85,7 +82,7 @@ type HttpClient struct {
 }
 
 func NewHttpClient(serverAddr string) HttpClient {
-	return HttpClient{ZeppelinServer: "http://" + serverAddr, Client: &http.Client{Timeout: time.Second * 60}}
+	return HttpClient{ZeppelinServer: "http://" + serverAddr, Client: &http.Client{Timeout: time.Second * 600}}
 }
 
 func doRequest(client *http.Client, method string, status int, api string, body string, retJson bool) (repJson map[string]string, repString string, err error) {
@@ -108,7 +105,6 @@ func doRequest(client *http.Client, method string, status int, api string, body 
 
 	rep, err = client.Do(req)
 	if err != nil {
-		//rep.Body.Close()
 		return
 	}
 
@@ -133,57 +129,16 @@ func doRequest(client *http.Client, method string, status int, api string, body 
 	return
 }
 
-func (ex *HttpClient) CreateNote(ID string) (noteID string, err error) {
+func (ex *HttpClient) CreateNote(jobID string) (noteID string, err error) {
 	var repJson map[string]string
 
-	repJson, _, err = doRequest(ex.Client, http.MethodPost, http.StatusOK, ex.ZeppelinServer+"/api/notebook", fmt.Sprintf("{\"name\": \"%s\"}", ID), true)
+	repJson, _, err = doRequest(ex.Client, http.MethodPost, http.StatusOK, ex.ZeppelinServer+"/api/notebook", fmt.Sprintf("{\"name\": \"%s\"}", jobID), true)
 	if err != nil {
 		return
 	}
 	noteID = repJson["body"]
 
 	return noteID, nil
-}
-
-func (ex *HttpClient) DeleteNote(ID string) (err error) {
-	_, _, err = doRequest(ex.Client, http.MethodDelete, http.StatusOK, ex.ZeppelinServer+"/api/notebook/"+ID, "", false)
-	return
-}
-
-func (ex *HttpClient) StopAllParagraphs(noteID string) (err error) {
-	_, _, err = doRequest(ex.Client, http.MethodDelete, http.StatusOK, ex.ZeppelinServer+"/api/notebook/job/"+noteID, "", false)
-	return
-}
-
-func (ex *HttpClient) CreateParagraph(noteID string, index int32, name string, text string) (paragraphID string, err error) {
-	var repJson map[string]string
-
-	repJson, _, err = doRequest(ex.Client, http.MethodPost, http.StatusOK, ex.ZeppelinServer+"/api/notebook/"+noteID+"/paragraph", fmt.Sprintf("{\"title\": \"%s\", \"text\": %s, \"index\": %d}", name, strconv.Quote(text), index), true)
-	if err != nil {
-		return
-	}
-	paragraphID = repJson["body"]
-
-	return paragraphID, nil
-}
-
-func (ex *HttpClient) RunParagraphSync(noteID string, paragraphID string) (err error) {
-	var status string
-	_, _, err = doRequest(ex.Client, http.MethodPost, http.StatusOK, ex.ZeppelinServer+"/api/notebook/run/"+noteID+"/"+paragraphID, "", false)
-	if err != nil {
-		return
-	}
-	status, err = ex.GetParagraphStatus(noteID, paragraphID)
-	if status != "OK" && status != "FINISHED" {
-		msg, _ := ex.GetParagraphResultOutput(noteID, paragraphID)
-		err = fmt.Errorf("run failed. status is ." + status + ". the output message: " + msg)
-	}
-	return
-}
-
-func (ex *HttpClient) RunParagraphAsync(noteID string, paragraphID string) (err error) {
-	_, _, err = doRequest(ex.Client, http.MethodPost, http.StatusOK, ex.ZeppelinServer+"/api/notebook/job/"+noteID+"/"+paragraphID, "", false)
-	return
 }
 
 func (ex *HttpClient) GetParagraphStatus(noteID string, paragraphID string) (status string, err error) {
@@ -205,6 +160,20 @@ func (ex *HttpClient) GetParagraphStatus(noteID string, paragraphID string) (sta
 	}
 	status = repJsonLevel2["status"]
 
+	return
+}
+
+func (ex *HttpClient) RunParagraphSync(noteID string, paragraphID string) (err error) {
+	var status string
+	_, _, err = doRequest(ex.Client, http.MethodPost, http.StatusOK, ex.ZeppelinServer+"/api/notebook/run/"+noteID+"/"+paragraphID, "", false)
+	if err != nil {
+		return
+	}
+	status, err = ex.GetParagraphStatus(noteID, paragraphID)
+	if status != "OK" && status != "FINISHED" {
+		msg, _ := ex.GetParagraphResultOutput(noteID, paragraphID)
+		err = fmt.Errorf("run note " + noteID + " failed. status is " + status + ". the output message is " + msg)
+	}
 	return
 }
 
@@ -236,90 +205,238 @@ func (ex *HttpClient) GetParagraphResultOutput(noteID string, paragraphID string
 	return
 }
 
-type JobdevClient struct {
-	Client jobdevpb.JobdeveloperClient
+func (ex *HttpClient) CreateParagraph(noteID string, index int32, name string, text string) (paragraphID string, err error) {
+	var repJson map[string]string
+
+	repJson, _, err = doRequest(ex.Client, http.MethodPost, http.StatusOK, ex.ZeppelinServer+"/api/notebook/"+noteID+"/paragraph", fmt.Sprintf("{\"title\": \"%s\", \"text\": %s, \"index\": %d}", name, strconv.Quote(text), index), true)
+	if err != nil {
+		return
+	}
+	paragraphID = repJson["body"]
+
+	return paragraphID, nil
 }
 
-func NewJobdevClient(conn *grpcwrap.ClientConn) (c JobdevClient, err error) {
-	c.Client = jobdevpb.NewJobdeveloperClient(conn)
-	return c, nil
+func (ex *HttpClient) RunParagraphAsync(noteID string, paragraphID string) (err error) {
+	_, _, err = doRequest(ex.Client, http.MethodPost, http.StatusOK, ex.ZeppelinServer+"/api/notebook/job/"+noteID+"/"+paragraphID, "", false)
+	return
 }
 
-func FreeJobResources(ctx context.Context, resources constants.JobResources, EngineType string, logger *glog.Logger, httpClient HttpClient, jobdevClient JobdevClient) (err error) {
-	if EngineType == constants.EngineTypeFlink {
-		var (
-			req          jobdevpb.JobFreeRequest
-			zeppelinFree constants.JobFreeActionFlink
-			resp         *jobdevpb.JobFreeAction
-			noteID       string
-			paragraphID  string
-		)
+func StringStatusToInt32(s string) (r int32) {
+	if s == constants.StatusRunningString {
+		r = int32(constants.StatusRunning.Number())
+	} else if s == constants.StatusFinishString {
+		r = int32(constants.StatusFinish.Number())
+	} else if s == constants.StatusFailedString {
+		r = int32(constants.StatusFailed.Number())
+	} else if s == constants.StatusTerminatedString {
+		r = int32(constants.StatusTerminated.Number())
+	}
+	return r
+}
 
-		defer func() {
-			if err != nil {
-				logger.Warn().String("can't delete jar", resources.Jar).String("FreeEngine", resources.JobID).Error("message", err).Fire()
-			}
-			if noteID != "" {
-				_ = httpClient.DeleteNote(noteID)
-			}
-		}()
+func Int32StatusToString(i int32) (r string) {
+	if i == int32(constants.StatusRunning.Number()) {
+		r = constants.StatusRunningString
+	} else if i == int32(constants.StatusFinish.Number()) {
+		r = constants.StatusFinishString
+	} else if i == int32(constants.StatusFailed) {
+		r = constants.StatusFailedString
+	} else if i == int32(constants.StatusTerminated) {
+		r = constants.StatusTerminatedString
+	}
+	return r
+}
 
-		req.EngineType = EngineType
-		resourcesByte, _ := json.Marshal(resources)
-		req.JobResources = string(resourcesByte)
+func (ex *HttpClient) DeleteNote(ID string) (err error) {
+	_, _, err = doRequest(ex.Client, http.MethodDelete, http.StatusOK, ex.ZeppelinServer+"/api/notebook/"+ID, "", false)
+	return
+}
 
-		resp, err = jobdevClient.Client.JobFree(ctx, &req)
+func (ex *HttpClient) StopAllParagraphs(noteID string) (err error) {
+	_, _, err = doRequest(ex.Client, http.MethodDelete, http.StatusOK, ex.ZeppelinServer+"/api/notebook/job/"+noteID, "", false)
+	return
+}
+
+func FreeJobResources(ctx context.Context, resources model.JobResources, logger *glog.Logger, httpClient HttpClient, jobdevClient JobdevClient) (err error) {
+	var (
+		resp   *response.JobFree
+		noteID string
+	)
+
+	defer func() {
+		if err != nil {
+			logger.Warn().String("can't free resources ", resources.JobID).Error("message", err).Fire()
+			err = nil
+		}
+		if noteID != "" {
+			_ = httpClient.DeleteNote(noteID)
+		}
+	}()
+
+	resp, err = jobdevClient.Client.JobFree(ctx, &request.JobFree{Resources: &resources})
+	if err != nil {
+		return
+	}
+
+	if resp.ZeppelinDeleteJar != "" {
+		var paragraphID string
+
+		noteID, err = httpClient.CreateNote(resources.JobID + "_delete_resources")
 		if err != nil {
 			return
 		}
 
-		respString := resp.GetJobResources()
-		if respString != "" {
-			if err = json.Unmarshal([]byte(respString), &zeppelinFree); err != nil {
-				return
-			}
+		paragraphID, err = httpClient.CreateParagraph(noteID, 0, "delete_resources", resp.ZeppelinDeleteJar)
+		if err != nil {
+			return
 		}
 
-		if zeppelinFree.ZeppelinDeleteJar != "" {
-			noteID, err = httpClient.CreateNote(resources.JobID + "_delete_resources")
-			if err != nil {
-				return
-			}
-
-			paragraphID, err = httpClient.CreateParagraph(noteID, 0, "delete resources", zeppelinFree.ZeppelinDeleteJar)
-			if err != nil {
-				return
-			}
-
-			if err = httpClient.RunParagraphSync(noteID, paragraphID); err != nil {
-				return
-			}
+		if err = httpClient.RunParagraphSync(noteID, paragraphID); err != nil {
+			return
 		}
-
-		logger.Info().String("delete jar", resources.Jar).String("FreeEngine", resources.JobID).Fire()
 	}
 
 	return
 }
 
-func ModifyStatus(ctx context.Context, ID string, status int32, message string, resources constants.JobResources, EngineType string, db *gorm.DB, logger *glog.Logger, httpClient HttpClient, jobdevClient JobdevClient) (err error) {
+func ModifyState(ctx context.Context, jobID string, state int32, message string, db *gorm.DB) (err error) {
 	var info JobmanagerInfo
 
-	info.ID = ID
-	info.Status = Int32StatusToString(status)
+	info.JobID = jobID
+	info.Status = Int32StatusToString(state)
 	info.Message = message
 	info.UpdateTime = time.Now().Format("2006-01-02 15:04:05")
 
 	edb := db.WithContext(ctx)
-	if err = edb.Select("status", "message", "updatetime").Where("id = ? ", info.ID).Updates(info).Error; err != nil {
+	err = edb.Select("status", "message", "updatetime").Where("jobid = ? ", info.JobID).Updates(info).Error
+
+	return
+}
+
+func InitJobInfo(watchInfo JobWatchInfo) (job JobQueueType) {
+	job.Watch = watchInfo
+	job.StatusFailedNum = 0
+	job.HttpClient = NewHttpClient(watchInfo.ServerAddr)
+
+	return
+}
+
+func JobInfoToWatchInfo(jobinfo JobmanagerInfo) (watchInfo JobWatchInfo) {
+	var Pa constants.FlinkParagraphsInfo
+	var resource model.JobResources
+
+	watchInfo.JobID = jobinfo.JobID
+	watchInfo.NoteID = jobinfo.NoteID
+	watchInfo.ServerAddr = jobinfo.ZeppelinServer
+	_ = json.Unmarshal([]byte(jobinfo.Paragraph), &Pa)
+	watchInfo.FlinkParagraphIDs = Pa
+	_ = json.Unmarshal([]byte(jobinfo.Resources), &resource)
+	watchInfo.FlinkResources = resource
+	watchInfo.JobState.State = StringStatusToInt32(jobinfo.Status)
+	watchInfo.JobState.Message = jobinfo.Message
+
+	return
+}
+
+func GetZeppelinJobState(ctx context.Context, jobInput JobQueueType, logger *glog.Logger, db *gorm.DB, jobdevClient JobdevClient) (job JobQueueType, err error) {
+	var status string
+
+	defer func() {
+		if err != nil {
+			job.StatusFailedNum += 1
+		}
+	}()
+
+	job = jobInput
+	if status, err = job.HttpClient.GetParagraphStatus(job.Watch.NoteID, job.Watch.FlinkParagraphIDs.MainRun); err != nil {
+		logger.Error().Msg("can't get this paragraph status").String("noteid", job.Watch.NoteID).String("jobid", job.Watch.JobID).Int32("failed number", job.StatusFailedNum).Fire()
+		job.StatusFailedNum += 1
+
+		if job.StatusFailedNum <= MaxStatusFailedNum {
+			err = nil
+			return
+		}
+
 		return
 	}
 
-	if status == int32(constants.StatusFinish.Number()) || status == int32(constants.StatusFailed.Number()) {
-		err = FreeJobResources(ctx, resources, EngineType, logger, httpClient, jobdevClient)
-		if err != nil {
-			logger.Warn().String("can't delete jar", resources.Jar).String("can't FreeEngine", resources.JobID).Fire()
+	if status == ParagraphFinish {
+		var jobmsg string
+
+		if jobmsg, err = job.HttpClient.GetParagraphResultOutput(job.Watch.NoteID, job.Watch.FlinkParagraphIDs.MainRun); err != nil {
+			jobmsg = "job finish, but can't get the MainRun paragraph output"
+			logger.Error().Msg(jobmsg).String("noteid", job.Watch.NoteID).String("jobid", job.Watch.JobID).String("error msg", err.Error()).Fire()
+			err = nil
 		}
+
+		if err = ModifyState(ctx, job.Watch.JobID, int32(constants.StatusFinish), jobmsg, db); err != nil {
+			logger.Error().Msg("can't change the job status to finish").String("jobid", job.Watch.JobID).Fire()
+			return
+		}
+
+		if err = job.HttpClient.DeleteNote(job.Watch.NoteID); err != nil {
+			logger.Error().Msg("can't delete the note").String("noteid", job.Watch.NoteID).String("jobid", job.Watch.JobID).String("error msg", err.Error()).Fire()
+			err = nil
+		}
+		_ = FreeJobResources(ctx, job.Watch.FlinkResources, logger, job.HttpClient, jobdevClient)
+
+		job.Watch.JobState.State = int32(constants.StatusFinish)
+		job.Watch.JobState.Message = jobmsg
+		return
+	} else if status == ParagraphError {
+		var jobmsg string
+
+		if jobmsg, err = job.HttpClient.GetParagraphResultOutput(job.Watch.NoteID, job.Watch.FlinkParagraphIDs.MainRun); err != nil {
+			jobmsg = "job error, but can't get the MainRun paragraph output"
+			logger.Error().Msg(jobmsg).String("noteid", job.Watch.NoteID).String("jobid", job.Watch.JobID).String("error msg", err.Error()).Fire()
+			err = nil
+		}
+
+		if err = ModifyState(ctx, job.Watch.JobID, int32(constants.StatusFailed), jobmsg, db); err != nil {
+			logger.Error().Msg("can't change the job status to failed").String("jobid", job.Watch.JobID).Fire()
+			return
+		}
+
+		if err = job.HttpClient.DeleteNote(job.Watch.NoteID); err != nil {
+			logger.Error().Msg("can't delete the note").String("noteid", job.Watch.NoteID).String("jobid", job.Watch.JobID).String("error msg", err.Error()).Fire()
+			err = nil
+		}
+		_ = FreeJobResources(ctx, job.Watch.FlinkResources, logger, job.HttpClient, jobdevClient)
+
+		job.Watch.JobState.State = int32(constants.StatusFailed)
+		job.Watch.JobState.Message = jobmsg
+		return
+	} else if status == ParagraphAbort {
+		var jobmsg string
+
+		if jobmsg, err = job.HttpClient.GetParagraphResultOutput(job.Watch.NoteID, job.Watch.FlinkParagraphIDs.MainRun); err != nil {
+			jobmsg = "job terminated, but can't get the MainRun paragraph output"
+			logger.Error().Msg(jobmsg).String("noteid", job.Watch.NoteID).String("jobid", job.Watch.JobID).String("error msg", err.Error()).Fire()
+			err = nil
+		}
+
+		if err = ModifyState(ctx, job.Watch.JobID, int32(constants.StatusTerminated), jobmsg, db); err != nil {
+			logger.Error().Msg("can't change the job status to terminated").String("jobid", job.Watch.JobID).Fire()
+			return
+		}
+
+		if err = job.HttpClient.DeleteNote(job.Watch.NoteID); err != nil {
+			logger.Error().Msg("can't delete the note").String("noteid", job.Watch.NoteID).String("jobid", job.Watch.JobID).String("error msg", err.Error()).Fire()
+			err = nil
+		}
+		_ = FreeJobResources(ctx, job.Watch.FlinkResources, logger, job.HttpClient, jobdevClient)
+
+		job.Watch.JobState.State = int32(constants.StatusTerminated)
+		job.Watch.JobState.Message = jobmsg
+		return
+	} else {
+		/* paragraph is running
+		   ParagraphUnknown = "UNKNOWN"
+		   ParagraphRunning = "RUNNING"
+		   ParagraphReady = "READY"
+		   ParagraphPending = "PENDING"
+		*/
 	}
 
 	return
