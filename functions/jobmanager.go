@@ -331,7 +331,9 @@ func JobInfoToWatchInfo(jobinfo JobmanagerInfo) (watchInfo JobWatchInfo) {
 	watchInfo.ServerAddr = jobinfo.ZeppelinServer
 	_ = json.Unmarshal([]byte(jobinfo.Paragraph), &Pa)
 	watchInfo.FlinkParagraphIDs = Pa
-	_ = json.Unmarshal([]byte(jobinfo.Resources), &resource)
+	if jobinfo.Resources != "" {
+		_ = json.Unmarshal([]byte(jobinfo.Resources), &resource)
+	}
 	watchInfo.FlinkResources = resource
 	watchInfo.JobState.State = StringStatusToInt32(jobinfo.Status)
 	watchInfo.JobState.Message = jobinfo.Message
