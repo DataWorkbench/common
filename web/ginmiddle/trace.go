@@ -111,6 +111,7 @@ func Trace(ctx context.Context) gin.HandlerFunc {
 				nl.Error().String("completed handle error", c.Errors.String()).Fire()
 			}
 		}
+		nl.Debug().Any("response headers", c.Writer.Header()).Fire()
 		nl.Info().Int("completed with status", status).Millisecond("elapsed", time.Since(start)).Fire()
 
 		span.SetTag(string(ext.HTTPMethod), c.Request.Method)

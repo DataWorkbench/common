@@ -92,12 +92,14 @@ func (cli *Client) Send(ctx context.Context, req *http.Request) (resp *http.Resp
 		}
 	}
 
-	lg.Debug().String("sending request to url", req.URL.String()).Fire()
+	lg.Debug().String("client sending to url", req.URL.String()).Fire()
+	lg.Debug().Any("client request header", req.Header).Fire()
 	resp, err = cli.Client.Do(req)
 	if err != nil {
 		lg.Error().Error("send request error", err).Fire()
 		return
 	}
-	lg.Debug().Int("successful request with status", resp.StatusCode).Fire()
+	lg.Debug().Any("client receive response header", resp.Header).Fire()
+	lg.Debug().Int("client receive response status", resp.StatusCode).Fire()
 	return
 }
