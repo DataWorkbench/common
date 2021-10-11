@@ -287,8 +287,8 @@ var (
 	ConnectSourceFailed = &Error{
 		code:   "ConnectSourceFailed",
 		status: http.StatusInternalServerError,
-		enUS:   "this source can't connect",
-		zhCN:   "数据源无法连接",
+		enUS:   "this source can't connect[%s]",
+		zhCN:   "数据源无法连接[%s]",
 	}
 )
 

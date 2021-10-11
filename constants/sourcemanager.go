@@ -19,4 +19,7 @@ const (
 
 	SourceConnectedSuccess = "successful"
 	SourceConnectedFailed  = "failed"
+
+	TimeColumnProctime  = "proctime"
+	TimeColumnWaterMark = "watermark"
 )
