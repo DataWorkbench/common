@@ -17,9 +17,10 @@ const (
 	SourceEnableState  = "enable"
 	SourceDisableState = "disable"
 
-	SourceConnectedSuccess = "successful"
-	SourceConnectedFailed  = "failed"
-
 	TimeColumnProctime  = "proctime"
 	TimeColumnWaterMark = "watermark"
+
+	ConnecteSuccess        = "success"
+	ConnectePartialSuccess = "partialsuccess"
+	ConnecteFailed         = "failed"
 )
