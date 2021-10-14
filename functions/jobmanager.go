@@ -266,7 +266,7 @@ func FreeJobResources(ctx context.Context, resources model.JobResources, logger 
 
 	defer func() {
 		if err != nil {
-			logger.Warn().String("can't free resources ", resources.JobID).Error("message", err).Fire()
+			logger.Warn().String("can't free resources ", resources.JobId).Error("message", err).Fire()
 			err = nil
 		}
 		if noteID != "" {
@@ -282,7 +282,7 @@ func FreeJobResources(ctx context.Context, resources model.JobResources, logger 
 	if resp.ZeppelinDeleteJar != "" {
 		var paragraphID string
 
-		noteID, err = httpClient.CreateNote(resources.JobID + "_delete_resources")
+		noteID, err = httpClient.CreateNote(resources.JobId + "_delete_resources")
 		if err != nil {
 			return
 		}
