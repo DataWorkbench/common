@@ -3,13 +3,13 @@ package constants
 import "github.com/DataWorkbench/gproto/pkg/model"
 
 const (
-	StatusFailed           = model.StreamFlowInst_Failed
+	StatusFailed           = model.StreamJobInst_Failed
 	StatusFailedString     = "failed"
-	StatusFinish           = model.StreamFlowInst_Succeed
+	StatusFinish           = model.StreamJobInst_Succeed
 	StatusFinishString     = "finish"
-	StatusRunning          = model.StreamFlowInst_Running
+	StatusRunning          = model.StreamJobInst_Running
 	StatusRunningString    = "running"
-	StatusTerminated       = model.StreamFlowInst_Terminated
+	StatusTerminated       = model.StreamJobInst_Terminated
 	StatusTerminatedString = "terminated"
 
 	MessageUnknowState = "unknow state"
