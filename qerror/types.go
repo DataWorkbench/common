@@ -269,8 +269,8 @@ var (
 	NotSupportSourceType = &Error{
 		code:   "NotSupportSourceType",
 		status: http.StatusInternalServerError,
-		enUS:   "not support source type[%s]",
-		zhCN:   "不支持的数据源类型[%s]",
+		enUS:   "not support source type[%d]",
+		zhCN:   "不支持的数据源类型[%d]",
 	}
 	InvalidSourceName = &Error{
 		code:   "InvalidSourceName",
@@ -287,8 +287,8 @@ var (
 	ConnectSourceFailed = &Error{
 		code:   "ConnectSourceFailed",
 		status: http.StatusInternalServerError,
-		enUS:   "this source can't connect[%s]",
-		zhCN:   "数据源无法连接[%s]",
+		enUS:   "this source can't connect[%d]",
+		zhCN:   "数据源无法连接[%d]",
 	}
 )
 
@@ -303,8 +303,8 @@ var (
 	NotSupportUDFType = &Error{
 		code:   "NotSupportUDFType",
 		status: http.StatusInternalServerError,
-		enUS:   "not support UDF type[%s]",
-		zhCN:   "不支持的自定义函数类型[%s]",
+		enUS:   "not support UDF type[%d]",
+		zhCN:   "不支持的自定义函数类型[%d]",
 	}
 )
 
