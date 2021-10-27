@@ -2,28 +2,28 @@ package constants
 
 // Declares id prefix
 const (
-	// The Id prefix of workspace.
+	// IdPrefixSpace represents the id prefix of workspace.
 	IdPrefixSpace = "wks-"
 
-	// The id prefix of system role.
+	// IdPrefixRoleSystem represents the id prefix of system role.
 	IdPrefixRoleSystem = "wrs-"
 
-	// The id prefix of custom role.
+	// IdPrefixRoleCustom represents the id prefix of custom role.
 	IdPrefixRoleCustom = "wrc-"
 
-	// The Id prefix of stream workflow.
+	// IdPrefixStreamFlow represents the id prefix of stream workflow.
 	IdPrefixStreamFlow = "wkf-"
 
-	// The Id prefix of stream workflow cycle instance.
+	// IdPrefixStreamFlowCycleInst represents the id prefixof stream workflow cycle instance.
 	IdPrefixStreamFlowCycleInst = "sci-"
 
-	// The Id prefix of stream workflow test instance.
+	// IdPrefixStreamFlowTestInst represents the id prefix of stream workflow test instance.
 	IdPrefixStreamFlowTestInst = "sti-"
 
-	// The Id prefix of engine.
+	// IdPrefixEngine represents the id prefix of engine.
 	IdPrefixEngine = "eng-"
 
-	// The Id prefix of monitor rule.
+	// IdPrefixMonitorRule represents the id prefix of monitor rule.
 	IdPrefixMonitorRule = "mor-"
 
 	SourceManagerIDPrefix = "som-"
@@ -31,4 +31,10 @@ const (
 	JobIDPrefix           = "job-"
 	UdfManagerIDPrefix    = "udf-"
 	FileMangerIDPrefix    = "res-"
+
+	// IdPrefixFlinkCluster represents the id prefix of flink cluster.
+	IdPrefixFlinkCluster = "flc-"
+
+	// IdPrefixNetwork represents the id prefix of network.
+	IdPrefixNetwork = "net-"
 )
