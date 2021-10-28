@@ -33,7 +33,8 @@ const (
 	FileMangerIDPrefix    = "res-"
 
 	// IdPrefixFlinkCluster represents the id prefix of flink cluster.
-	IdPrefixFlinkCluster = "flc-"
+	IdPrefixFlinkCluster = "cfi-"
+
 
 	// IdPrefixNetwork represents the id prefix of network.
 	IdPrefixNetwork = "net-"
