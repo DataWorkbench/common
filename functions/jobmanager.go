@@ -32,7 +32,7 @@ const (
 
 	MaxStatusFailedNum = 30
 
-	JobTableName = "jobmanager"
+	JobTableName = "job_manager"
 )
 
 type JobQueueType struct {
@@ -43,11 +43,11 @@ type JobQueueType struct {
 
 type JobWatchInfo struct {
 	JobID             string                        `json:"id"`
-	NoteID            string                        `json:"noteid"`
-	ServerAddr        string                        `json:"serveraddr"`
-	FlinkParagraphIDs constants.FlinkParagraphsInfo `json:"flinkparagraphids"`
-	FlinkResources    model.JobResources            `json:"jobresources"`
-	JobState          response.JobState
+	NoteID            string                        `json:"note_id"`
+	ServerAddr        string                        `json:"server_addr"`
+	FlinkParagraphIDs constants.FlinkParagraphsInfo `json:"flink_paragraphids"`
+	FlinkResources    model.JobResources            `json:"job_resources"`
+	JobState          response.JobState             `json:"job_state"`
 }
 
 type JobdevClient struct {
@@ -55,16 +55,16 @@ type JobdevClient struct {
 }
 
 type JobmanagerInfo struct {
-	JobID          string `gorm:"column:jobid;primaryKey"`
-	SpaceID        string `gorm:"column:spaceid;"`
-	NoteID         string `gorm:"column:noteid;"`
-	Status         string `gorm:"column:status;"`
-	Message        string `gorm:"column:message;"`
-	Paragraph      string `gorm:"column:paragraph;"`
-	CreateTime     string `gorm:"column:createtime;"`
-	UpdateTime     string `gorm:"column:updatetime;"`
-	Resources      string `gorm:"column:resources;"`
-	ZeppelinServer string `gorm:"column:zeppelinserver;"`
+	JobID          string                    `gorm:"column:job_id;primaryKey"`
+	SpaceID        string                    `gorm:"column:space_id;"`
+	NoteID         string                    `gorm:"column:note_id;"`
+	Status         model.StreamJobInst_State `gorm:"column:status;"`
+	Message        string                    `gorm:"column:message;"`
+	Paragraph      string                    `gorm:"column:paragraph;"`
+	Created        int64                     `gorm:"column:created;"`
+	Updated        int64                     `gorm:"column:updated;"`
+	Resources      string                    `gorm:"column:resources;"`
+	ZeppelinServer string                    `gorm:"column:zeppelin_server;"`
 }
 
 func (smi JobmanagerInfo) TableName() string {
@@ -222,32 +222,6 @@ func (ex *HttpClient) RunParagraphAsync(noteID string, paragraphID string) (err 
 	return
 }
 
-func StringStatusToInt32(s string) (r int32) {
-	if s == constants.StatusRunningString {
-		r = int32(constants.StatusRunning.Number())
-	} else if s == constants.StatusFinishString {
-		r = int32(constants.StatusFinish.Number())
-	} else if s == constants.StatusFailedString {
-		r = int32(constants.StatusFailed.Number())
-	} else if s == constants.StatusTerminatedString {
-		r = int32(constants.StatusTerminated.Number())
-	}
-	return r
-}
-
-func Int32StatusToString(i int32) (r string) {
-	if i == int32(constants.StatusRunning.Number()) {
-		r = constants.StatusRunningString
-	} else if i == int32(constants.StatusFinish.Number()) {
-		r = constants.StatusFinishString
-	} else if i == int32(constants.StatusFailed) {
-		r = constants.StatusFailedString
-	} else if i == int32(constants.StatusTerminated) {
-		r = constants.StatusTerminatedString
-	}
-	return r
-}
-
 func (ex *HttpClient) DeleteNote(ID string) (err error) {
 	_, _, err = doRequest(ex.Client, http.MethodDelete, http.StatusOK, ex.ZeppelinServer+"/api/notebook/"+ID, "", false)
 	return
@@ -300,16 +274,16 @@ func FreeJobResources(ctx context.Context, resources model.JobResources, logger 
 	return
 }
 
-func ModifyState(ctx context.Context, jobID string, state int32, message string, db *gorm.DB) (err error) {
+func ModifyState(ctx context.Context, jobID string, state model.StreamJobInst_State, message string, db *gorm.DB) (err error) {
 	var info JobmanagerInfo
 
 	info.JobID = jobID
-	info.Status = Int32StatusToString(state)
+	info.Status = state
 	info.Message = message
-	info.UpdateTime = time.Now().Format("2006-01-02 15:04:05")
+	info.Updated = time.Now().Unix()
 
 	edb := db.WithContext(ctx)
-	err = edb.Select("status", "message", "updatetime").Where("jobid = ? ", info.JobID).Updates(info).Error
+	err = edb.Select("status", "message", "updated").Where("job_id = ? ", info.JobID).Updates(info).Error
 
 	return
 }
@@ -335,7 +309,7 @@ func JobInfoToWatchInfo(jobinfo JobmanagerInfo) (watchInfo JobWatchInfo) {
 		_ = json.Unmarshal([]byte(jobinfo.Resources), &resource)
 	}
 	watchInfo.FlinkResources = resource
-	watchInfo.JobState.State = StringStatusToInt32(jobinfo.Status)
+	watchInfo.JobState.State = jobinfo.Status
 	watchInfo.JobState.Message = jobinfo.Message
 
 	return
@@ -354,11 +328,8 @@ func GetZeppelinJobState(ctx context.Context, jobInput JobQueueType, logger *glo
 	if status, err = job.HttpClient.GetParagraphStatus(job.Watch.NoteID, job.Watch.FlinkParagraphIDs.MainRun); err != nil {
 		logger.Error().Msg("can't get this paragraph status").String("noteid", job.Watch.NoteID).String("jobid", job.Watch.JobID).Int32("failed number", job.StatusFailedNum).Fire()
 		job.StatusFailedNum += 1
-
-		if job.StatusFailedNum <= MaxStatusFailedNum {
-			err = nil
-			return
-		}
+		job.Watch.JobState.State = model.StreamJobInst_Retrying
+		err = nil
 
 		return
 	}
@@ -372,7 +343,7 @@ func GetZeppelinJobState(ctx context.Context, jobInput JobQueueType, logger *glo
 			err = nil
 		}
 
-		if err = ModifyState(ctx, job.Watch.JobID, int32(constants.StatusFinish), jobmsg, db); err != nil {
+		if err = ModifyState(ctx, job.Watch.JobID, model.StreamJobInst_Succeed, jobmsg, db); err != nil {
 			logger.Error().Msg("can't change the job status to finish").String("jobid", job.Watch.JobID).Fire()
 			return
 		}
@@ -383,7 +354,7 @@ func GetZeppelinJobState(ctx context.Context, jobInput JobQueueType, logger *glo
 		}
 		_ = FreeJobResources(ctx, job.Watch.FlinkResources, logger, job.HttpClient, jobdevClient)
 
-		job.Watch.JobState.State = int32(constants.StatusFinish)
+		job.Watch.JobState.State = model.StreamJobInst_Succeed
 		job.Watch.JobState.Message = jobmsg
 		return
 	} else if status == ParagraphError {
@@ -395,7 +366,7 @@ func GetZeppelinJobState(ctx context.Context, jobInput JobQueueType, logger *glo
 			err = nil
 		}
 
-		if err = ModifyState(ctx, job.Watch.JobID, int32(constants.StatusFailed), jobmsg, db); err != nil {
+		if err = ModifyState(ctx, job.Watch.JobID, model.StreamJobInst_Failed, jobmsg, db); err != nil {
 			logger.Error().Msg("can't change the job status to failed").String("jobid", job.Watch.JobID).Fire()
 			return
 		}
@@ -406,7 +377,7 @@ func GetZeppelinJobState(ctx context.Context, jobInput JobQueueType, logger *glo
 		}
 		_ = FreeJobResources(ctx, job.Watch.FlinkResources, logger, job.HttpClient, jobdevClient)
 
-		job.Watch.JobState.State = int32(constants.StatusFailed)
+		job.Watch.JobState.State = model.StreamJobInst_Failed
 		job.Watch.JobState.Message = jobmsg
 		return
 	} else if status == ParagraphAbort {
@@ -418,7 +389,7 @@ func GetZeppelinJobState(ctx context.Context, jobInput JobQueueType, logger *glo
 			err = nil
 		}
 
-		if err = ModifyState(ctx, job.Watch.JobID, int32(constants.StatusTerminated), jobmsg, db); err != nil {
+		if err = ModifyState(ctx, job.Watch.JobID, model.StreamJobInst_Terminated, jobmsg, db); err != nil {
 			logger.Error().Msg("can't change the job status to terminated").String("jobid", job.Watch.JobID).Fire()
 			return
 		}
@@ -429,7 +400,7 @@ func GetZeppelinJobState(ctx context.Context, jobInput JobQueueType, logger *glo
 		}
 		_ = FreeJobResources(ctx, job.Watch.FlinkResources, logger, job.HttpClient, jobdevClient)
 
-		job.Watch.JobState.State = int32(constants.StatusTerminated)
+		job.Watch.JobState.State = model.StreamJobInst_Terminated
 		job.Watch.JobState.Message = jobmsg
 		return
 	} else {
@@ -438,7 +409,17 @@ func GetZeppelinJobState(ctx context.Context, jobInput JobQueueType, logger *glo
 		   ParagraphRunning = "RUNNING"
 		   ParagraphReady = "READY"
 		   ParagraphPending = "PENDING"
+		   defualt is running
 		*/
+		var jobmsg string
+
+		if jobmsg, err = job.HttpClient.GetParagraphResultOutput(job.Watch.NoteID, job.Watch.FlinkParagraphIDs.MainRun); err != nil {
+			jobmsg = "job running, but can't get the MainRun paragraph output"
+			logger.Error().Msg(jobmsg).String("noteid", job.Watch.NoteID).String("jobid", job.Watch.JobID).String("error msg", err.Error()).Fire()
+			err = nil
+		}
+		job.Watch.JobState.State = model.StreamJobInst_Running
+		job.Watch.JobState.Message = jobmsg
 	}
 
 	return
