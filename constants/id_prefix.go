@@ -35,7 +35,6 @@ const (
 	// IdPrefixFlinkCluster represents the id prefix of flink cluster.
 	IdPrefixFlinkCluster = "cfi-"
 
-
 	// IdPrefixNetwork represents the id prefix of network.
 	IdPrefixNetwork = "net-"
 )
