@@ -317,18 +317,18 @@ var (
 		zhCN:   "计算引擎[%s]不存在.",
 	}
 
+	EngineIncorrect = &Error{
+		code:   "EngineIncorrect",
+		status: 400,
+		enUS:   "The engine[%s] not exist or status not in[%s].",
+		zhCN:   "计算引擎[%s]不存在或者状态不是[%s].",
+	}
+
 	EngineNameInUse = &Error{
 		code:   "EngineNameInUse",
 		status: 400,
 		enUS:   "The engine name[%s] is in use.",
-		zhCN:   "计算引擎名称[%s]已存在.",
-	}
-
-	EngineNameError = &Error{
-		code:   "EngineNameError",
-		status: 400,
-		enUS:   "The name[%s] is not support.",
-		zhCN:   "命名[%s]错误.",
+		zhCN:   "计算集群名称[%s]已存在.",
 	}
 
 	EngineInTransaction = &Error{

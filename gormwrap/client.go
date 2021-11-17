@@ -15,6 +15,17 @@ import (
 	"github.com/DataWorkbench/common/gtrace"
 )
 
+const (
+	CondEqual         = " = ? "
+	CondNotEqual      = " <> ? "
+	CondIn            = " IN ? "
+	CondLike          = " LIKE ? "
+	CondLikePlacehold = "%"
+
+	JointAnd   = " AND "
+	ReverseFmt = "%s DESC"
+)
+
 type MySQLConfig struct {
 	// Hosts sample "127.0.0.1:3306,127.0.0.1:3307,127.0.0.1:3308"
 	Hosts       string `json:"hosts"         yaml:"hosts"         env:"HOSTS"                     validate:"required"`
@@ -87,23 +98,71 @@ func NewMySQLConn(ctx context.Context, cfg *MySQLConfig, options ...Option) (db 
 	return
 }
 
-// conditions: column: values(string, int or slice)
-func BuildQueryArgs(conditions map[string]interface{}) (query string, args []interface{}) {
-	var q string
-	var a []interface{}
-	identifier := " "
-	operator := " = "
-	for k, v := range conditions {
-		switch v.(type) {
-		case types.Slice, types.Array, []string, []int:
-			operator = " in "
-		default:
-			operator = " = "
-		}
+type Condition struct {
+	// where cond: k = v
+	Values     map[string]interface{}
+	Operators map[string]string
 
-		q = q + identifier + k + operator + Placeholder
-		a = append(a, v)
-		identifier = " and "
+	Offset  int
+	Limit   int
+	Order   string
+	Reverse bool
+}
+
+// default operator is CondEqual
+func (c *Condition) Update(column string, value interface{}, operator ...string) {
+	c.Values[column] = value
+	if len(operator) > 0 {
+		c.Operators[column] = operator[0]
+	} else {
+		switch value.(type) {
+		case types.Slice:
+			c.Operators[column] = CondIn
+		case types.Array:
+			c.Operators[column] = CondIn
+		default:
+			c.Operators[column] = CondEqual
+		}
 	}
-	return q, a
+}
+
+func (c *Condition) UpdateLimit(offset, limit int)  {
+	c.Offset = offset
+	c.Limit = limit
+}
+
+func (c *Condition) UpdateOrder(order string, reverse bool)  {
+	c.Order = order
+	c.Reverse = reverse
+}
+
+// conditions: column: values(string, int or slice)
+func (c *Condition) Build(tx *gorm.DB) *gorm.DB {
+	var q, joint string
+	var a []interface{}
+	for column, v := range c.Values {
+		q += joint + column + c.Operators[column]
+		// handle like
+		if c.Operators[column] == CondLike {
+			a = append(a, fmt.Sprintf("%s%v%s", CondLikePlacehold, v, CondLikePlacehold))
+		} else {
+			a = append(a, v)
+		}
+		joint = JointAnd
+	}
+
+	if q != "" {
+		tx.Where(q, a...)
+	}
+	if c.Limit > 0 {
+		tx.Offset(c.Offset).Limit(c.Limit)
+	}
+	if c.Order != "" {
+		if c.Reverse {
+			tx.Order(fmt.Sprintf(ReverseFmt, c.Order))
+		} else {
+			tx.Order(c.Order)
+		}
+	}
+	return tx
 }

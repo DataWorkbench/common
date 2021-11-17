@@ -1,9 +1,7 @@
 package utils
 
-type StrArray []string
-
-func (sa StrArray) Contain(str string) bool {
-	for _, s := range sa {
+func ContainStr(ss []string, str string) bool {
+	for _, s := range ss {
 		if s == str {
 			return true
 		}
