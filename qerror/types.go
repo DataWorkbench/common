@@ -438,3 +438,13 @@ var (
 		zhCN:   "调用Flink Web Api [%s] 失败",
 	}
 )
+
+// resourcemanager error
+var (
+	FileSizeLimitExceededException = &Error{
+		code: "FileSizeLimitExceededException",
+		status: 500,
+		enUS: "file size is large than 512mb",
+		zhCN: "文件大小超过 512mb",
+	}
+)
