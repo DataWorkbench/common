@@ -51,11 +51,16 @@ func BuildSV1StringToSignature(method string, signPath string, headers http.Head
 		canonicalizeResource = signPath
 	}
 
+	date := headers.Get("X-Date")
+	if date == "" {
+		date = headers.Get("Date")
+	}
+
 	// Build stringToSign
 	signParts := []string{
 		method,
 		canonicalizeResource,
-		headers.Get("Date"),
+		date,
 		headers.Get("Content-Type"),
 		headers.Get("Content-MD5"),
 	}
