@@ -100,7 +100,7 @@ func NewMySQLConn(ctx context.Context, cfg *MySQLConfig, options ...Option) (db 
 
 type Condition struct {
 	// where cond: k = v
-	Values     map[string]interface{}
+	Values    map[string]interface{}
 	Operators map[string]string
 
 	Offset  int
@@ -126,12 +126,12 @@ func (c *Condition) Update(column string, value interface{}, operator ...string)
 	}
 }
 
-func (c *Condition) UpdateLimit(offset, limit int)  {
+func (c *Condition) UpdateLimit(offset, limit int) {
 	c.Offset = offset
 	c.Limit = limit
 }
 
-func (c *Condition) UpdateOrder(order string, reverse bool)  {
+func (c *Condition) UpdateOrder(order string, reverse bool) {
 	c.Order = order
 	c.Reverse = reverse
 }
