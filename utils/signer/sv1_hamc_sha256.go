@@ -9,7 +9,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/pkg/errors"
+	"github.com/DataWorkbench/common/qerror"
 )
 
 const (
@@ -81,20 +81,24 @@ func BuildSV1Authorization(accessKeyId string, signature string) (authorization 
 }
 
 func ParseSV1Authorization(authorization string) (accessKeyId string, signature string, err error) {
+	if authorization == "" {
+		err = qerror.MissingAuthorizationHeader
+		return
+	}
 	authParts := strings.Split(authorization, " ")
 	if len(authParts) != 2 {
-		err = errors.New("invalid authorization format")
+		err = qerror.InvalidAuthorizationHeader
 		return
 	}
 	if authParts[0] != VersionSV1HmacSha256 {
 		// return invalid sign version.
-		err = errors.New("unsupported signature version")
+		err = qerror.UnsupportedSignatureVersion
 		return
 	}
 
 	signParts := strings.Split(authParts[1], ":")
 	if len(signParts) != 2 {
-		err = errors.New("invalid signature format")
+		err = qerror.InvalidAuthorizationHeader
 		return
 	}
 

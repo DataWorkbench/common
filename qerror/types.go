@@ -363,17 +363,17 @@ var (
 	}
 )
 
-// account error
+// sign error
 var (
 	AccessKeyNotExists = &Error{
 		code:   "AccessKeyNotExist",
-		status: 404,
+		status: 403,
 		enUS:   "The access key[%s] not exist.",
 		zhCN:   "Access key[%s]不存在。",
 	}
 	UserNotExists = &Error{
 		code:   "UserNotExist",
-		status: 404,
+		status: 403,
 		enUS:   "The user[%s] not exist.",
 		zhCN:   "User[%s]不存在。",
 	}
@@ -382,6 +382,49 @@ var (
 		status: 400,
 		enUS:   "Validate signature failed, the signature[%s] not match [%s].",
 		zhCN:   "签名验证失败, 签名[%s]与[%s]不匹配。",
+	}
+
+	MissingDateHeader = &Error{
+		code:   "MissingDateHeader",
+		status: 400,
+		enUS:   "You must provide the Date or X-Date HTTP header.",
+		zhCN:   "",
+	}
+	InvalidDateHeader = &Error{
+		code:   "InvalidDateHeader",
+		status: 400,
+		enUS:   "The HTTP header Date or X-Date has wrong format.",
+		zhCN:   "",
+	}
+	ExpiredSignature = &Error{
+		code:   "ExpiredSignature",
+		status: 401,
+		enUS:   "The signature has been expired",
+		zhCN:   "",
+	}
+	MissingAuthorizationHeader = &Error{
+		code:   "MissingAuthorizationHeader",
+		status: 400,
+		enUS:   "You must provide the Authorization HTTP header.",
+		zhCN:   "",
+	}
+	InvalidAuthorizationHeader = &Error{
+		code:   "InvalidAuthorizationHeader",
+		status: 400,
+		enUS:   "The HTTP header Authorization has wrong format.",
+		zhCN:   "",
+	}
+	UnsupportedSignatureVersion = &Error{
+		code:   "UnsupportedSignVersion",
+		status: 400,
+		enUS:   "The signature version you used is not supported.",
+		zhCN:   "",
+	}
+	SignatureNotMatch = &Error{
+		code:   "SignatureNotMatch",
+		status: 401,
+		enUS:   "The request signature server calculated does not match the signature you provided.",
+		zhCN:   "",
 	}
 )
 
