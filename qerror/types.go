@@ -122,6 +122,12 @@ var (
 		enUS:   "The param[s] [%s] is[are] dependence of param [%s] not exist.",
 		zhCN:   "参数[%s]不存在，被参数[%s]依赖.",
 	}
+	InvalidName = &Error{
+		code:   "InvalidName",
+		status: 400,
+		enUS:   "The name is invalid, accepts 0~9、a~z、 A~Z、_ and can't begin or end with _.",
+		zhCN:   "工作空间名称不符合要求, 只允许数字,大小写字母和下划线, 并且不能以下划线开头或者结尾.",
+	}
 )
 
 // Error for Global API
@@ -165,12 +171,6 @@ var (
 		status: 403,
 		enUS:   "The workspace [%s] does not active.",
 		zhCN:   "工作空间[%s]已被禁用",
-	}
-	InvalidSpaceName = &Error{
-		code:   "InvalidWorkspaceName",
-		status: 400,
-		enUS:   "The workspace name is invalid, accepts 0~9、a~z、_ and can't begin or end with _.",
-		zhCN:   "工作空间名称不符合要求, 只允许数字,小写字母和下划线, 并且不能以下划线开头或者结尾.",
 	}
 )
 
@@ -233,12 +233,6 @@ var (
 		status: 400,
 		enUS:   "The workflow [%s] not set environmental parameters ",
 		zhCN:   "工作流程[%s]未设置环境参数",
-	}
-	InvalidFlowName = &Error{
-		code:   "InvalidFlowName",
-		status: 400,
-		enUS:   "The workflow name is invalid, accepts 0~9、a~z、_ and can't begin or end with _.",
-		zhCN:   "工作流程名称不符合要求, 只允许数字,小写字母和下划线, 并且不能以下划线开头或者结尾.",
 	}
 )
 
