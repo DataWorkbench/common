@@ -55,14 +55,22 @@ func BuildSV1StringToSignature(method string, signPath string, headers http.Head
 	if date == "" {
 		date = headers.Get("Date")
 	}
+	contentType := headers.Get("Content-Type")
+	var mimeType string
+	if i := strings.Index(contentType, ";"); i > 0 {
+		mimeType = contentType[:i]
+	} else {
+		mimeType = contentType
+	}
+	contentMD5 := headers.Get("Content-MD5")
 
 	// Build stringToSign
 	signParts := []string{
 		method,
 		canonicalizeResource,
 		date,
-		headers.Get("Content-Type"),
-		headers.Get("Content-MD5"),
+		mimeType,
+		contentMD5,
 	}
 	return strings.Join(signParts, "\n")
 }
