@@ -447,4 +447,10 @@ var (
 		enUS: "file size is large than 512mb",
 		zhCN: "文件大小超过 512mb",
 	}
+	HadoopClientCreateFailed = &Error{
+		code:   "HadoopClientCreateFailed",
+		status: 500,
+		enUS:   "fail to init hadoop client",
+		zhCN:   "hadoop客户端创建失败",
+	}
 )
