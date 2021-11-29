@@ -65,6 +65,10 @@ type JobmanagerInfo struct {
 	Updated        int64                     `gorm:"column:updated;"`
 	Resources      string                    `gorm:"column:resources;"`
 	ZeppelinServer string                    `gorm:"column:zeppelin_server;"`
+	FlinkServer    string                    `gorm:"column:flink_server;"`
+	Savepoint      string                    `gorm:"column:savepoint;"`
+	FlinkJobID     string                    `gorm:"column:flink_job_id;"`
+	Version        int                       `gorm:"column:version;"`
 }
 
 func (smi JobmanagerInfo) TableName() string {
@@ -177,6 +181,42 @@ func (ex *HttpClient) RunParagraphSync(noteID string, paragraphID string) (err e
 	return
 }
 
+func (ex *HttpClient) RunParagraphSyncWithResult(noteID string, paragraphID string) (err error, res string) {
+	//var repJsonLevel1 map[string]json.RawMessage
+	//var repJsonLevel2 map[string]json.RawMessage
+	//var repJsonLevel3 []map[string]json.RawMessage
+	_, res, err = doRequest(ex.Client, http.MethodPost, http.StatusOK, ex.ZeppelinServer+"/api/notebook/run/"+noteID+"/"+paragraphID, "", false)
+	if err != nil {
+		return
+	}
+	return
+	//err = json.Unmarshal([]byte(repString), &repJsonLevel1)
+	//if err != nil {
+	//	return
+	//}
+	//err = json.Unmarshal(repJsonLevel1["body"], &repJsonLevel2)
+	//if err != nil {
+	//	return
+	//}
+	//err = json.Unmarshal(repJsonLevel2["msg"], &repJsonLevel3)
+	//if err != nil {
+	//	return
+	//}
+	//if len(repJsonLevel3) <= 0 {
+	//	return qerror.CancelWithSavepointFailed.Format("job data msg parse failed."), ""
+	//}
+	//m := repJsonLevel3[0]
+
+	//data := string(m["data"])
+	//if strings.Contains(data, "success") {
+	//	index := strings.LastIndex(data, "success") + 8
+	//	savepoint = data[index : len(data)-3]
+	//	return
+	//}
+
+	//return qerror.CancelWithSavepointFailed.Format(data), ""
+}
+
 func (ex *HttpClient) GetParagraphResultOutput(noteID string, paragraphID string) (msg string, err error) {
 	var repString string
 	var repJsonLevel1 map[string]json.RawMessage
@@ -219,6 +259,11 @@ func (ex *HttpClient) CreateParagraph(noteID string, index int32, name string, t
 
 func (ex *HttpClient) RunParagraphAsync(noteID string, paragraphID string) (err error) {
 	_, _, err = doRequest(ex.Client, http.MethodPost, http.StatusOK, ex.ZeppelinServer+"/api/notebook/job/"+noteID+"/"+paragraphID, "", false)
+	return
+}
+
+func (ex *HttpClient) UpdateParagraphConfig(noteID string, paragraphID string, config string) (err error) {
+	_, _, err = doRequest(ex.Client, http.MethodPost, http.StatusOK, ex.ZeppelinServer+"/api/notebook/"+noteID+"/paragraph/"+paragraphID+"/config", fmt.Sprintf("{\"savepoint_path\": \"%s\"}", config), true)
 	return
 }
 
@@ -284,6 +329,21 @@ func ModifyState(ctx context.Context, jobID string, state model.StreamJobInst_St
 
 	edb := db.WithContext(ctx)
 	err = edb.Select("status", "message", "updated").Where("job_id = ? ", info.JobID).Updates(info).Error
+
+	return
+}
+
+func ModifyCancelState(ctx context.Context, jobID string, state model.StreamJobInst_State, savepoint string, message string, db *gorm.DB) (err error) {
+	var info JobmanagerInfo
+
+	info.JobID = jobID
+	info.Status = state
+	info.Message = message
+	info.Savepoint = savepoint
+	info.Updated = time.Now().Unix()
+
+	edb := db.WithContext(ctx)
+	err = edb.Select("status", "message", "updated", "savepoint").Where("job_id = ?", info.JobID).Updates(info).Error
 
 	return
 }

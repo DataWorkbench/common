@@ -454,3 +454,13 @@ var (
 		zhCN:   "hadoop客户端创建失败",
 	}
 )
+
+// jobmanager error
+var(
+	CancelWithSavepointFailed = &Error{
+		code:   "CancelWithSavepointFailed",
+		status: 500,
+		enUS:   "fail to cancel with savepoint reason [%s]",
+		zhCN:   "取消任务失败: [%s]",
+	}
+)
