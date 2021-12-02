@@ -312,12 +312,12 @@ func (h *consumerHandler) spanFromMessage(ctx context.Context, messages []*saram
 	// Only trace the first message.
 	msg := messages[0]
 
-	mc := &msgHeadersCarrier{}
-	for _, h := range msg.Headers {
-		mc.msgHeaders = append(mc.msgHeaders, *h)
+	carrier := &opentracingCarrier{}
+	for _, mh := range msg.Headers {
+		carrier.headers = append(carrier.headers, *mh)
 	}
 
-	producerSpan, err := h.tracer.Extract(opentracing.TextMap, mc)
+	producerSpan, err := h.tracer.Extract(opentracing.TextMap, carrier)
 	if err != nil {
 		lg := glog.FromContext(ctx)
 		// No parent span in message headers. We can ignore this error.

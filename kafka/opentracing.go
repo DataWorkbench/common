@@ -13,20 +13,20 @@ import (
 
 var traceComponentTag = opentracing.Tag{Key: string(ext.Component), Value: "sarama"}
 
-type msgHeadersCarrier struct {
-	msgHeaders []sarama.RecordHeader
+type opentracingCarrier struct {
+	headers []sarama.RecordHeader
 }
 
-// Set conforms to the TextMapWriter interface.
-func (c *msgHeadersCarrier) Set(key, val string) {
+// Set conforms to the opentracing.TextMapWriter interface.
+func (c *opentracingCarrier) Set(key, val string) {
 	rh := sarama.RecordHeader{Key: []byte(key), Value: []byte(val)}
-	c.msgHeaders = append(c.msgHeaders, rh)
+	c.headers = append(c.headers, rh)
 }
 
-// ForeachKey conforms to the TextMapReader interface.
-func (c *msgHeadersCarrier) ForeachKey(handler func(key, val string) error) error {
-	for i := range c.msgHeaders {
-		h := c.msgHeaders[i]
+// ForeachKey conforms to the opentracing.TextMapReader interface.
+func (c *opentracingCarrier) ForeachKey(handler func(key, val string) error) error {
+	for i := range c.headers {
+		h := c.headers[i]
 		if err := handler(string(h.Key), string(h.Value)); err != nil {
 			return err
 		}
@@ -52,13 +52,13 @@ func producerTraceSpan(ctx context.Context, tracer gtrace.Tracer, opName string)
 		traceComponentTag,
 	)
 
-	mc := &msgHeadersCarrier{}
-	err := tracer.Inject(span.Context(), opentracing.TextMap, mc)
+	carrier := &opentracingCarrier{}
+	err := tracer.Inject(span.Context(), opentracing.TextMap, carrier)
 	if err != nil {
 		lg := glog.FromContext(ctx)
 		lg.Error().Error("producerTraceSpan: tracer inject error", err).Fire()
 	}
 
-	headers = append(headers, mc.msgHeaders...)
+	headers = append(headers, carrier.headers...)
 	return
 }
