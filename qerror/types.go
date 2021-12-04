@@ -442,10 +442,10 @@ var (
 // resourcemanager error
 var (
 	FileSizeLimitExceededException = &Error{
-		code: "FileSizeLimitExceededException",
+		code:   "FileSizeLimitExceededException",
 		status: 500,
-		enUS: "file size is large than 512mb",
-		zhCN: "文件大小超过 512mb",
+		enUS:   "file size is large than 512mb",
+		zhCN:   "文件大小超过 512mb",
 	}
 	HadoopClientCreateFailed = &Error{
 		code:   "HadoopClientCreateFailed",

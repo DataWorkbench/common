@@ -22,7 +22,7 @@ type ClientConfig struct {
 	MaxIdleConnsPerHost   int           `json:"max_idle_conns_per_host" yaml:"max_idle_conns_per_host" env:"MAX_IDLE_CONNS_PER_HOST,default=128" validate:"required"`
 }
 
-// defaultClientConfig return a ClientConfig that can be used in most scenarios;
+// NewClientConfig return a ClientConfig that can be used in most scenarios;
 // And without TLSClientConfig and Proxy
 func NewClientConfig() *ClientConfig {
 	return &ClientConfig{
@@ -48,11 +48,9 @@ func NewClient(ctx context.Context, cfg *ClientConfig) *Client {
 	dialer := &net.Dialer{
 		Timeout:       time.Second * 10,
 		KeepAlive:     time.Second * 15,
-		DualStack:     true,
 		LocalAddr:     nil,
 		FallbackDelay: 0,
 		Resolver:      nil,
-		Cancel:        nil,
 		Control:       nil,
 	}
 
@@ -92,14 +90,14 @@ func (cli *Client) Send(ctx context.Context, req *http.Request) (resp *http.Resp
 		}
 	}
 
-	lg.Debug().String("client sending to url", req.URL.String()).Fire()
-	lg.Debug().Any("client request header", req.Header).Fire()
+	lg.Debug().String("http client sending to url", req.URL.String()).Fire()
+	lg.Debug().Any("http client request headers", req.Header).Fire()
 	resp, err = cli.Client.Do(req)
 	if err != nil {
-		lg.Error().Error("send request error", err).Fire()
+		lg.Error().Error("http client send request error", err).Fire()
 		return
 	}
-	lg.Debug().Any("client receive response header", resp.Header).Fire()
-	lg.Debug().Int("client receive response status", resp.StatusCode).Fire()
+	lg.Debug().Any("http client receive response headers", resp.Header).Fire()
+	lg.Debug().Int("http client receive response status", resp.StatusCode).Fire()
 	return
 }

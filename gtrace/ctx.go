@@ -7,10 +7,10 @@ import (
 )
 
 const (
-	// The key string format of trace id.
+	// IdKey is the key string format of trace id.
 	IdKey = "tid"
 
-	// The request id key in http header.
+	// HeaderKey is the request id key in http header.
 	HeaderKey = "X-Request-Id"
 
 	// Used when no trace id found or generated failed.
