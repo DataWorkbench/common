@@ -456,7 +456,7 @@ var (
 )
 
 // jobmanager error
-var(
+var (
 	CancelWithSavepointFailed = &Error{
 		code:   "CancelWithSavepointFailed",
 		status: 500,

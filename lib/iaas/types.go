@@ -160,7 +160,7 @@ func (b *DescribeVxnetsOuput) ReturnMessage() string {
 type VxnetResource struct {
 	VxnetId      string `json:"vxnet_id"`
 	ResourceId   string `json:"resource_id"`
-	ResourceType int    `json:"resource_type"`
+	ResourceType string `json:"resource_type"`
 	ResourceName string `json:"resource_name"`
 	Status       string `json:"status"`
 	PrivateIp    string `json:"private_ip"`
