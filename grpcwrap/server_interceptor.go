@@ -25,8 +25,8 @@ func traceUnaryServerInterceptor(lp *glog.Logger) grpc.UnaryServerInterceptor {
 		nl.Debug().String("unary receive", info.FullMethod).RawString("request", pbMsgToString(nl, req)).Fire()
 
 		// Validated request parameters
-		if err := validateRequestArgument(req, nl); err != nil {
-			return nil, err
+		if err = validateRequestArgument(req, nl); err != nil {
+			return
 		}
 
 		ctx = gtrace.ContextWithId(ctx, tid)

@@ -24,12 +24,12 @@ func newOpenTracingPlugin(tracer opentracing.Tracer) gorm.Plugin {
 	return &openTracingPlugin{tracer: tracer}
 }
 
-// Implements gorm.Plugin
+// Name for Implements gorm.Plugin
 func (pl *openTracingPlugin) Name() string {
 	return "OpenTracingPlugin"
 }
 
-// Implements gorm.Plugin
+// Initialize for Implements gorm.Plugin
 func (pl *openTracingPlugin) Initialize(db *gorm.DB) (err error) {
 	// Register before function.
 	err = db.Callback().Create().Before("gorm:CreateBefore").Register(callBackBeforeName, pl.before)
@@ -98,7 +98,7 @@ func (pl *openTracingPlugin) before(db *gorm.DB) {
 	opName := strings.Split(sql, " ")[0]
 
 	span := pl.tracer.StartSpan(
-		db.Name()+opName,
+		db.Name()+"-"+opName,
 		opentracing.ChildOf(parentCtx),
 		ext.SpanKindRPCClient,
 		traceComponentTag,

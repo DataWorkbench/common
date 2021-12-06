@@ -25,6 +25,7 @@ require (
 	github.com/uber/jaeger-client-go v2.29.1+incompatible
 	github.com/uber/jaeger-lib v2.4.0+incompatible // indirect
 	github.com/yu31/snowflake v0.0.0-20210309213122-580647caa2bb
+	go.etcd.io/etcd/api/v3 v3.5.0
 	go.etcd.io/etcd/client/v3 v3.5.0
 	google.golang.org/grpc v1.38.0
 	google.golang.org/protobuf v1.27.1

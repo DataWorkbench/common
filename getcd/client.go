@@ -15,8 +15,6 @@ import (
 	"github.com/DataWorkbench/common/gtrace"
 )
 
-type Client = etcdv3.Client
-
 // Config is a copy of clientv3.Config.
 type Config struct {
 	// Etcd server endpoints, multiple endpoint are separated by ",".
@@ -46,6 +44,7 @@ func NewClient(ctx context.Context, cfg *Config) (cli *Client, err error) {
 		DialTimeout: cfg.DialTimeout,
 		DialOptions: dialOpts,
 	})
+
 	if err != nil {
 		lg.Error().Error("connects to etcd error", err).Fire()
 		return

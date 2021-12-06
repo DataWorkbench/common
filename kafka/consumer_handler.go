@@ -290,9 +290,9 @@ func (h *consumerHandler) getTraceId(ctx context.Context, messages []*sarama.Con
 	msg := messages[0]
 
 	// Get the trace id from `message.Headers` that producer passed.
-	for _, h := range msg.Headers {
-		if string(h.Key) == gtrace.IdKey {
-			tid = string(h.Value)
+	for _, mh := range msg.Headers {
+		if string(mh.Key) == gtrace.IdKey {
+			tid = string(mh.Value)
 			return
 		}
 	}
