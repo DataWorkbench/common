@@ -280,7 +280,7 @@ var (
 	}
 	ConnectSourceFailed = &Error{
 		code:   "ConnectSourceFailed",
-		status: http.StatusNotModified,
+		status: http.StatusNoContent,
 		enUS:   "this source can't connect[%d]",
 		zhCN:   "数据源无法连接[%d]",
 	}
