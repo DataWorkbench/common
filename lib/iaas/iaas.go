@@ -335,7 +335,7 @@ func (c *Client) DescribeRouterVxnetsById(ctx context.Context, routerId string) 
 }
 
 // DescribeVxnetsById query the vxnet info of specified vxnetId.
-func (c *Client) DescribeVxnetsById(ctx context.Context, vxnetId string) (vxnet *Vxnet, err error) {
+func (c *Client) DescribeVxnetById(ctx context.Context, vxnetId string) (vxnet *Vxnet, err error) {
 	params := map[string]interface{}{
 		"action":          "DescribeVxnets",
 		"vxnets":          []string{vxnetId},
@@ -353,7 +353,7 @@ func (c *Client) DescribeVxnetsById(ctx context.Context, vxnetId string) (vxnet 
 		return
 	}
 	if len(body.VxnetSet) == 0 {
-		err = errors.New("access_key_not_exists")
+		err = errors.New("vxnet_not_exists")
 		return
 	}
 	vxnet = body.VxnetSet[0]
