@@ -152,16 +152,16 @@ func (c *Condition) Build(tx *gorm.DB) *gorm.DB {
 	}
 
 	if q != "" {
-		tx.Where(q, a...)
+		tx = tx.Where(q, a...)
 	}
 	if c.Limit > 0 {
-		tx.Offset(c.Offset).Limit(c.Limit)
+		tx = tx.Offset(c.Offset).Limit(c.Limit)
 	}
 	if c.Order != "" {
 		if c.Reverse {
-			tx.Order(fmt.Sprintf(ReverseFmt, c.Order))
+			tx = tx.Order(fmt.Sprintf(ReverseFmt, c.Order))
 		} else {
-			tx.Order(c.Order)
+			tx = tx.Order(c.Order)
 		}
 	}
 	return tx
