@@ -463,4 +463,10 @@ var (
 		enUS:   "fail to cancel with savepoint reason [%s]",
 		zhCN:   "取消任务失败: [%s]",
 	}
+	StreamJobSyntaxFailed = &Error{
+		code:   "StreamJobSyntaxFailed",
+		status: 400,
+		enUS:   "%s",
+		zhCN:   "%s",
+	}
 )
