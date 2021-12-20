@@ -334,7 +334,7 @@ func (c *Client) DescribeRouterVxnetsById(ctx context.Context, routerId string) 
 	return
 }
 
-// DescribeVxnetsById query the vxnet info of specified vxnetId.
+// DescribeVxnetById query the vxnet info of specified vxnetId.
 func (c *Client) DescribeVxnetById(ctx context.Context, vxnetId string) (vxnet *Vxnet, err error) {
 	params := map[string]interface{}{
 		"action":          "DescribeVxnets",
