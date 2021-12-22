@@ -412,7 +412,7 @@ func GetZeppelinJobState(ctx context.Context, jobInput JobQueueType, logger *glo
 			logger.Error().Msg("can't delete the note").String("noteid", job.Watch.NoteID).String("jobid", job.Watch.JobID).String("error msg", err.Error()).Fire()
 			err = nil
 		}
-		_ = FreeJobResources(ctx, job.Watch.FlinkResources, logger, job.HttpClient, jobdevClient)
+		//_ = FreeJobResources(ctx, job.Watch.FlinkResources, logger, job.HttpClient, jobdevClient)
 
 		job.Watch.JobState.State = model.StreamJobInst_Succeed
 		job.Watch.JobState.Message = jobmsg
@@ -435,7 +435,7 @@ func GetZeppelinJobState(ctx context.Context, jobInput JobQueueType, logger *glo
 			logger.Error().Msg("can't delete the note").String("noteid", job.Watch.NoteID).String("jobid", job.Watch.JobID).String("error msg", err.Error()).Fire()
 			err = nil
 		}
-		_ = FreeJobResources(ctx, job.Watch.FlinkResources, logger, job.HttpClient, jobdevClient)
+		//_ = FreeJobResources(ctx, job.Watch.FlinkResources, logger, job.HttpClient, jobdevClient)
 
 		job.Watch.JobState.State = model.StreamJobInst_Failed
 		job.Watch.JobState.Message = jobmsg
@@ -458,7 +458,7 @@ func GetZeppelinJobState(ctx context.Context, jobInput JobQueueType, logger *glo
 			logger.Error().Msg("can't delete the note").String("noteid", job.Watch.NoteID).String("jobid", job.Watch.JobID).String("error msg", err.Error()).Fire()
 			err = nil
 		}
-		_ = FreeJobResources(ctx, job.Watch.FlinkResources, logger, job.HttpClient, jobdevClient)
+		//_ = FreeJobResources(ctx, job.Watch.FlinkResources, logger, job.HttpClient, jobdevClient)
 
 		job.Watch.JobState.State = model.StreamJobInst_Terminated
 		job.Watch.JobState.Message = jobmsg
