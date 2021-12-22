@@ -443,9 +443,15 @@ var (
 var (
 	FileSizeLimitExceededException = &Error{
 		code:   "FileSizeLimitExceededException",
-		status: 500,
+		status: 407,
 		enUS:   "file size is large than 512mb",
 		zhCN:   "文件大小超过 512mb",
+	}
+	InvalidFileSize = &Error{
+		code :"InvalidFileSize",
+		status: 408,
+		enUS: "invalid file size [%s]",
+		zhCN: "文件大小不符",
 	}
 	HadoopClientCreateFailed = &Error{
 		code:   "HadoopClientCreateFailed",
