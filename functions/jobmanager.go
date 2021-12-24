@@ -65,7 +65,6 @@ type JobmanagerInfo struct {
 	Updated        int64                     `gorm:"column:updated;"`
 	Resources      string                    `gorm:"column:resources;"`
 	ZeppelinServer string                    `gorm:"column:zeppelin_server;"`
-	FlinkServer    string                    `gorm:"column:flink_server;"`
 	Savepoint      string                    `gorm:"column:savepoint;"`
 	FlinkJobID     string                    `gorm:"column:flink_job_id;"`
 	Version        int                       `gorm:"column:version;"`
