@@ -65,9 +65,6 @@ type JobmanagerInfo struct {
 	Updated        int64                     `gorm:"column:updated;"`
 	Resources      string                    `gorm:"column:resources;"`
 	ZeppelinServer string                    `gorm:"column:zeppelin_server;"`
-	Savepoint      string                    `gorm:"column:savepoint;"`
-	FlinkJobID     string                    `gorm:"column:flink_job_id;"`
-	Version        int                       `gorm:"column:version;"`
 }
 
 func (smi JobmanagerInfo) TableName() string {
@@ -338,7 +335,7 @@ func ModifyCancelState(ctx context.Context, jobID string, state model.StreamJobI
 	info.JobID = jobID
 	info.Status = state
 	info.Message = message
-	info.Savepoint = savepoint
+	//info.Savepoint = savepoint
 	info.Updated = time.Now().Unix()
 
 	edb := db.WithContext(ctx)
