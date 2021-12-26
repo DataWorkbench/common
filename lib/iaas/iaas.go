@@ -30,7 +30,6 @@ const (
 	iso8601            = "2006-01-02T15:04:05Z"
 	signatureAlgorithm = "HmacSHA256"
 	signatureVersion   = "1"
-	requestPath        = "/iaas/"
 )
 
 // Config represents the iaas api config.
@@ -40,6 +39,7 @@ type Config struct {
 	Port            int    `json:"port"              yaml:"port"              env:"PORT"                validate:"required"`
 	Protocol        string `json:"protocol"          yaml:"protocol"          env:"PROTOCOL"            validate:"required"`
 	Timeout         int    `json:"timeout"           yaml:"timeout"           env:"TIMEOUT,default=600" validate:"required"`
+	Uri             string `json:"uri"               yaml:"uri"               env:"URI"                 validate:"required"`
 	AccessKeyId     string `json:"access_key_id"     yaml:"access_key_id"     env:"ACCESS_KEY_ID"       validate:"required"`
 	SecretAccessKey string `json:"secret_access_key" yaml:"secret_access_key" env:"SECRET_ACCESS_KEY"   validate:"required"`
 }
@@ -128,7 +128,7 @@ func (c *Client) buildRequestURL(queryParams map[string]string, opts ...Option) 
 
 	signToString := strings.Join([]string{
 		http.MethodGet,
-		requestPath,
+		c.cfg.Uri,
 		queryString,
 	}, "\n")
 
@@ -141,7 +141,7 @@ func (c *Client) buildRequestURL(queryParams map[string]string, opts ...Option) 
 		c.cfg.Protocol,
 		c.cfg.Host,
 		c.cfg.Port,
-		requestPath,
+		c.cfg.Uri,
 		queryString,
 		url.QueryEscape(signature),
 	)
