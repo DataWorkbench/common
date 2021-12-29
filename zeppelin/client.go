@@ -20,13 +20,6 @@ type Client struct {
 	clientConfig ClientConfig
 }
 
-type ClientConfig struct {
-	ZeppelinRestUrl string
-	Timeout         time.Duration
-	RetryCount      int
-	QueryInterval   time.Duration
-}
-
 func NewZeppelinClient(config ClientConfig) *Client {
 	client := httpclient.NewClient(
 		httpclient.WithHTTPTimeout(config.Timeout),

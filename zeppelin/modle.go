@@ -3,6 +3,7 @@ package zeppelin
 import (
 	"github.com/valyala/fastjson"
 	"strings"
+	"time"
 )
 
 type Status string
@@ -51,6 +52,13 @@ func valueOf(value string) Status {
 		return ABORT
 	}
 	return UNKNOWN
+}
+
+type ClientConfig struct {
+	ZeppelinRestUrl string
+	Timeout         time.Duration
+	RetryCount      int
+	QueryInterval   time.Duration
 }
 
 type ParagraphResult struct {
