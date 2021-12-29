@@ -448,10 +448,10 @@ var (
 		zhCN:   "文件大小超过 512mb",
 	}
 	InvalidFileSize = &Error{
-		code :"InvalidFileSize",
+		code:   "InvalidFileSize",
 		status: 408,
-		enUS: "invalid file size [%s]",
-		zhCN: "文件大小不符",
+		enUS:   "invalid file size [%s]",
+		zhCN:   "文件大小不符",
 	}
 	HadoopClientCreateFailed = &Error{
 		code:   "HadoopClientCreateFailed",
@@ -474,5 +474,36 @@ var (
 		status: 400,
 		enUS:   "%s",
 		zhCN:   "%s",
+	}
+)
+
+// zeppelin error
+var (
+	InvalidateZeppelinUser = &Error{
+		code:   "InvalidateZeppelinUser",
+		status: 302,
+		enUS:   "invalidate zeppelin user",
+		zhCN:   "请重新登陆zeppelin",
+	}
+
+	CallZeppelinRestApiFailed = &Error{
+		code:   "UnableCallZeppelinRestApi",
+		status: 500,
+		enUS:   "call zeppelin rest api failed, status: %s, statusText %s, message: %s",
+		zhCN:   "zeppelin 服务异常",
+	}
+
+	ZeppelinReturnStatusError = &Error{
+		code:   "ZeppelinReturnStatusError",
+		status: 500,
+		enUS:   "submit zeppelin failed ,message: %s",
+		zhCN:   "zeppelin 调用异常",
+	}
+
+	ZeppelinRunParagraphTimeout = &Error{
+		code:   "ZeppelinRunParagraphTimeout",
+		status: 500,
+		enUS:   "the paragraph is not finished in %s seconds",
+		zhCN:   "zeppelin paragraph 运行超时",
 	}
 )

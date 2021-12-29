@@ -13,6 +13,7 @@ require (
 	github.com/gin-gonic/gin v1.7.3
 	github.com/go-playground/validator/v10 v10.4.1
 	github.com/go-redis/redis/v8 v8.11.0
+	github.com/gojek/heimdall/v7 v7.0.2
 	github.com/gorilla/websocket v1.4.2
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.2
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
@@ -24,6 +25,7 @@ require (
 	github.com/stretchr/testify v1.7.0
 	github.com/uber/jaeger-client-go v2.29.1+incompatible
 	github.com/uber/jaeger-lib v2.4.0+incompatible // indirect
+	github.com/valyala/fastjson v1.6.3
 	github.com/yu31/snowflake v0.0.0-20210309213122-580647caa2bb
 	go.etcd.io/etcd/api/v3 v3.5.0
 	go.etcd.io/etcd/client/v3 v3.5.0
