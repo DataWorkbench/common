@@ -193,6 +193,20 @@ func (z *Client) waitUtilParagraphJobUrlReturn(noteId string, paragraphId string
 	return paragraphResult, nil
 }
 
+func (z *Client) waitUtilParagraphJobUrlReturnWithTimeout(noteId string, paragraphId string, timeoutInSec int) (*ParagraphResult, error) {
+	start := time.Now().Second()
+	paragraphResult := &ParagraphResult{}
+	for (time.Now().Second()-start) < timeoutInSec && len(paragraphResult.JobUrls) == 0 {
+		result, err := z.waitUtilParagraphRunning(noteId, paragraphId)
+		if err != nil {
+			return nil, err
+		}
+		paragraphResult = result
+		time.Sleep(time.Millisecond * z.clientConfig.QueryInterval)
+	}
+	return paragraphResult, nil
+}
+
 func (z *Client) waitUtilParagraphFinish(noteId string, paragraphId string) (*ParagraphResult, error) {
 	for {
 		paragraphResult, err := z.queryParagraphResult(noteId, paragraphId)
