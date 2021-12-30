@@ -20,13 +20,16 @@ func NewZSession2(config ClientConfig, interceptor string) *ZSession {
 	return NewZSession4(config, interceptor, make(map[string]string), 100)
 }
 
-func NewZSession3(config ClientConfig, interceptor string, sessionId string) *ZSession {
-	sessionInfo, _ := NewSessionInfo(sessionId)
+func NewZSession3(config ClientConfig, interceptor string, sessionId string) (*ZSession, error) {
+	sessionInfo, err := NewSessionInfo(sessionId)
+	if err != nil {
+		return nil, err
+	}
 	return &ZSession{
 		zeppelinClient: NewZeppelinClient(config),
 		interpreter:    interceptor,
 		sessionInfo:    sessionInfo,
-	}
+	}, nil
 }
 
 func NewZSession4(config ClientConfig, interceptor string, intpPorperties map[string]string, maxStatement int) *ZSession {
@@ -39,8 +42,11 @@ func NewZSession4(config ClientConfig, interceptor string, intpPorperties map[st
 }
 
 func CreateFromExistingSession(config ClientConfig, interceptor string, sessionId string) (*ZSession, error) {
-	session := NewZSession3(config, interceptor, sessionId)
-	if err := session.reconnect(); err != nil {
+	session, err := NewZSession3(config, interceptor, sessionId)
+	if err != nil {
+		return nil, err
+	}
+	if err = session.reconnect(); err != nil {
 		return nil, err
 	}
 	return session, nil
@@ -80,26 +86,6 @@ func (z *ZSession) start() (err error) {
 	if !paragraphResult.Status.isFinished() {
 		return qerror.ZeppelinInitFailed
 	}
-	/*if z.sessionInfo, err = z.zeppelinClient.getSession(z.getSessionId()); err != nil {
-		return
-	}
-	if handler != nil {
-		z.webSocketClient = NewWebSocketClient(handler)
-		restUrl := z.zeppelinClient.ClientConfig.ZeppelinRestUrl
-		wsUrl := strings.ReplaceAll(restUrl, "https", "ws")
-		wsUrl = strings.ReplaceAll(wsUrl, "http", "ws") + "/ws"
-		req := map[string]string{}
-		req["id"] = z.getNoteId()
-		req["op"] = "GET_NOTE"
-		var reqBytes []byte
-		if reqBytes, err = json.Marshal(req); err != nil {
-			return
-		}
-		if err = z.webSocketClient.connect(wsUrl); err != nil {
-			return
-		}
-		return z.webSocketClient.dial.WriteJSON(string(reqBytes))
-	}*/
 	return nil
 }
 

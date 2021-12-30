@@ -1,6 +1,7 @@
 package zeppelin
 
 import (
+	"encoding/json"
 	"strings"
 	"time"
 
@@ -67,24 +68,24 @@ type ClientConfig struct {
 }
 
 type ParagraphResult struct {
-	ParagraphId string
-	Status      Status
-	Progress    int
-	Results     []*Result
-	JobUrls     []string
+	ParagraphId string    `json:"paragraphId"`
+	Status      Status    `json:"status"`
+	Progress    int       `json:"progress"`
+	Results     []*Result `json:"results"`
+	JobUrls     []string  `json:"jobUrl"`
 }
 
 type Result struct {
-	rType string
-	rData string
+	Type string `json:"type"`
+	Data string `json:"data"`
 }
 
 func NewResult(jsonObj *fastjson.Value) *Result {
 	rType := string(jsonObj.GetStringBytes("type"))
 	rData := string(jsonObj.GetStringBytes("data"))
 	return &Result{
-		rType: rType,
-		rData: rData,
+		Type: rType,
+		Data: rData,
 	}
 }
 
@@ -135,12 +136,12 @@ func NewExecuteResult(paragraphResult *ParagraphResult) *ExecuteResult {
 }
 
 type SessionInfo struct {
-	SessionId   string
-	NoteId      string
-	Interpreter string
-	State       string
-	WebUrl      string
-	StartTime   string
+	SessionId   string `json:"sessionId"`
+	NoteId      string `json:"noteId"`
+	Interpreter string `json:"interpreter"`
+	State       string `json:"state"`
+	WebUrl      string `json:"webUrl"`
+	StartTime   string `json:"starTime"`
 }
 
 func NewSessionInfo(sessionStr string) (*SessionInfo, error) {
@@ -149,24 +150,8 @@ func NewSessionInfo(sessionStr string) (*SessionInfo, error) {
 	if err != nil {
 		return nil, err
 	}
-	body := sessionObj.Get("body")
-	if strings.Contains(sessionStr, "sessionId") {
-		sessionInfo.SessionId = string(body.GetStringBytes("sessionId"))
-	}
-	if strings.Contains(sessionStr, "noteId") {
-		sessionInfo.NoteId = string(body.GetStringBytes("noteId"))
-	}
-	if strings.Contains(sessionStr, "interpreter") {
-		sessionInfo.Interpreter = string(body.GetStringBytes("interpreter"))
-	}
-	if strings.Contains(sessionStr, "state") {
-		sessionInfo.State = string(body.GetStringBytes("state"))
-	}
-	if strings.Contains(sessionStr, "weburl") {
-		sessionInfo.WebUrl = string(body.GetStringBytes("weburl"))
-	}
-	if strings.Contains(sessionStr, "startTime") {
-		sessionInfo.StartTime = string(body.GetStringBytes("startTime"))
+	if err = json.Unmarshal([]byte(sessionObj.Get("body").String()), &sessionInfo); err != nil {
+		return nil, err
 	}
 	return &sessionInfo, nil
 }

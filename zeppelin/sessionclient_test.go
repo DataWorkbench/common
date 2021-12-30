@@ -2,6 +2,7 @@ package zeppelin
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 	"time"
 )
@@ -67,6 +68,25 @@ func Test_RunSql(t *testing.T) {
 	result, err = zSession.waitUntilRunning(result.statementId)
 	if err != nil {
 		t.Error(err)
+	}
+	for {
+		if result, err = zSession.queryStatement(result.statementId); err != nil {
+			t.Error(err)
+		}
+		if len(result.jobUrls) > 0 {
+			if len(result.jobUrls[0]) > strings.LastIndex(result.jobUrls[0], "/") {
+				jobId := result.jobUrls[0][strings.LastIndex(result.jobUrls[0], "/")+1:]
+				if len(jobId) == 32 {
+					fmt.Printf("jobId = %s\n", jobId)
+					break
+				}
+				t.Error("jobId failed ")
+			}
+			break
+		}
+		if result.status.isCompleted() {
+			t.Error("job completed without job id")
+		}
 	}
 	fmt.Println(result)
 }
