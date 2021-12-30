@@ -1,9 +1,10 @@
 package zeppelin
 
 import (
-	"github.com/valyala/fastjson"
 	"strings"
 	"time"
+
+	"github.com/valyala/fastjson"
 )
 
 type Status string
@@ -32,6 +33,10 @@ func (s Status) isPending() bool {
 
 func (s Status) isCompleted() bool {
 	return FINISHED == s || ERROR == s || ABORT == s
+}
+
+func (s Status) isFinished() bool {
+	return FINISHED == s
 }
 
 func valueOf(value string) Status {
@@ -109,4 +114,41 @@ func NewParagraphResult(paragraphJson *fastjson.Value) *ParagraphResult {
 		}
 	}
 	return result
+}
+
+type SessionInfo struct {
+	SessionId   string
+	NoteId      string
+	Interpreter string
+	State       string
+	WebUrl      string
+	StartTime   string
+}
+
+func NewSessionInfo(sessionStr string) (*SessionInfo, error) {
+	sessionInfo := SessionInfo{}
+	sessionObj, err := fastjson.Parse(sessionStr)
+	body := sessionObj.Get("body")
+	if err != nil {
+		return nil, err
+	}
+	if strings.Contains(sessionStr, "sessionId") {
+		sessionInfo.SessionId = string(body.GetStringBytes("sessionId"))
+	}
+	if strings.Contains(sessionStr, "noteId") {
+		sessionInfo.NoteId = string(body.GetStringBytes("noteId"))
+	}
+	if strings.Contains(sessionStr, "interpreter") {
+		sessionInfo.Interpreter = string(body.GetStringBytes("interpreter"))
+	}
+	if strings.Contains(sessionStr, "state") {
+		sessionInfo.State = string(body.GetStringBytes("state"))
+	}
+	if strings.Contains(sessionStr, "weburl") {
+		sessionInfo.WebUrl = string(body.GetStringBytes("weburl"))
+	}
+	if strings.Contains(sessionStr, "startTime") {
+		sessionInfo.StartTime = string(body.GetStringBytes("startTime"))
+	}
+	return &sessionInfo, nil
 }

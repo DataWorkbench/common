@@ -506,4 +506,18 @@ var (
 		enUS:   "the paragraph is not finished in %s seconds",
 		zhCN:   "zeppelin paragraph 运行超时",
 	}
+
+	ZeppelinConfigureFailed = &Error{
+		code:   "ZeppelinConfigureFailed",
+		status: 500,
+		enUS:   "fail to configure zeppelin session",
+		zhCN:   "设置zeppelin config参数失败",
+	}
+
+	ZeppelinInitFailed = &Error{
+		code:   "ZeppelinInitFailed",
+		status: 500,
+		enUS:   "fail to init zeppelin session",
+		zhCN:   "zeppelin session 初始化失败",
+	}
 )

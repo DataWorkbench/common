@@ -17,7 +17,7 @@ import (
 
 type Client struct {
 	*httpclient.Client
-	clientConfig ClientConfig
+	ClientConfig ClientConfig
 }
 
 func NewZeppelinClient(config ClientConfig) *Client {
@@ -30,7 +30,7 @@ func NewZeppelinClient(config ClientConfig) *Client {
 }
 
 func (z *Client) getBaseUrl() string {
-	return z.clientConfig.ZeppelinRestUrl + "/api"
+	return z.ClientConfig.ZeppelinRestUrl + "/api"
 }
 
 func (z *Client) createNoteWithGroup(notePath string, defaultInterpreterGroup string) (string, error) {
@@ -145,6 +145,22 @@ func (z *Client) submitParagraph(noteId string, paragraphId string) (*ParagraphR
 	return z.submitParagraphWithAll(noteId, paragraphId, "", make(map[string]string))
 }
 
+func (z *Client) executeParagraphWithAll(noteId string, paragraphId string, sessionId string, parameters map[string]string) (*ParagraphResult, error) {
+	_, err := z.submitParagraphWithAll(noteId, paragraphId, sessionId, parameters)
+	if err != nil {
+		return nil, err
+	}
+	return z.waitUtilParagraphFinish(noteId, paragraphId)
+}
+
+func (z *Client) executeParagraphWithSessionId(noteId string, paragraphId string, sessionId string) (*ParagraphResult, error) {
+	return z.executeParagraphWithAll(noteId, paragraphId, sessionId, make(map[string]string))
+}
+
+func (z *Client) executeParagraph(noteId string, paragraphId string) (*ParagraphResult, error) {
+	return z.executeParagraphWithAll(noteId, paragraphId, "", make(map[string]string))
+}
+
 func (z *Client) cancelParagraph(noteId string, paragraphId string) error {
 	response, err := z.Delete(z.getBaseUrl()+fmt.Sprintf("/notebook/job/%s/%s", noteId, paragraphId), http.Header{})
 	if err != nil {
@@ -169,7 +185,7 @@ func (z *Client) waitUtilParagraphRunning(noteId string, paragraphId string) (*P
 		if paragraphResult.Status.isRunning() {
 			return paragraphResult, nil
 		}
-		time.Sleep(time.Millisecond * z.clientConfig.QueryInterval)
+		time.Sleep(time.Millisecond * z.ClientConfig.QueryInterval)
 	}
 }
 
@@ -181,7 +197,7 @@ func (z *Client) waitUtilParagraphJobUrlReturn(noteId string, paragraphId string
 			return nil, err
 		}
 		paragraphResult = result
-		time.Sleep(time.Millisecond * z.clientConfig.QueryInterval)
+		time.Sleep(time.Millisecond * z.ClientConfig.QueryInterval)
 	}
 	return paragraphResult, nil
 }
@@ -195,7 +211,7 @@ func (z *Client) waitUtilParagraphFinish(noteId string, paragraphId string) (*Pa
 		if paragraphResult.Status.isCompleted() {
 			return paragraphResult, nil
 		}
-		time.Sleep(time.Millisecond * z.clientConfig.QueryInterval)
+		time.Sleep(time.Millisecond * z.ClientConfig.QueryInterval)
 	}
 }
 
@@ -209,7 +225,7 @@ func (z *Client) waitUtilParagraphFinishWithTimeout(noteId string, paragraphId s
 		if paragraphResult.Status.isCompleted() {
 			return paragraphResult, nil
 		}
-		time.Sleep(time.Millisecond * z.clientConfig.QueryInterval)
+		time.Sleep(time.Millisecond * z.ClientConfig.QueryInterval)
 	}
 	return nil, qerror.ZeppelinRunParagraphTimeout.Format(timeoutInSec)
 }
@@ -234,8 +250,59 @@ func (z *Client) queryParagraphResult(noteId string, paragraphId string) (*Parag
 	return NewParagraphResult(paragraphJson), nil
 }
 
+func (z *Client) newSession(interpreter string) (*SessionInfo, error) {
+	response, err := z.Post(z.getBaseUrl()+fmt.Sprintf("/session%s", queryString("interpreter", interpreter)), strings.NewReader(""), http.Header{})
+	if err != nil {
+		return nil, err
+	}
+	body, err := checkResponse(response)
+	if err != nil {
+		return nil, err
+	}
+	if err = checkBodyStatus(body); err != nil {
+		return nil, err
+	}
+	return NewSessionInfo(body)
+}
+
+func (z *Client) stopSession(sessionId string) error {
+	response, err := z.Delete(z.getBaseUrl()+fmt.Sprintf("/session/%s", sessionId), http.Header{})
+	if err != nil {
+		return err
+	}
+	body, err := checkResponse(response)
+	if err != nil {
+		return err
+	}
+	return checkBodyStatus(body)
+}
+
+func (z *Client) getSession(sessionId string) (*SessionInfo, error) {
+	response, err := z.Get(z.getBaseUrl()+fmt.Sprintf("/session/%s", sessionId), http.Header{})
+	if err != nil {
+		return nil, err
+	}
+	if response.StatusCode == 404 {
+		body, err := ioutil.ReadAll(response.Body)
+		if err != nil {
+			return nil, err
+		}
+		if strings.Contains(string(body), "No such session") {
+			return nil, nil
+		}
+	}
+	body, err := checkResponse(response)
+	if err != nil {
+		return nil, err
+	}
+	if err = checkBodyStatus(body); err != nil {
+		return nil, err
+	}
+	return NewSessionInfo(body)
+}
+
 func queryString(name string, value string) (queryStr string) {
-	queryStr = value + "?" + name
+	queryStr = "?" + name
 	if value != "" && len(value) > 0 {
 		queryStr = queryStr + "=" + value
 	}
