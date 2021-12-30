@@ -18,7 +18,7 @@ func Test_Start(t *testing.T) {
 	properties["flink.execution.remote.host"] = "localhost"
 	properties["flink.execution.remote.port"] = "8081"
 	zSession := NewZSession4(config, "flink", properties, 100)
-	err := zSession.start(&CompositeMessageHandler{})
+	err := zSession.start()
 	if err != nil {
 		t.Error(err)
 	}
