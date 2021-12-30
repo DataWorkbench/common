@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
 
@@ -163,25 +162,6 @@ func (c *Client) submitParagraphWithParameters(noteId string, paragraphId string
 
 func (c *Client) submitParagraph(noteId string, paragraphId string) (*ParagraphResult, error) {
 	return c.submitParagraphWithAll(noteId, paragraphId, "", make(map[string]string))
-}
-
-func (c *Client) nextSessionParagraph(noteId string, maxStatement int) (string, error) {
-	response, err := c.Post(c.getBaseUrl()+fmt.Sprintf("/notebook/%s/paragraph/next%s", noteId, queryString("maxStatement", strconv.Itoa(maxStatement))), strings.NewReader(""), http.Header{})
-	if err != nil {
-		return "", err
-	}
-	body, err := checkResponse(response)
-	if err != nil {
-		return "", err
-	}
-	if err = checkBodyStatus(body); err != nil {
-		return "", err
-	}
-	jsonObj, err := fastjson.Parse(body)
-	if err != nil {
-		return "", err
-	}
-	return string(jsonObj.GetStringBytes("message")), nil
 }
 
 func (c *Client) executeParagraphWithAll(noteId string, paragraphId string, sessionId string, parameters map[string]string) (*ParagraphResult, error) {
