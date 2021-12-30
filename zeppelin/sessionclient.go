@@ -12,7 +12,6 @@ type ZSession struct {
 	interpreter     string
 	intpProperties  map[string]string
 	maxStatement    int
-	webSocketClient *WebSocketClient
 	sessionInfo     *SessionInfo
 }
 
