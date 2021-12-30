@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -165,7 +166,7 @@ func (c *Client) submitParagraph(noteId string, paragraphId string) (*ParagraphR
 }
 
 func (c *Client) nextSessionParagraph(noteId string, maxStatement int) (string, error) {
-	response, err := c.Post(c.getBaseUrl()+fmt.Sprintf("/notebook/%s/paragraph/next", noteId), strings.NewReader(""), http.Header{})
+	response, err := c.Post(c.getBaseUrl()+fmt.Sprintf("/notebook/%s/paragraph/next%s", noteId, queryString("maxStatement", strconv.Itoa(maxStatement))), strings.NewReader(""), http.Header{})
 	if err != nil {
 		return "", err
 	}
@@ -225,19 +226,6 @@ func (c *Client) waitUtilParagraphRunning(noteId string, paragraphId string) (*P
 		}
 		time.Sleep(time.Millisecond * c.ClientConfig.QueryInterval)
 	}
-}
-
-func (c *Client) waitUtilParagraphJobUrlReturn(noteId string, paragraphId string) (*ParagraphResult, error) {
-	paragraphResult := &ParagraphResult{}
-	for len(paragraphResult.JobUrls) == 0 {
-		result, err := c.waitUtilParagraphRunning(noteId, paragraphId)
-		if err != nil {
-			return nil, err
-		}
-		paragraphResult = result
-		time.Sleep(time.Millisecond * c.ClientConfig.QueryInterval)
-	}
-	return paragraphResult, nil
 }
 
 func (c *Client) waitUtilParagraphFinish(noteId string, paragraphId string) (*ParagraphResult, error) {

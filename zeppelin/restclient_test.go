@@ -104,25 +104,8 @@ func Test_WaitUtilRunning(t *testing.T) {
 	}
 }
 
-func Test_WaitUtilJobUrl(t *testing.T) {
-	var noteId = "2GRK6JUF5"
-	var paragraphId = "paragraph_1640772348317_1851116219"
-	paragraph, err := client.submitParagraph(noteId, paragraphId)
-	if err != nil {
-		t.Error(err)
-	}
-	fmt.Println(paragraph)
-	urlReturn, err := client.waitUtilParagraphJobUrlReturn(noteId, paragraphId)
-	if err != nil {
-		t.Error(err)
-	}
-	for _, url := range urlReturn.JobUrls {
-		fmt.Println(url)
-	}
-}
-
 func Test_NextParagraph(t *testing.T) {
-	var noteId = "2GTHSWEDS"
+	var noteId = "2GRNBSUQD"
 	paragraph, err := client.nextSessionParagraph(noteId, 100)
 	if err != nil {
 		t.Error(err)

@@ -130,11 +130,8 @@ func (z *ZSession) submitWithProperties(subInterpreter string, localProperties m
 	}
 	builder.WriteString(" " + code)
 	text := builder.String()
-	nextParagraphId, err := z.zeppelinClient.nextSessionParagraph(z.getNoteId(), z.maxStatement)
+	nextParagraphId, err := z.zeppelinClient.addParagraph(z.getNoteId(), "", text)
 	if err != nil {
-		return nil, err
-	}
-	if err = z.zeppelinClient.updateParagraph(z.getNoteId(), nextParagraphId, "", text); err != nil {
 		return nil, err
 	}
 	paragraphResult, err := z.zeppelinClient.submitParagraphWithSessionId(z.getNoteId(), nextParagraphId, z.getSessionId())
@@ -154,7 +151,7 @@ func (z *ZSession) executeWithProperties(subInterpreter string, localProperties 
 	if subInterpreter != "" && len(subInterpreter) > 0 {
 		builder.WriteString("." + subInterpreter)
 	}
-	if localProperties != nil && len(subInterpreter) > 0 {
+	if localProperties != nil && len(localProperties) > 0 {
 		builder.WriteString("(")
 		var propertyStrs []string
 		for k, v := range localProperties {
@@ -165,11 +162,8 @@ func (z *ZSession) executeWithProperties(subInterpreter string, localProperties 
 	}
 	builder.WriteString(" " + code)
 	text := builder.String()
-	nextParagraphId, err := z.zeppelinClient.nextSessionParagraph(z.getNoteId(), z.maxStatement)
+	nextParagraphId, err := z.zeppelinClient.addParagraph(z.getNoteId(), "", text)
 	if err != nil {
-		return nil, err
-	}
-	if err = z.zeppelinClient.updateParagraph(z.getNoteId(), nextParagraphId, "", text); err != nil {
 		return nil, err
 	}
 	paragraphResult, err := z.zeppelinClient.executeParagraphWithSessionId(z.getNoteId(), nextParagraphId, z.getSessionId())
@@ -205,21 +199,6 @@ func (z *ZSession) waitUntilRunning(statementId string) (*ExecuteResult, error) 
 		return nil, err
 	}
 	return NewExecuteResult(paragraphResult), nil
-}
-
-func (z *ZSession) waitUntilGetJobId(statementId string) (*ExecuteResult, error) {
-	paragraphResult, err := z.zeppelinClient.waitUtilParagraphJobUrlReturn(z.getNoteId(), statementId)
-	if err != nil {
-		return nil, err
-	}
-	if len(paragraphResult.JobUrls[0]) > strings.LastIndex(paragraphResult.JobUrls[0], "/") {
-		jobId := paragraphResult.JobUrls[0][strings.LastIndex(paragraphResult.JobUrls[0], "/")+1:]
-		if len(jobId) == 32 {
-			paragraphResult.JobUrls = []string{jobId}
-			return NewExecuteResult(paragraphResult), nil
-		}
-	}
-	return nil, qerror.ZeppelinGetJobIdFailed
 }
 
 func (z *ZSession) reconnect() (err error) {

@@ -36,23 +36,39 @@ func Test_RunSql(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	result, err := zSession.executeWithProperties("ssql", make(map[string]string), "drop table if exists datagen;")
+	result, err := zSession.submitWithProperties("ssql", make(map[string]string), "drop table if exists datagen;")
+	if err != nil {
+		t.Error(err)
+	}
+	result, err = zSession.waitUntilFinished(result.statementId)
 	if err != nil {
 		t.Error(err)
 	}
 	fmt.Println(result)
-	result, err = zSession.executeWithProperties("ssql", make(map[string]string), "create table datagen(id int,name string) with ('connector' = 'datagen'"+
+	result, err = zSession.submitWithProperties("ssql", make(map[string]string), "create table datagen(id int,name string) with ('connector' = 'datagen',"+
 		"'rows-per-second' = '2');")
 	if err != nil {
 		t.Error(err)
 	}
-	fmt.Println(result)
-	result, err = zSession.executeWithProperties("ssql", make(map[string]string), "drop table if exists datagen;")
+	result, err = zSession.waitUntilFinished(result.statementId)
 	if err != nil {
 		t.Error(err)
 	}
 	fmt.Println(result)
-	result, err = zSession.executeWithProperties("ssql", make(map[string]string), "create table print(id int,name string) with ('connector'='print');")
+	result, err = zSession.submitWithProperties("ssql", make(map[string]string), "drop table if exists print;")
+	if err != nil {
+		t.Error(err)
+	}
+	result, err = zSession.waitUntilFinished(result.statementId)
+	if err != nil {
+		t.Error(err)
+	}
+	fmt.Println(result)
+	result, err = zSession.submitWithProperties("ssql", make(map[string]string), "create table print(id int,name string) with ('connector'='print');")
+	if err != nil {
+		t.Error(err)
+	}
+	result, err = zSession.waitUntilFinished(result.statementId)
 	if err != nil {
 		t.Error(err)
 	}
@@ -60,13 +76,13 @@ func Test_RunSql(t *testing.T) {
 	var properties = map[string]string{}
 	properties["parallelism"] = "1"
 	properties["jobName"] = "demo01"
-	executeResult, err := zSession.submitWithProperties("ssql", properties, "insert into print select * from datagen;")
+	result, err = zSession.submitWithProperties("ssql", properties, "insert into print select * from datagen;")
 	if err != nil {
 		t.Error(err)
 	}
-	executeResult, err = zSession.waitUntilGetJobId(executeResult.statementId)
+	result, err = zSession.waitUntilRunning(result.statementId)
 	if err != nil {
 		t.Error(err)
 	}
-	fmt.Println(executeResult.jobUrls[0])
+	fmt.Println(result)
 }
