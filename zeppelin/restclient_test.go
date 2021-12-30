@@ -120,3 +120,12 @@ func Test_WaitUtilJobUrl(t *testing.T) {
 		fmt.Println(url)
 	}
 }
+
+func Test_NextParagraph(t *testing.T) {
+	var noteId = "2GTHSWEDS"
+	paragraph, err := client.nextSessionParagraph(noteId, 100)
+	if err != nil {
+		t.Error(err)
+	}
+	fmt.Println(paragraph)
+}

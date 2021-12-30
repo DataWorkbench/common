@@ -520,4 +520,18 @@ var (
 		enUS:   "fail to init zeppelin session",
 		zhCN:   "zeppelin session 初始化失败",
 	}
+
+	ZeppelinSessionNotRunning = &Error{
+		code:   "ZeppelinSessionNotRunning",
+		status: 500,
+		enUS:   "reconnect failed zeppelin session not running",
+		zhCN:   "重连session失败",
+	}
+
+	ZeppelinGetJobIdFailed = &Error{
+		code:   "ZeppelinGetJobIdFailed",
+		status: 500,
+		enUS:   "failed to get flink job id",
+		zhCN:   "获取flink任务id失败",
+	}
 )

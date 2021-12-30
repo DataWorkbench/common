@@ -116,6 +116,24 @@ func NewParagraphResult(paragraphJson *fastjson.Value) *ParagraphResult {
 	return result
 }
 
+type ExecuteResult struct {
+	statementId string
+	status      Status
+	results     []*Result
+	jobUrls     []string
+	progress    int
+}
+
+func NewExecuteResult(paragraphResult *ParagraphResult) *ExecuteResult {
+	return &ExecuteResult{
+		statementId: paragraphResult.ParagraphId,
+		status:      paragraphResult.Status,
+		results:     paragraphResult.Results,
+		jobUrls:     paragraphResult.JobUrls,
+		progress:    paragraphResult.Progress,
+	}
+}
+
 type SessionInfo struct {
 	SessionId   string
 	NoteId      string

@@ -29,11 +29,11 @@ func NewZeppelinClient(config ClientConfig) *Client {
 	return &Client{client, config}
 }
 
-func (z *Client) getBaseUrl() string {
-	return z.ClientConfig.ZeppelinRestUrl + "/api"
+func (c *Client) getBaseUrl() string {
+	return c.ClientConfig.ZeppelinRestUrl + "/api"
 }
 
-func (z *Client) createNoteWithGroup(notePath string, defaultInterpreterGroup string) (string, error) {
+func (c *Client) createNoteWithGroup(notePath string, defaultInterpreterGroup string) (string, error) {
 	reqObj := map[string]interface{}{}
 	reqObj["name"] = notePath
 	reqObj["defaultInterpreterGroup"] = defaultInterpreterGroup
@@ -41,7 +41,7 @@ func (z *Client) createNoteWithGroup(notePath string, defaultInterpreterGroup st
 	if err != nil {
 		return "", err
 	}
-	response, err := z.Post(z.getBaseUrl()+"/notebook", strings.NewReader(string(reqBytes)), http.Header{})
+	response, err := c.Post(c.getBaseUrl()+"/notebook", strings.NewReader(string(reqBytes)), http.Header{})
 	if err != nil {
 		return "", err
 	}
@@ -59,12 +59,12 @@ func (z *Client) createNoteWithGroup(notePath string, defaultInterpreterGroup st
 	return string(bodyJson.GetStringBytes("body")), nil
 }
 
-func (z *Client) createNote(notePath string) (string, error) {
-	return z.createNoteWithGroup(notePath, "")
+func (c *Client) createNote(notePath string) (string, error) {
+	return c.createNoteWithGroup(notePath, "")
 }
 
-func (z *Client) deleteNote(noteId string) error {
-	response, err := z.Delete(z.getBaseUrl()+fmt.Sprintf("/notebook/%s", noteId), http.Header{})
+func (c *Client) deleteNote(noteId string) error {
+	response, err := c.Delete(c.getBaseUrl()+fmt.Sprintf("/notebook/%s", noteId), http.Header{})
 	if err != nil {
 		return err
 	}
@@ -78,7 +78,7 @@ func (z *Client) deleteNote(noteId string) error {
 	return nil
 }
 
-func (z *Client) addParagraph(noteId string, title string, text string) (string, error) {
+func (c *Client) addParagraph(noteId string, title string, text string) (string, error) {
 	reqObj := map[string]interface{}{}
 	reqObj["title"] = title
 	reqObj["text"] = text
@@ -86,7 +86,7 @@ func (z *Client) addParagraph(noteId string, title string, text string) (string,
 	if err != nil {
 		return "", err
 	}
-	response, err := z.Post(z.getBaseUrl()+fmt.Sprintf("/notebook/%s/paragraph", noteId), strings.NewReader(string(reqBytes)), http.Header{})
+	response, err := c.Post(c.getBaseUrl()+fmt.Sprintf("/notebook/%s/paragraph", noteId), strings.NewReader(string(reqBytes)), http.Header{})
 	if err != nil {
 		return "", err
 	}
@@ -104,7 +104,26 @@ func (z *Client) addParagraph(noteId string, title string, text string) (string,
 	return string(bodyJson.GetStringBytes("body")), nil
 }
 
-func (z *Client) submitParagraphWithAll(noteId string, paragraphId string, sessionId string, parameters map[string]string) (*ParagraphResult, error) {
+func (c *Client) updateParagraph(noteId string, paragraphId string, title string, text string) error {
+	reqObj := map[string]string{}
+	reqObj["title"] = title
+	reqObj["text"] = text
+	reqBytes, err := json.Marshal(reqObj)
+	if err != nil {
+		return err
+	}
+	response, err := c.Put(c.getBaseUrl()+fmt.Sprintf("/notebook/%s/paragraph/%s", noteId, paragraphId), strings.NewReader(string(reqBytes)), http.Header{})
+	if err != nil {
+		return err
+	}
+	body, err := checkResponse(response)
+	if err != nil {
+		return err
+	}
+	return checkBodyStatus(body)
+}
+
+func (c *Client) submitParagraphWithAll(noteId string, paragraphId string, sessionId string, parameters map[string]string) (*ParagraphResult, error) {
 	reqObj := map[string]interface{}{}
 	parametersJson, err := json.Marshal(parameters)
 	if err != nil {
@@ -116,9 +135,9 @@ func (z *Client) submitParagraphWithAll(noteId string, paragraphId string, sessi
 	if err != nil {
 		return nil, err
 	}
-	url := z.getBaseUrl() + fmt.Sprintf("/notebook/job/%s/%s%s", noteId, paragraphId, queryString("sessionId", sessionId))
+	url := c.getBaseUrl() + fmt.Sprintf("/notebook/job/%s/%s%s", noteId, paragraphId, queryString("sessionId", sessionId))
 	fmt.Println(url)
-	response, err := z.Post(z.getBaseUrl()+fmt.Sprintf("/notebook/job/%s/%s%s", noteId, paragraphId, queryString("sessionId", sessionId)),
+	response, err := c.Post(c.getBaseUrl()+fmt.Sprintf("/notebook/job/%s/%s%s", noteId, paragraphId, queryString("sessionId", sessionId)),
 		strings.NewReader(""), http.Header{})
 	if err != nil {
 		return nil, err
@@ -130,39 +149,58 @@ func (z *Client) submitParagraphWithAll(noteId string, paragraphId string, sessi
 	if err = checkBodyStatus(body); err != nil {
 		return nil, err
 	}
-	return z.queryParagraphResult(noteId, paragraphId)
+	return c.queryParagraphResult(noteId, paragraphId)
 }
 
-func (z *Client) submitParagraphWithSessionId(noteId string, paragraphId string, sessionId string) (*ParagraphResult, error) {
-	return z.submitParagraphWithAll(noteId, paragraphId, sessionId, make(map[string]string))
+func (c *Client) submitParagraphWithSessionId(noteId string, paragraphId string, sessionId string) (*ParagraphResult, error) {
+	return c.submitParagraphWithAll(noteId, paragraphId, sessionId, make(map[string]string))
 }
 
-func (z *Client) submitParagraphWithParameters(noteId string, paragraphId string, parameters map[string]string) (*ParagraphResult, error) {
-	return z.submitParagraphWithAll(noteId, paragraphId, "", parameters)
+func (c *Client) submitParagraphWithParameters(noteId string, paragraphId string, parameters map[string]string) (*ParagraphResult, error) {
+	return c.submitParagraphWithAll(noteId, paragraphId, "", parameters)
 }
 
-func (z *Client) submitParagraph(noteId string, paragraphId string) (*ParagraphResult, error) {
-	return z.submitParagraphWithAll(noteId, paragraphId, "", make(map[string]string))
+func (c *Client) submitParagraph(noteId string, paragraphId string) (*ParagraphResult, error) {
+	return c.submitParagraphWithAll(noteId, paragraphId, "", make(map[string]string))
 }
 
-func (z *Client) executeParagraphWithAll(noteId string, paragraphId string, sessionId string, parameters map[string]string) (*ParagraphResult, error) {
-	_, err := z.submitParagraphWithAll(noteId, paragraphId, sessionId, parameters)
+func (c *Client) nextSessionParagraph(noteId string, maxStatement int) (string, error) {
+	response, err := c.Post(c.getBaseUrl()+fmt.Sprintf("/notebook/%s/paragraph/next", noteId), strings.NewReader(""), http.Header{})
+	if err != nil {
+		return "", err
+	}
+	body, err := checkResponse(response)
+	if err != nil {
+		return "", err
+	}
+	if err = checkBodyStatus(body); err != nil {
+		return "", err
+	}
+	jsonObj, err := fastjson.Parse(body)
+	if err != nil {
+		return "", err
+	}
+	return string(jsonObj.GetStringBytes("message")), nil
+}
+
+func (c *Client) executeParagraphWithAll(noteId string, paragraphId string, sessionId string, parameters map[string]string) (*ParagraphResult, error) {
+	_, err := c.submitParagraphWithAll(noteId, paragraphId, sessionId, parameters)
 	if err != nil {
 		return nil, err
 	}
-	return z.waitUtilParagraphFinish(noteId, paragraphId)
+	return c.waitUtilParagraphFinish(noteId, paragraphId)
 }
 
-func (z *Client) executeParagraphWithSessionId(noteId string, paragraphId string, sessionId string) (*ParagraphResult, error) {
-	return z.executeParagraphWithAll(noteId, paragraphId, sessionId, make(map[string]string))
+func (c *Client) executeParagraphWithSessionId(noteId string, paragraphId string, sessionId string) (*ParagraphResult, error) {
+	return c.executeParagraphWithAll(noteId, paragraphId, sessionId, make(map[string]string))
 }
 
-func (z *Client) executeParagraph(noteId string, paragraphId string) (*ParagraphResult, error) {
-	return z.executeParagraphWithAll(noteId, paragraphId, "", make(map[string]string))
+func (c *Client) executeParagraph(noteId string, paragraphId string) (*ParagraphResult, error) {
+	return c.executeParagraphWithAll(noteId, paragraphId, "", make(map[string]string))
 }
 
-func (z *Client) cancelParagraph(noteId string, paragraphId string) error {
-	response, err := z.Delete(z.getBaseUrl()+fmt.Sprintf("/notebook/job/%s/%s", noteId, paragraphId), http.Header{})
+func (c *Client) cancelParagraph(noteId string, paragraphId string) error {
+	response, err := c.Delete(c.getBaseUrl()+fmt.Sprintf("/notebook/job/%s/%s", noteId, paragraphId), http.Header{})
 	if err != nil {
 		return err
 	}
@@ -176,62 +214,62 @@ func (z *Client) cancelParagraph(noteId string, paragraphId string) error {
 	return nil
 }
 
-func (z *Client) waitUtilParagraphRunning(noteId string, paragraphId string) (*ParagraphResult, error) {
+func (c *Client) waitUtilParagraphRunning(noteId string, paragraphId string) (*ParagraphResult, error) {
 	for {
-		paragraphResult, err := z.queryParagraphResult(noteId, paragraphId)
+		paragraphResult, err := c.queryParagraphResult(noteId, paragraphId)
 		if err != nil {
 			return nil, err
 		}
 		if paragraphResult.Status.isRunning() {
 			return paragraphResult, nil
 		}
-		time.Sleep(time.Millisecond * z.ClientConfig.QueryInterval)
+		time.Sleep(time.Millisecond * c.ClientConfig.QueryInterval)
 	}
 }
 
-func (z *Client) waitUtilParagraphJobUrlReturn(noteId string, paragraphId string) (*ParagraphResult, error) {
+func (c *Client) waitUtilParagraphJobUrlReturn(noteId string, paragraphId string) (*ParagraphResult, error) {
 	paragraphResult := &ParagraphResult{}
 	for len(paragraphResult.JobUrls) == 0 {
-		result, err := z.waitUtilParagraphRunning(noteId, paragraphId)
+		result, err := c.waitUtilParagraphRunning(noteId, paragraphId)
 		if err != nil {
 			return nil, err
 		}
 		paragraphResult = result
-		time.Sleep(time.Millisecond * z.ClientConfig.QueryInterval)
+		time.Sleep(time.Millisecond * c.ClientConfig.QueryInterval)
 	}
 	return paragraphResult, nil
 }
 
-func (z *Client) waitUtilParagraphFinish(noteId string, paragraphId string) (*ParagraphResult, error) {
+func (c *Client) waitUtilParagraphFinish(noteId string, paragraphId string) (*ParagraphResult, error) {
 	for {
-		paragraphResult, err := z.queryParagraphResult(noteId, paragraphId)
+		paragraphResult, err := c.queryParagraphResult(noteId, paragraphId)
 		if err != nil {
 			return nil, err
 		}
 		if paragraphResult.Status.isCompleted() {
 			return paragraphResult, nil
 		}
-		time.Sleep(time.Millisecond * z.ClientConfig.QueryInterval)
+		time.Sleep(time.Millisecond * c.ClientConfig.QueryInterval)
 	}
 }
 
-func (z *Client) waitUtilParagraphFinishWithTimeout(noteId string, paragraphId string, timeoutInSec int) (*ParagraphResult, error) {
+func (c *Client) waitUtilParagraphFinishWithTimeout(noteId string, paragraphId string, timeoutInSec int) (*ParagraphResult, error) {
 	start := time.Now().Second()
 	for (time.Now().Second() - start) < timeoutInSec {
-		paragraphResult, err := z.queryParagraphResult(noteId, paragraphId)
+		paragraphResult, err := c.queryParagraphResult(noteId, paragraphId)
 		if err != nil {
 			return nil, err
 		}
 		if paragraphResult.Status.isCompleted() {
 			return paragraphResult, nil
 		}
-		time.Sleep(time.Millisecond * z.ClientConfig.QueryInterval)
+		time.Sleep(time.Millisecond * c.ClientConfig.QueryInterval)
 	}
 	return nil, qerror.ZeppelinRunParagraphTimeout.Format(timeoutInSec)
 }
 
-func (z *Client) queryParagraphResult(noteId string, paragraphId string) (*ParagraphResult, error) {
-	response, err := z.Get(z.getBaseUrl()+fmt.Sprintf("/notebook/%s/paragraph/%s", noteId, paragraphId), http.Header{})
+func (c *Client) queryParagraphResult(noteId string, paragraphId string) (*ParagraphResult, error) {
+	response, err := c.Get(c.getBaseUrl()+fmt.Sprintf("/notebook/%s/paragraph/%s", noteId, paragraphId), http.Header{})
 	if err != nil {
 		return nil, err
 	}
@@ -250,8 +288,8 @@ func (z *Client) queryParagraphResult(noteId string, paragraphId string) (*Parag
 	return NewParagraphResult(paragraphJson), nil
 }
 
-func (z *Client) newSession(interpreter string) (*SessionInfo, error) {
-	response, err := z.Post(z.getBaseUrl()+fmt.Sprintf("/session%s", queryString("interpreter", interpreter)), strings.NewReader(""), http.Header{})
+func (c *Client) newSession(interpreter string) (*SessionInfo, error) {
+	response, err := c.Post(c.getBaseUrl()+fmt.Sprintf("/session%s", queryString("interpreter", interpreter)), strings.NewReader(""), http.Header{})
 	if err != nil {
 		return nil, err
 	}
@@ -265,8 +303,8 @@ func (z *Client) newSession(interpreter string) (*SessionInfo, error) {
 	return NewSessionInfo(body)
 }
 
-func (z *Client) stopSession(sessionId string) error {
-	response, err := z.Delete(z.getBaseUrl()+fmt.Sprintf("/session/%s", sessionId), http.Header{})
+func (c *Client) stopSession(sessionId string) error {
+	response, err := c.Delete(c.getBaseUrl()+fmt.Sprintf("/session/%s", sessionId), http.Header{})
 	if err != nil {
 		return err
 	}
@@ -277,8 +315,8 @@ func (z *Client) stopSession(sessionId string) error {
 	return checkBodyStatus(body)
 }
 
-func (z *Client) getSession(sessionId string) (*SessionInfo, error) {
-	response, err := z.Get(z.getBaseUrl()+fmt.Sprintf("/session/%s", sessionId), http.Header{})
+func (c *Client) getSession(sessionId string) (*SessionInfo, error) {
+	response, err := c.Get(c.getBaseUrl()+fmt.Sprintf("/session/%s", sessionId), http.Header{})
 	if err != nil {
 		return nil, err
 	}
