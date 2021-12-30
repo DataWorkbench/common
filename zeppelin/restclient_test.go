@@ -103,12 +103,3 @@ func Test_WaitUtilRunning(t *testing.T) {
 		fmt.Println(v)
 	}
 }
-
-func Test_NextParagraph(t *testing.T) {
-	var noteId = "2GRNBSUQD"
-	paragraph, err := client.nextSessionParagraph(noteId, 100)
-	if err != nil {
-		t.Error(err)
-	}
-	fmt.Println(paragraph)
-}
