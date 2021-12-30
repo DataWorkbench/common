@@ -146,10 +146,10 @@ type SessionInfo struct {
 func NewSessionInfo(sessionStr string) (*SessionInfo, error) {
 	sessionInfo := SessionInfo{}
 	sessionObj, err := fastjson.Parse(sessionStr)
-	body := sessionObj.Get("body")
 	if err != nil {
 		return nil, err
 	}
+	body := sessionObj.Get("body")
 	if strings.Contains(sessionStr, "sessionId") {
 		sessionInfo.SessionId = string(body.GetStringBytes("sessionId"))
 	}
