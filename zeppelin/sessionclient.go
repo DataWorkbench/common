@@ -123,7 +123,7 @@ func (z *ZSession) submitWithProperties(subInterpreter string, localProperties m
 		builder.WriteString("(")
 		var propertyStrs []string
 		for k, v := range localProperties {
-			propertyStrs = append(propertyStrs, fmt.Sprintf("%s\"=\"%s\"", k, v))
+			propertyStrs = append(propertyStrs, fmt.Sprintf("\"%s\"=\"%s\"", k, v))
 		}
 		builder.WriteString(strings.Join(propertyStrs, ","))
 		builder.WriteString(")")
@@ -155,7 +155,7 @@ func (z *ZSession) executeWithProperties(subInterpreter string, localProperties 
 		builder.WriteString("(")
 		var propertyStrs []string
 		for k, v := range localProperties {
-			propertyStrs = append(propertyStrs, fmt.Sprintf("%s\"=\"%s\"", k, v))
+			propertyStrs = append(propertyStrs, fmt.Sprintf("\"%s\"=\"%s\"", k, v))
 		}
 		builder.WriteString(strings.Join(propertyStrs, ","))
 		builder.WriteString(")")
