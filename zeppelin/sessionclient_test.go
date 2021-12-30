@@ -36,39 +36,23 @@ func Test_RunSql(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	result, err := zSession.submitWithProperties("ssql", make(map[string]string), "drop table if exists datagen;")
-	if err != nil {
-		t.Error(err)
-	}
-	result, err = zSession.waitUntilFinished(result.statementId)
+	result, err := zSession.execute("ssql", "drop table if exists datagen;")
 	if err != nil {
 		t.Error(err)
 	}
 	fmt.Println(result)
-	result, err = zSession.submitWithProperties("ssql", make(map[string]string), "create table datagen(id int,name string) with ('connector' = 'datagen',"+
+	result, err = zSession.execute("ssql", "create table datagen(id int,name string) with ('connector' = 'datagen',"+
 		"'rows-per-second' = '2');")
 	if err != nil {
 		t.Error(err)
 	}
-	result, err = zSession.waitUntilFinished(result.statementId)
+	fmt.Println(result)
+	result, err = zSession.execute("ssql", "drop table if exists print;")
 	if err != nil {
 		t.Error(err)
 	}
 	fmt.Println(result)
-	result, err = zSession.submitWithProperties("ssql", make(map[string]string), "drop table if exists print;")
-	if err != nil {
-		t.Error(err)
-	}
-	result, err = zSession.waitUntilFinished(result.statementId)
-	if err != nil {
-		t.Error(err)
-	}
-	fmt.Println(result)
-	result, err = zSession.submitWithProperties("ssql", make(map[string]string), "create table print(id int,name string) with ('connector'='print');")
-	if err != nil {
-		t.Error(err)
-	}
-	result, err = zSession.waitUntilFinished(result.statementId)
+	result, err = zSession.execute("ssql", "create table print(id int,name string) with ('connector'='print');")
 	if err != nil {
 		t.Error(err)
 	}

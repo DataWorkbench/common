@@ -145,6 +145,10 @@ func (z *ZSession) submit(subInterpreter string, code string) (*ExecuteResult, e
 	return z.submitWithProperties(subInterpreter, make(map[string]string), code)
 }
 
+func (z *ZSession) sub(code string) (*ExecuteResult, error) {
+	return z.submit("", code)
+}
+
 func (z *ZSession) executeWithProperties(subInterpreter string, localProperties map[string]string, code string) (*ExecuteResult, error) {
 	builder := strings.Builder{}
 	builder.WriteString("%" + z.interpreter)
@@ -171,6 +175,14 @@ func (z *ZSession) executeWithProperties(subInterpreter string, localProperties 
 		return nil, err
 	}
 	return NewExecuteResult(paragraphResult), nil
+}
+
+func (z *ZSession) execute(subInterpreter string, code string) (*ExecuteResult, error) {
+	return z.executeWithProperties(subInterpreter, make(map[string]string), code)
+}
+
+func (z *ZSession) exec(code string) (*ExecuteResult, error) {
+	return z.execute("", code)
 }
 
 func (z *ZSession) cancel(statementId string) error {
