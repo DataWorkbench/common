@@ -130,6 +130,80 @@ var (
 	}
 )
 
+// Error for quota.
+var (
+	QuotaInsufficientWorkspaceLimit = &Error{
+		code:   "QuotaInsufficientWorkspaceLimit",
+		status: 403,
+		enUS:   "Limit exceeded of workspace number quota. quota is [%d] and already use [%d].",
+		zhCN:   "工作空间个数超出配额限制. 配额 [%d], 已使用 [%d].",
+	}
+	QuotaInsufficientStreamJobLimit = &Error{
+		code:   "QuotaInsufficientStreamJobLimit",
+		status: 403,
+		enUS:   "Limit exceeded of steam job number quota. quota is [%d] and already use [%d].",
+		zhCN:   "实时计算作业个数超出配额限制. 配额 [%d], 已使用 [%d].",
+	}
+	QuotaInsufficientDataSourceLimit = &Error{
+		code:   "QuotaInsufficientDataSourceLimit",
+		status: 403,
+		enUS:   "Limit exceeded of data source number quota. quota is [%d] and already use [%d].",
+		zhCN:   "数据源个数超出配额限制. 配额 [%d], 已使用 [%d].",
+	}
+	QuotaInsufficientDataUDFLimit = &Error{
+		code:   "QuotaInsufficientDataUDFLimit",
+		status: 403,
+		enUS:   "Limit exceeded of udf number quota. quota is [%d] and already use [%d].",
+		zhCN:   "函数个数超出配额限制. 配额 [%d], 已使用 [%d].",
+	}
+	QuotaInsufficientResourceLimit = &Error{
+		code:   "QuotaInsufficientResourceLimit",
+		status: 403,
+		enUS:   "Limit exceeded of resource number quota. quota is [%d] and already use [%d].",
+		zhCN:   "文件个数超出配额限制. 配额 [%d], 已使用 [%d].",
+	}
+	QuotaInsufficientResourceSize = &Error{
+		code:   "QuotaInsufficientResourceSize",
+		status: 403,
+		enUS:   "Limit exceeded of single file size quota. quota is [%d] and already use [%d].",
+		zhCN:   "单个文件大小超出配额限制. 配额 [%d], 已使用 [%d].",
+	}
+	QuotaInsufficientResourceSizeTotal = &Error{
+		code:   "QuotaInsufficientResourceSizeTotal",
+		status: 403,
+		enUS:   "Limit exceeded of total file size quota. quota is [%d] and already use [%d].",
+		zhCN:   "用户所有文件总大小超出配额限制. 配额 [%d], 已使用 [%d].",
+	}
+
+	QuotaInsufficientFlinkClusterLimit = &Error{
+		code:   "QuotaInsufficientFlinkClusterLimit",
+		status: 403,
+		enUS:   "Limit exceeded of flink cluster number quota. quota is [%d] and already use [%d].",
+		zhCN:   "Flink 计算集群个数超出配额限制. 配额 [%d], 已使用 [%d].",
+	}
+
+	QuotaInsufficientFlinkClusterCU = &Error{
+		code:   "QuotaInsufficientFlinkClusterCU",
+		status: 403,
+		enUS:   "Limit exceeded of single flink cu quota. quota is [%d] and already use [%d].",
+		zhCN:   "单个 Flink 计算集群的 CU 个数超出配额限制. 配额 [%d], 已使用 [%d].",
+	}
+
+	QuotaInsufficientFlinkClusterCUTotal = &Error{
+		code:   "QuotaInsufficientFlinkClusterCUTotal",
+		status: 403,
+		enUS:   "Limit exceeded of total cu quota. quota is [%d] and already use [%d].",
+		zhCN:   "所有 Flink 计算集群的 CU 个数超出配额限制. 配额 [%d], 已使用 [%d].",
+	}
+
+	QuotaInsufficientNetworkLimit = &Error{
+		code:   "QuotaInsufficientNetworkLimit",
+		status: 403,
+		enUS:   "Limit exceeded of network number quota. quota is [%d] and already use [%d].",
+		zhCN:   "网络配置个数超出配额限制. 配额 [%d], 已使用 [%d].",
+	}
+)
+
 // Error for Global API
 var (
 	RegionNotSpecified = &Error{
