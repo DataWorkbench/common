@@ -84,7 +84,7 @@ func Test_WaitUtilFinished(t *testing.T) {
 
 func Test_WaitUtilRunning(t *testing.T) {
 	var noteId = "2GRK6JUF5"
-	var paragraphId = "paragraph_1640772348317_1851116219"
+	var paragraphId = "paragraph_1640924117006_691289814"
 	paragraph, err := client.submitParagraph(noteId, paragraphId)
 	if err != nil {
 		t.Error(err)
@@ -101,5 +101,21 @@ func Test_WaitUtilRunning(t *testing.T) {
 	}
 	for _, v := range paragraphRunning.Results {
 		fmt.Println(v)
+	}
+}
+
+func Test_QueryParagraph(t *testing.T) {
+	var noteId = "2GRR3C4R6"
+	var paragraphId = "paragraph_1640924978975_1620534534"
+	result, err := client.queryParagraphResult(noteId, paragraphId)
+	if err != nil {
+		t.Error(err)
+	}
+	fmt.Println(result.Status)
+	for _, r := range result.Results {
+		fmt.Println(r.Type + "=============" + r.Data)
+	}
+	for _, url := range result.JobUrls {
+		fmt.Println(url)
 	}
 }

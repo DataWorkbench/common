@@ -8,19 +8,19 @@ import (
 )
 
 type ZSession struct {
-	zeppelinClient  *Client
-	interpreter     string
-	intpProperties  map[string]string
-	maxStatement    int
-	sessionInfo     *SessionInfo
+	zeppelinClient *Client
+	interpreter    string
+	intpProperties map[string]string
+	maxStatement   int
+	sessionInfo    *SessionInfo
 }
 
-func NewZSession2(config ClientConfig, interceptor string) *ZSession {
-	return NewZSession4(config, interceptor, make(map[string]string), 100)
+func NewZSession(config ClientConfig, interceptor string) *ZSession {
+	return NewZSessionWithProperties(config, interceptor, make(map[string]string))
 }
 
-func NewZSession3(config ClientConfig, interceptor string, sessionId string) (*ZSession, error) {
-	sessionInfo, err := NewSessionInfo(sessionId)
+func NewZSessionWithSessionId(config ClientConfig, interceptor string, sessionId string) (*ZSession, error) {
+	sessionInfo, err := NewSessionInfo([]byte(sessionId))
 	if err != nil {
 		return nil, err
 	}
@@ -31,7 +31,11 @@ func NewZSession3(config ClientConfig, interceptor string, sessionId string) (*Z
 	}, nil
 }
 
-func NewZSession4(config ClientConfig, interceptor string, intpPorperties map[string]string, maxStatement int) *ZSession {
+func NewZSessionWithProperties(config ClientConfig, interceptor string, intpPorperties map[string]string) *ZSession {
+	return NewZSessionWithAll(config, interceptor, intpPorperties, 100)
+}
+
+func NewZSessionWithAll(config ClientConfig, interceptor string, intpPorperties map[string]string, maxStatement int) *ZSession {
 	return &ZSession{
 		zeppelinClient: NewZeppelinClient(config),
 		interpreter:    interceptor,
@@ -41,7 +45,7 @@ func NewZSession4(config ClientConfig, interceptor string, intpPorperties map[st
 }
 
 func CreateFromExistingSession(config ClientConfig, interceptor string, sessionId string) (*ZSession, error) {
-	session, err := NewZSession3(config, interceptor, sessionId)
+	session, err := NewZSessionWithSessionId(config, interceptor, sessionId)
 	if err != nil {
 		return nil, err
 	}
@@ -92,9 +96,6 @@ func (z *ZSession) stop() error {
 	if z.getSessionId() != "" {
 		return z.zeppelinClient.stopSession(z.getSessionId())
 	}
-	//if z.webSocketClient != nil {
-	//	//TODO stop websocket
-	//}
 	return nil
 }
 

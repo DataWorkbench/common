@@ -2,10 +2,7 @@ package zeppelin
 
 import (
 	"encoding/json"
-	"strings"
-	"time"
-
-	"github.com/valyala/fastjson"
+	"github.com/buger/jsonparser"
 )
 
 type Status string
@@ -19,6 +16,10 @@ const (
 	ERROR    Status = "ERROR"
 	ABORT    Status = "ABORT"
 )
+
+func (s Status) isUnknown() bool {
+	return UNKNOWN == s
+}
 
 func (s Status) isReady() bool {
 	return READY == s
@@ -38,6 +39,10 @@ func (s Status) isCompleted() bool {
 
 func (s Status) isFinished() bool {
 	return FINISHED == s
+}
+
+func (s Status) isFailed() bool {
+	return ERROR == s || ABORT == s
 }
 
 func valueOf(value string) Status {
@@ -60,17 +65,10 @@ func valueOf(value string) Status {
 	return UNKNOWN
 }
 
-type ClientConfig struct {
-	ZeppelinRestUrl string
-	Timeout         time.Duration
-	RetryCount      int
-	QueryInterval   time.Duration
-}
-
 type ParagraphResult struct {
 	ParagraphId string    `json:"paragraphId"`
 	Status      Status    `json:"status"`
-	Progress    int       `json:"progress"`
+	Progress    int64     `json:"progress"`
 	Results     []*Result `json:"results"`
 	JobUrls     []string  `json:"jobUrl"`
 }
@@ -80,41 +78,44 @@ type Result struct {
 	Data string `json:"data"`
 }
 
-func NewResult(jsonObj *fastjson.Value) *Result {
-	rType := string(jsonObj.GetStringBytes("type"))
-	rData := string(jsonObj.GetStringBytes("data"))
-	return &Result{
-		Type: rType,
-		Data: rData,
+func NewParagraphResult(value []byte) (*ParagraphResult, error) {
+	var err error
+	var paragraphResult ParagraphResult
+	if paragraphResult.ParagraphId, err = jsonparser.GetString(value, "body", "id"); err != nil {
+		return nil, err
 	}
-}
-
-func NewParagraphResult(paragraphJson *fastjson.Value) *ParagraphResult {
-	result := &ParagraphResult{}
-	result.ParagraphId = string(paragraphJson.GetStringBytes("id"))
-	result.Status = valueOf(string(paragraphJson.GetStringBytes("status")))
-	result.Progress = paragraphJson.GetInt("progress")
-	if strings.Contains(paragraphJson.String(), "results") {
-		resultJson := paragraphJson.Get("results")
-		msgArray := resultJson.GetArray("msg")
-		for _, resultObj := range msgArray {
-			result.Results = append(result.Results, NewResult(resultObj))
-		}
+	status, err := jsonparser.GetString(value, "body", "status")
+	if err != nil {
+		return nil, err
+	}
+	paragraphResult.Status = valueOf(status)
+	if paragraphResult.Progress, err = jsonparser.GetInt(value, "body", "progress"); err != nil {
+		return nil, err
 	}
 
-	if strings.Contains(paragraphJson.String(), "runtimeInfos") {
-		runtimeInfosJson := paragraphJson.Get("runtimeInfos")
-		if strings.Contains(runtimeInfosJson.String(), "jobUrl") {
-			jobUrlJson := runtimeInfosJson.Get("jobUrl")
-			if strings.Contains(jobUrlJson.String(), "values") {
-				valuesArray := jobUrlJson.GetArray("values")
-				for _, value := range valuesArray {
-					result.JobUrls = append(result.JobUrls, string(value.GetStringBytes("jobUrl")))
-				}
-			}
+	_, _ = jsonparser.ArrayEach(value, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+		if err != nil {
+			return
 		}
-	}
-	return result
+		var result Result
+		if err = json.Unmarshal(value, &result); err != nil {
+			return
+		}
+		paragraphResult.Results = append(paragraphResult.Results, &result)
+	}, "body", "results", "msg")
+
+	_, _ = jsonparser.ArrayEach(value, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+		if err != nil {
+			return
+		}
+		jobUrl, err := jsonparser.GetString(value, "jobUrl")
+		if err != nil {
+			return
+		}
+		paragraphResult.JobUrls = append(paragraphResult.JobUrls, jobUrl)
+	}, "body", "runtimeInfos", "jobUrl", "values")
+
+	return &paragraphResult, nil
 }
 
 type ExecuteResult struct {
@@ -122,7 +123,7 @@ type ExecuteResult struct {
 	status      Status
 	results     []*Result
 	jobUrls     []string
-	progress    int
+	progress    int64
 }
 
 func NewExecuteResult(paragraphResult *ParagraphResult) *ExecuteResult {
@@ -144,13 +145,13 @@ type SessionInfo struct {
 	StartTime   string `json:"starTime"`
 }
 
-func NewSessionInfo(sessionStr string) (*SessionInfo, error) {
+func NewSessionInfo(session []byte) (*SessionInfo, error) {
 	sessionInfo := SessionInfo{}
-	sessionObj, err := fastjson.Parse(sessionStr)
+	body, _, _, err := jsonparser.Get(session, "body")
 	if err != nil {
 		return nil, err
 	}
-	if err = json.Unmarshal([]byte(sessionObj.Get("body").String()), &sessionInfo); err != nil {
+	if err = json.Unmarshal(body, &sessionInfo); err != nil {
 		return nil, err
 	}
 	return &sessionInfo, nil

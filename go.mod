@@ -7,6 +7,7 @@ require (
 	github.com/DataWorkbench/gproto v0.0.0-20211104011919-3ac6e567ea90
 	github.com/HdrHistogram/hdrhistogram-go v1.0.1 // indirect
 	github.com/Shopify/sarama v1.29.1
+	github.com/buger/jsonparser v1.1.1
 	github.com/creasty/defaults v1.5.1
 	github.com/deathowl/go-metrics-prometheus v0.0.0-20200518174047-74482eab5bfb
 	github.com/gin-contrib/cors v1.3.1

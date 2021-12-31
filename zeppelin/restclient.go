@@ -3,6 +3,7 @@ package zeppelin
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/buger/jsonparser"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -12,8 +13,14 @@ import (
 
 	"github.com/gojek/heimdall/v7"
 	"github.com/gojek/heimdall/v7/httpclient"
-	"github.com/valyala/fastjson"
 )
+
+type ClientConfig struct {
+	ZeppelinRestUrl string
+	Timeout         time.Duration
+	RetryCount      int
+	QueryInterval   time.Duration
+}
 
 type Client struct {
 	*httpclient.Client
@@ -30,6 +37,7 @@ func NewZeppelinClient(config ClientConfig) *Client {
 }
 
 func (c *Client) getBaseUrl() string {
+
 	return c.ClientConfig.ZeppelinRestUrl + "/api"
 }
 
@@ -52,11 +60,7 @@ func (c *Client) createNoteWithGroup(notePath string, defaultInterpreterGroup st
 	if err = checkBodyStatus(body); err != nil {
 		return "", err
 	}
-	bodyJson, err := fastjson.Parse(body)
-	if err != nil {
-		return "", err
-	}
-	return string(bodyJson.GetStringBytes("body")), nil
+	return jsonparser.GetString(body, "body")
 }
 
 func (c *Client) createNote(notePath string) (string, error) {
@@ -72,10 +76,7 @@ func (c *Client) deleteNote(noteId string) error {
 	if err != nil {
 		return err
 	}
-	if err = checkBodyStatus(body); err != nil {
-		return err
-	}
-	return nil
+	return checkBodyStatus(body)
 }
 
 func (c *Client) addParagraph(noteId string, title string, text string) (string, error) {
@@ -97,11 +98,7 @@ func (c *Client) addParagraph(noteId string, title string, text string) (string,
 	if err = checkBodyStatus(body); err != nil {
 		return "", err
 	}
-	bodyJson, err := fastjson.Parse(body)
-	if err != nil {
-		return "", err
-	}
-	return string(bodyJson.GetStringBytes("body")), nil
+	return jsonparser.GetString(body, "body")
 }
 
 func (c *Client) updateParagraph(noteId string, paragraphId string, title string, text string) error {
@@ -123,20 +120,7 @@ func (c *Client) updateParagraph(noteId string, paragraphId string, title string
 	return checkBodyStatus(body)
 }
 
-func (c *Client) submitParagraphWithAll(noteId string, paragraphId string, sessionId string, parameters map[string]string) (*ParagraphResult, error) {
-	reqObj := map[string]interface{}{}
-	parametersJson, err := json.Marshal(parameters)
-	if err != nil {
-		return nil, err
-	}
-	// TODO the params is zeppelin web params,
-	reqObj["params"] = string(parametersJson)
-	//reqBytes, err := json.Marshal(reqObj)
-	if err != nil {
-		return nil, err
-	}
-	url := c.getBaseUrl() + fmt.Sprintf("/notebook/job/%s/%s%s", noteId, paragraphId, queryString("sessionId", sessionId))
-	fmt.Println(url)
+func (c *Client) submitParagraphWithSessionId(noteId string, paragraphId string, sessionId string) (*ParagraphResult, error) {
 	response, err := c.Post(c.getBaseUrl()+fmt.Sprintf("/notebook/job/%s/%s%s", noteId, paragraphId, queryString("sessionId", sessionId)),
 		strings.NewReader(""), http.Header{})
 	if err != nil {
@@ -152,32 +136,20 @@ func (c *Client) submitParagraphWithAll(noteId string, paragraphId string, sessi
 	return c.queryParagraphResult(noteId, paragraphId)
 }
 
-func (c *Client) submitParagraphWithSessionId(noteId string, paragraphId string, sessionId string) (*ParagraphResult, error) {
-	return c.submitParagraphWithAll(noteId, paragraphId, sessionId, make(map[string]string))
-}
-
-func (c *Client) submitParagraphWithParameters(noteId string, paragraphId string, parameters map[string]string) (*ParagraphResult, error) {
-	return c.submitParagraphWithAll(noteId, paragraphId, "", parameters)
-}
-
 func (c *Client) submitParagraph(noteId string, paragraphId string) (*ParagraphResult, error) {
-	return c.submitParagraphWithAll(noteId, paragraphId, "", make(map[string]string))
+	return c.submitParagraphWithSessionId(noteId, paragraphId, "")
 }
 
-func (c *Client) executeParagraphWithAll(noteId string, paragraphId string, sessionId string, parameters map[string]string) (*ParagraphResult, error) {
-	_, err := c.submitParagraphWithAll(noteId, paragraphId, sessionId, parameters)
+func (c *Client) executeParagraphWithSessionId(noteId string, paragraphId string, sessionId string) (*ParagraphResult, error) {
+	_, err := c.submitParagraphWithSessionId(noteId, paragraphId, sessionId)
 	if err != nil {
 		return nil, err
 	}
 	return c.waitUtilParagraphFinish(noteId, paragraphId)
 }
 
-func (c *Client) executeParagraphWithSessionId(noteId string, paragraphId string, sessionId string) (*ParagraphResult, error) {
-	return c.executeParagraphWithAll(noteId, paragraphId, sessionId, make(map[string]string))
-}
-
 func (c *Client) executeParagraph(noteId string, paragraphId string) (*ParagraphResult, error) {
-	return c.executeParagraphWithAll(noteId, paragraphId, "", make(map[string]string))
+	return c.executeParagraphWithSessionId(noteId, paragraphId, "")
 }
 
 func (c *Client) cancelParagraph(noteId string, paragraphId string) error {
@@ -189,10 +161,7 @@ func (c *Client) cancelParagraph(noteId string, paragraphId string) error {
 	if err != nil {
 		return err
 	}
-	if err = checkBodyStatus(body); err != nil {
-		return err
-	}
-	return nil
+	return checkBodyStatus(body)
 }
 
 func (c *Client) waitUtilParagraphRunning(noteId string, paragraphId string) (*ParagraphResult, error) {
@@ -201,8 +170,21 @@ func (c *Client) waitUtilParagraphRunning(noteId string, paragraphId string) (*P
 		if err != nil {
 			return nil, err
 		}
-		if paragraphResult.Status.isRunning() {
+		if paragraphResult.Status.isRunning() || paragraphResult.Status.isFinished() {
 			return paragraphResult, nil
+		}
+		if paragraphResult.Status.isFailed() {
+			var reason string
+			if len(paragraphResult.Results) > 0 {
+				result := paragraphResult.Results[0]
+				t := result.Type
+				data := result.Data
+				reason = fmt.Sprintf("type: %s ,data: %s", t, data)
+			}
+			return paragraphResult, qerror.ZeppelinParagraphRunError.Format(reason)
+		}
+		if paragraphResult.Status.isUnknown() {
+			return paragraphResult, qerror.ZeppelinSessionNotRunning.Format(paragraphResult.Status)
 		}
 		time.Sleep(time.Millisecond * c.ClientConfig.QueryInterval)
 	}
@@ -248,12 +230,7 @@ func (c *Client) queryParagraphResult(noteId string, paragraphId string) (*Parag
 	if err = checkBodyStatus(body); err != nil {
 		return nil, err
 	}
-	jsonBody, err := fastjson.Parse(body)
-	if err != nil {
-		return nil, err
-	}
-	paragraphJson := jsonBody.Get("body")
-	return NewParagraphResult(paragraphJson), nil
+	return NewParagraphResult(body)
 }
 
 func (c *Client) newSession(interpreter string) (*SessionInfo, error) {
@@ -315,27 +292,31 @@ func queryString(name string, value string) (queryStr string) {
 	return queryStr
 }
 
-func checkResponse(response *http.Response) (string, error) {
+func checkResponse(response *http.Response) ([]byte, error) {
 	if response.StatusCode == 302 {
-		return "", qerror.InvalidateZeppelinUser
+		return nil, qerror.InvalidateZeppelinUser
 	}
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	if response.StatusCode != 200 {
-		return "", qerror.CallZeppelinRestApiFailed.Format(response.StatusCode, response.Status, string(body))
+		return nil, qerror.CallZeppelinRestApiFailed.Format(response.StatusCode, response.Status, string(body))
 	}
-	return string(body), nil
+	return body, nil
 }
 
-func checkBodyStatus(resBody string) error {
-	bodyJson, err := fastjson.Parse(resBody)
+func checkBodyStatus(resBody []byte) error {
+	status, err := jsonparser.GetString(resBody, "status")
 	if err != nil {
 		return err
 	}
-	if !strings.EqualFold("OK", string(bodyJson.GetStringBytes("status"))) {
-		return qerror.ZeppelinReturnStatusError.Format(bodyJson.Get("message").String())
+	if !strings.EqualFold("OK", status) {
+		message, err := jsonparser.GetString(resBody, "status")
+		if err != nil {
+			return err
+		}
+		return qerror.ZeppelinReturnStatusError.Format(message)
 	}
 	return nil
 }

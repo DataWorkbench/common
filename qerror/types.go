@@ -534,4 +534,35 @@ var (
 		enUS:   "failed to get flink job id",
 		zhCN:   "获取flink任务id失败",
 	}
+
+	ZeppelinParagraphRunError = &Error{
+		code:   "ZeppelinRuntimeError",
+		status: 500,
+		enUS:   "job failed, reason: %s",
+		zhCN:   "zeppelin任务运行失败",
+	}
+
+	ZeppelinRuntimeError = &Error{
+		code:   "ZeppelinRuntimeError",
+		status: 500,
+		enUS:   "zeppelin runtime error ,paragraph status is %s",
+		zhCN:   "",
+	}
+)
+
+// flink rest error
+var (
+	FlinkRestError = &Error{
+		code:   "FlinkRestError",
+		status: 500,
+		enUS:   "failed to ask request api,status: %s, statusText: %s, message:%s",
+		zhCN:   "请求Flink APi失败",
+	}
+
+	FlinkJobNotExists = &Error{
+		code:   "FlinkJobNotExists",
+		status: 500,
+		enUS:   "flink job not exists,jobName is %s",
+		zhCN:   "Flink Job 不存在",
+	}
 )
