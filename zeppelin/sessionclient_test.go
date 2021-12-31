@@ -36,23 +36,23 @@ func Test_RunSql(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	result, err := zSession.execute("ssql", "drop table if exists datagen;")
+	result, err := zSession.Execute("ssql", "drop table if exists datagen;")
 	if err != nil {
 		t.Error(err)
 	}
 	fmt.Println(result)
-	result, err = zSession.execute("ssql", "create table datagen(id int,name string) with ('connector' = 'datagen',"+
+	result, err = zSession.Execute("ssql", "create table datagen(id int,name string) with ('connector' = 'datagen',"+
 		"'rows-per-second' = '2');")
 	if err != nil {
 		t.Error(err)
 	}
 	fmt.Println(result)
-	result, err = zSession.execute("ssql", "drop table if exists print;")
+	result, err = zSession.Execute("ssql", "drop table if exists print;")
 	if err != nil {
 		t.Error(err)
 	}
 	fmt.Println(result)
-	result, err = zSession.execute("ssql", "create table print(id int,name string) with ('connector'='print');")
+	result, err = zSession.Execute("ssql", "create table print(id int,name string) with ('connector'='print');")
 	if err != nil {
 		t.Error(err)
 	}
@@ -64,7 +64,7 @@ func Test_RunSql(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	result, err = zSession.WaitUntilRunning(result.statementId)
+	result, err = zSession.WaitUntilRunning(result.StatementId)
 	if err != nil {
 		t.Error(err)
 	}

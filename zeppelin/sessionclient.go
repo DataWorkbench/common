@@ -76,7 +76,7 @@ func (z *ZSession) Start() (err error) {
 	if paragraphResult, err = z.zeppelinClient.executeParagraphWithSessionId(z.getNoteId(), paragraphId, z.getSessionId()); err != nil {
 		return
 	}
-	if !paragraphResult.Status.isFinished() {
+	if !paragraphResult.Status.IsFinished() {
 		return qerror.ZeppelinConfigureFailed
 	}
 
@@ -86,7 +86,7 @@ func (z *ZSession) Start() (err error) {
 	if paragraphResult, err = z.zeppelinClient.executeParagraphWithSessionId(z.getNoteId(), paragraphId, z.getSessionId()); err != nil {
 		return
 	}
-	if !paragraphResult.Status.isFinished() {
+	if !paragraphResult.Status.IsFinished() {
 		return qerror.ZeppelinInitFailed
 	}
 	return nil
