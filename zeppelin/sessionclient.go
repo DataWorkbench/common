@@ -49,13 +49,13 @@ func CreateFromExistingSession(config ClientConfig, interceptor string, sessionI
 	if err != nil {
 		return nil, err
 	}
-	if err = session.reconnect(); err != nil {
+	if err = session.Reconnect(); err != nil {
 		return nil, err
 	}
 	return session, nil
 }
 
-func (z *ZSession) start() (err error) {
+func (z *ZSession) Start() (err error) {
 	if z.sessionInfo, err = z.zeppelinClient.newSession(z.interpreter); err != nil {
 		return
 	}
@@ -92,14 +92,14 @@ func (z *ZSession) start() (err error) {
 	return nil
 }
 
-func (z *ZSession) stop() error {
+func (z *ZSession) Stop() error {
 	if z.getSessionId() != "" {
 		return z.zeppelinClient.stopSession(z.getSessionId())
 	}
 	return nil
 }
 
-func (z *ZSession) submitWithProperties(subInterpreter string, localProperties map[string]string, code string) (*ExecuteResult, error) {
+func (z *ZSession) SubmitWithProperties(subInterpreter string, localProperties map[string]string, code string) (*ExecuteResult, error) {
 	builder := strings.Builder{}
 	builder.WriteString("%" + z.interpreter)
 	if subInterpreter != "" && len(subInterpreter) > 0 {
@@ -127,15 +127,15 @@ func (z *ZSession) submitWithProperties(subInterpreter string, localProperties m
 	return NewExecuteResult(paragraphResult), nil
 }
 
-func (z *ZSession) submit(subInterpreter string, code string) (*ExecuteResult, error) {
-	return z.submitWithProperties(subInterpreter, make(map[string]string), code)
+func (z *ZSession) Submit(subInterpreter string, code string) (*ExecuteResult, error) {
+	return z.SubmitWithProperties(subInterpreter, make(map[string]string), code)
 }
 
-func (z *ZSession) sub(code string) (*ExecuteResult, error) {
-	return z.submit("", code)
+func (z *ZSession) Sub(code string) (*ExecuteResult, error) {
+	return z.Submit("", code)
 }
 
-func (z *ZSession) executeWithProperties(subInterpreter string, localProperties map[string]string, code string) (*ExecuteResult, error) {
+func (z *ZSession) ExecuteWithProperties(subInterpreter string, localProperties map[string]string, code string) (*ExecuteResult, error) {
 	builder := strings.Builder{}
 	builder.WriteString("%" + z.interpreter)
 	if subInterpreter != "" && len(subInterpreter) > 0 {
@@ -163,19 +163,19 @@ func (z *ZSession) executeWithProperties(subInterpreter string, localProperties 
 	return NewExecuteResult(paragraphResult), nil
 }
 
-func (z *ZSession) execute(subInterpreter string, code string) (*ExecuteResult, error) {
-	return z.executeWithProperties(subInterpreter, make(map[string]string), code)
+func (z *ZSession) Execute(subInterpreter string, code string) (*ExecuteResult, error) {
+	return z.ExecuteWithProperties(subInterpreter, make(map[string]string), code)
 }
 
-func (z *ZSession) exec(code string) (*ExecuteResult, error) {
-	return z.execute("", code)
+func (z *ZSession) Exec(code string) (*ExecuteResult, error) {
+	return z.Execute("", code)
 }
 
-func (z *ZSession) cancel(statementId string) error {
+func (z *ZSession) Cancel(statementId string) error {
 	return z.zeppelinClient.cancelParagraph(z.getNoteId(), statementId)
 }
 
-func (z *ZSession) queryStatement(statementId string) (*ExecuteResult, error) {
+func (z *ZSession) QueryStatement(statementId string) (*ExecuteResult, error) {
 	paragraphResult, err := z.zeppelinClient.queryParagraphResult(z.getNoteId(), statementId)
 	if err != nil {
 		return nil, err
@@ -183,7 +183,7 @@ func (z *ZSession) queryStatement(statementId string) (*ExecuteResult, error) {
 	return NewExecuteResult(paragraphResult), nil
 }
 
-func (z *ZSession) waitUntilFinished(statementId string) (*ExecuteResult, error) {
+func (z *ZSession) WaitUntilFinished(statementId string) (*ExecuteResult, error) {
 	paragraphResult, err := z.zeppelinClient.waitUtilParagraphFinish(z.getNoteId(), statementId)
 	if err != nil {
 		return nil, err
@@ -191,7 +191,7 @@ func (z *ZSession) waitUntilFinished(statementId string) (*ExecuteResult, error)
 	return NewExecuteResult(paragraphResult), nil
 }
 
-func (z *ZSession) waitUntilRunning(statementId string) (*ExecuteResult, error) {
+func (z *ZSession) WaitUntilRunning(statementId string) (*ExecuteResult, error) {
 	paragraphResult, err := z.zeppelinClient.waitUtilParagraphRunning(z.getNoteId(), statementId)
 	if err != nil {
 		return nil, err
@@ -199,7 +199,7 @@ func (z *ZSession) waitUntilRunning(statementId string) (*ExecuteResult, error) 
 	return NewExecuteResult(paragraphResult), nil
 }
 
-func (z *ZSession) reconnect() (err error) {
+func (z *ZSession) Reconnect() (err error) {
 	z.sessionInfo, err = z.zeppelinClient.getSession(z.getSessionId())
 	if !strings.EqualFold("Running", z.sessionInfo.State) {
 		return qerror.ZeppelinSessionNotRunning

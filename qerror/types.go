@@ -549,6 +549,12 @@ var (
 		enUS:   "%s",
 		zhCN:   "%s",
 	}
+	ParseEngineFlinkUrlFailed = &Error{
+		code:   "ParseEngineFlinkUrlFailed",
+		status: 500,
+		enUS:   "%s",
+		zhCN:   "%s",
+	}
 )
 
 // zeppelin error
@@ -614,13 +620,6 @@ var (
 		status: 500,
 		enUS:   "job failed, reason: %s",
 		zhCN:   "zeppelin任务运行失败",
-	}
-
-	ZeppelinRuntimeError = &Error{
-		code:   "ZeppelinRuntimeError",
-		status: 500,
-		enUS:   "zeppelin runtime error ,paragraph status is %s",
-		zhCN:   "",
 	}
 )
 

@@ -17,31 +17,31 @@ const (
 	ABORT    Status = "ABORT"
 )
 
-func (s Status) isUnknown() bool {
+func (s Status) IsUnknown() bool {
 	return UNKNOWN == s
 }
 
-func (s Status) isReady() bool {
+func (s Status) IsReady() bool {
 	return READY == s
 }
 
-func (s Status) isRunning() bool {
+func (s Status) IsRunning() bool {
 	return RUNNING == s
 }
 
-func (s Status) isPending() bool {
+func (s Status) IsPending() bool {
 	return PENDING == s
 }
 
-func (s Status) isCompleted() bool {
+func (s Status) IsCompleted() bool {
 	return FINISHED == s || ERROR == s || ABORT == s
 }
 
-func (s Status) isFinished() bool {
+func (s Status) IsFinished() bool {
 	return FINISHED == s
 }
 
-func (s Status) isFailed() bool {
+func (s Status) IsFailed() bool {
 	return ERROR == s || ABORT == s
 }
 
@@ -119,20 +119,20 @@ func NewParagraphResult(value []byte) (*ParagraphResult, error) {
 }
 
 type ExecuteResult struct {
-	statementId string
-	status      Status
-	results     []*Result
-	jobUrls     []string
-	progress    int64
+	StatementId string
+	Status      Status
+	Results     []*Result
+	JobUrls     []string
+	Progress    int64
 }
 
 func NewExecuteResult(paragraphResult *ParagraphResult) *ExecuteResult {
 	return &ExecuteResult{
-		statementId: paragraphResult.ParagraphId,
-		status:      paragraphResult.Status,
-		results:     paragraphResult.Results,
-		jobUrls:     paragraphResult.JobUrls,
-		progress:    paragraphResult.Progress,
+		StatementId: paragraphResult.ParagraphId,
+		Status:      paragraphResult.Status,
+		Results:     paragraphResult.Results,
+		JobUrls:     paragraphResult.JobUrls,
+		Progress:    paragraphResult.Progress,
 	}
 }
 

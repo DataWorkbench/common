@@ -25,14 +25,14 @@ func init() {
 }
 
 func Test_Start(t *testing.T) {
-	err := zSession.start()
+	err := zSession.Start()
 	if err != nil {
 		t.Error(err)
 	}
 }
 
 func Test_RunSql(t *testing.T) {
-	err := zSession.start()
+	err := zSession.Start()
 	if err != nil {
 		t.Error(err)
 	}
@@ -60,11 +60,11 @@ func Test_RunSql(t *testing.T) {
 	var properties = map[string]string{}
 	properties["parallelism"] = "1"
 	properties["jobName"] = "demo01"
-	result, err = zSession.submitWithProperties("ssql", properties, "insert into print select * from datagen;")
+	result, err = zSession.SubmitWithProperties("ssql", properties, "insert into print select * from datagen;")
 	if err != nil {
 		t.Error(err)
 	}
-	result, err = zSession.waitUntilRunning(result.statementId)
+	result, err = zSession.WaitUntilRunning(result.statementId)
 	if err != nil {
 		t.Error(err)
 	}
