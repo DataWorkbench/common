@@ -124,7 +124,7 @@ func (z *ZSession) SubmitWithProperties(subInterpreter string, localProperties m
 	if err != nil {
 		return nil, err
 	}
-	return NewExecuteResult(paragraphResult), nil
+	return NewExecuteResult(paragraphResult, z.sessionInfo), nil
 }
 
 func (z *ZSession) Submit(subInterpreter string, code string) (*ExecuteResult, error) {
@@ -160,7 +160,7 @@ func (z *ZSession) ExecuteWithProperties(subInterpreter string, localProperties 
 	if err != nil {
 		return nil, err
 	}
-	return NewExecuteResult(paragraphResult), nil
+	return NewExecuteResult(paragraphResult, z.sessionInfo), nil
 }
 
 func (z *ZSession) Execute(subInterpreter string, code string) (*ExecuteResult, error) {
@@ -180,7 +180,7 @@ func (z *ZSession) QueryStatement(statementId string) (*ExecuteResult, error) {
 	if err != nil {
 		return nil, err
 	}
-	return NewExecuteResult(paragraphResult), nil
+	return NewExecuteResult(paragraphResult, z.sessionInfo), nil
 }
 
 func (z *ZSession) WaitUntilFinished(statementId string) (*ExecuteResult, error) {
@@ -188,7 +188,7 @@ func (z *ZSession) WaitUntilFinished(statementId string) (*ExecuteResult, error)
 	if err != nil {
 		return nil, err
 	}
-	return NewExecuteResult(paragraphResult), nil
+	return NewExecuteResult(paragraphResult, z.sessionInfo), nil
 }
 
 func (z *ZSession) WaitUntilRunning(statementId string) (*ExecuteResult, error) {
@@ -196,7 +196,7 @@ func (z *ZSession) WaitUntilRunning(statementId string) (*ExecuteResult, error) 
 	if err != nil {
 		return nil, err
 	}
-	return NewExecuteResult(paragraphResult), nil
+	return NewExecuteResult(paragraphResult, z.sessionInfo), nil
 }
 
 func (z *ZSession) Reconnect() (err error) {

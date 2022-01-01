@@ -13,7 +13,6 @@ import (
 	"github.com/buger/jsonparser"
 	"github.com/gojek/heimdall/v7"
 	"github.com/gojek/heimdall/v7/httpclient"
-
 )
 
 type Client struct {
@@ -30,9 +29,9 @@ func NewFlinkClient(config ClientConfig) *Client {
 	return &Client{client, config}
 }
 
-func (c *Client) listJobs() ([]*Job, error) {
+func (c *Client) ListJobs(flinkUrl string) ([]*Job, error) {
 	var jobs []*Job
-	response, err := c.Get(c.getBaseUrl("jobs")+"/overview", http.Header{})
+	response, err := c.Get(fmt.Sprintf("http://%s/jobs/overview", flinkUrl), http.Header{})
 	if err != nil {
 		return nil, err
 	}
@@ -53,9 +52,9 @@ func (c *Client) listJobs() ([]*Job, error) {
 	return jobs, nil
 }
 
-func (c *Client) getJobInfoByJobId(jobId string) (*Job, error) {
+func (c *Client) GetJobInfoByJobId(flinkUrl string, jobId string) (*Job, error) {
 	var job *Job
-	response, err := c.Get(c.getBaseUrl("jobs")+"/"+jobId, http.Header{})
+	response, err := c.Get(fmt.Sprintf("http://%s/jobs/%s", flinkUrl, jobId), http.Header{})
 	if err != nil {
 		return nil, err
 	}
@@ -69,10 +68,10 @@ func (c *Client) getJobInfoByJobId(jobId string) (*Job, error) {
 	return job, nil
 }
 
-func (c *Client) getJobInfo(jobId string, jobName string) (*Job, error) {
-	job, err := c.getJobInfoByJobId(jobId)
+func (c *Client) GetJobInfo(flinkUrl string, jobId string, jobName string) (*Job, error) {
+	job, err := c.GetJobInfoByJobId(flinkUrl, jobId)
 	if err != nil {
-		jobs, err := c.listJobs()
+		jobs, err := c.ListJobs(flinkUrl)
 		if err != nil {
 			return nil, err
 		}
@@ -86,8 +85,8 @@ func (c *Client) getJobInfo(jobId string, jobName string) (*Job, error) {
 	return job, nil
 }
 
-func (c *Client) cancelJob(jobId string) error {
-	response, err := c.Patch(c.getBaseUrl("jobs")+"/"+jobId, strings.NewReader(""), http.Header{})
+func (c *Client) CancelJob(flinkUrl string, jobId string) error {
+	response, err := c.Patch(fmt.Sprintf("http://%s/jobs/%s", flinkUrl, jobId), strings.NewReader(""), http.Header{})
 	if err != nil {
 		return err
 	}
@@ -101,7 +100,7 @@ func (c *Client) cancelJob(jobId string) error {
 	return nil
 }
 
-func (c *Client) savepoint(jobId string, target string, cancel bool) (*Savepoint, error) {
+func (c *Client) savepoint(flinkUrl string, jobId string, target string, cancel bool) (*Savepoint, error) {
 	reqObj := map[string]interface{}{}
 	reqObj["cancel-job"] = cancel
 	reqObj["target-directory"] = target
@@ -109,7 +108,7 @@ func (c *Client) savepoint(jobId string, target string, cancel bool) (*Savepoint
 	if err != nil {
 		return nil, err
 	}
-	response, err := c.Post(c.getBaseUrl("jobs")+fmt.Sprintf("/%s/savepoints", jobId), strings.NewReader(string(reqBytes)), http.Header{})
+	response, err := c.Post(fmt.Sprintf("http://%s/jobs/%s/savepoints", flinkUrl, jobId), strings.NewReader(string(reqBytes)), http.Header{})
 	bytes, err := c.checkResponse(response)
 	if err != nil {
 		return nil, err
@@ -121,24 +120,24 @@ func (c *Client) savepoint(jobId string, target string, cancel bool) (*Savepoint
 	return savepoint, err
 }
 
-func (c *Client) triggerSavepoint(jobId string, target string) (string, error) {
-	savepoint, err := c.savepoint(jobId, target, false)
+func (c *Client) TriggerSavepoint(flinkUrl string, jobId string, target string) (string, error) {
+	savepoint, err := c.savepoint(flinkUrl, jobId, target, false)
 	if err != nil {
 		return "", err
 	}
 	return savepoint.RequestId, nil
 }
 
-func (c *Client) cancelWithSavepoint(jobId string, target string) (string, error) {
-	savepoint, err := c.savepoint(jobId, target, true)
+func (c *Client) CancelWithSavepoint(flinkUrl string, jobId string, target string) (string, error) {
+	savepoint, err := c.savepoint(flinkUrl, jobId, target, true)
 	if err != nil {
 		return "", err
 	}
 	return savepoint.RequestId, nil
 }
 
-func (c *Client) getSavepoint(jobId string, requestId string) (*Savepoint, error) {
-	response, err := c.Get(c.getBaseUrl("jobs")+fmt.Sprintf("/%s/savepoints/%s", jobId, requestId), http.Header{})
+func (c *Client) GetSavepoint(flinkUrl string, jobId string, requestId string) (*Savepoint, error) {
+	response, err := c.Get(fmt.Sprintf("http://%s/jobs/%s/savepoints/%s", flinkUrl, jobId, requestId), http.Header{})
 	if err != nil {
 		return nil, err
 	}
@@ -151,10 +150,6 @@ func (c *Client) getSavepoint(jobId string, requestId string) (*Savepoint, error
 		return nil, err
 	}
 	return savepoint, nil
-}
-
-func (c *Client) getBaseUrl(baseType string) string {
-	return c.ClientConfig.FlinkRestUrl + "/" + baseType
 }
 
 func (c *Client) checkResponse(response *http.Response) (res []byte, err error) {

@@ -7,10 +7,11 @@ import (
 )
 
 var client *Client
+var flinkUrl string
 
 func init() {
+	flinkUrl = "127.0.0.1:8081"
 	config := ClientConfig{
-		FlinkRestUrl:  "http://127.0.0.1:8081",
 		Timeout:       2000 * time.Millisecond,
 		RetryCount:    2,
 		QueryInterval: 2000,
@@ -19,7 +20,7 @@ func init() {
 }
 
 func Test_ListJobs(t *testing.T) {
-	jobs, err := client.listJobs()
+	jobs, err := client.listJobs(flinkUrl)
 	if err != nil {
 		t.Error(err)
 	}
@@ -29,7 +30,7 @@ func Test_ListJobs(t *testing.T) {
 }
 
 func Test_GetJob(t *testing.T) {
-	job, err := client.getJobInfoByJobId("d6c331d9ff06d75517ab9946cf884fea")
+	job, err := client.getJobInfoByJobId(flinkUrl, "d6c331d9ff06d75517ab9946cf884fea")
 	if err != nil {
 		t.Error(err)
 	}

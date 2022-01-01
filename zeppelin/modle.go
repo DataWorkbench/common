@@ -124,15 +124,18 @@ type ExecuteResult struct {
 	Results     []*Result
 	JobUrls     []string
 	Progress    int64
+	FlinkUrl    string
+	SessionInfo *SessionInfo
 }
 
-func NewExecuteResult(paragraphResult *ParagraphResult) *ExecuteResult {
+func NewExecuteResult(paragraphResult *ParagraphResult, sessionInfo *SessionInfo) *ExecuteResult {
 	return &ExecuteResult{
 		StatementId: paragraphResult.ParagraphId,
 		Status:      paragraphResult.Status,
 		Results:     paragraphResult.Results,
 		JobUrls:     paragraphResult.JobUrls,
 		Progress:    paragraphResult.Progress,
+		SessionInfo: sessionInfo,
 	}
 }
 

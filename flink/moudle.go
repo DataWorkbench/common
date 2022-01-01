@@ -3,7 +3,6 @@ package flink
 import "time"
 
 type ClientConfig struct {
-	FlinkRestUrl  string
 	Timeout       time.Duration
 	RetryCount    int
 	QueryInterval time.Duration
