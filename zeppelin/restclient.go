@@ -173,18 +173,8 @@ func (c *Client) waitUtilParagraphRunning(noteId string, paragraphId string) (*P
 		if paragraphResult.Status.IsRunning() || paragraphResult.Status.IsFinished() {
 			return paragraphResult, nil
 		}
-		if paragraphResult.Status.IsFailed() {
-			var reason string
-			if len(paragraphResult.Results) > 0 {
-				result := paragraphResult.Results[0]
-				t := result.Type
-				data := result.Data
-				reason = fmt.Sprintf("type: %s ,data: %s", t, data)
-			}
-			return paragraphResult, qerror.ZeppelinParagraphRunError.Format(reason)
-		}
-		if paragraphResult.Status.IsUnknown() {
-			return paragraphResult, qerror.ZeppelinSessionNotRunning.Format(paragraphResult.Status)
+		if paragraphResult.Status.IsFailed() || paragraphResult.Status.IsUnknown() {
+			return paragraphResult, nil
 		}
 		time.Sleep(time.Millisecond * c.ClientConfig.QueryInterval)
 	}
@@ -201,21 +191,6 @@ func (c *Client) waitUtilParagraphFinish(noteId string, paragraphId string) (*Pa
 		}
 		time.Sleep(time.Millisecond * c.ClientConfig.QueryInterval)
 	}
-}
-
-func (c *Client) waitUtilParagraphFinishWithTimeout(noteId string, paragraphId string, timeoutInSec int) (*ParagraphResult, error) {
-	start := time.Now().Second()
-	for (time.Now().Second() - start) < timeoutInSec {
-		paragraphResult, err := c.queryParagraphResult(noteId, paragraphId)
-		if err != nil {
-			return nil, err
-		}
-		if paragraphResult.Status.IsCompleted() {
-			return paragraphResult, nil
-		}
-		time.Sleep(time.Millisecond * c.ClientConfig.QueryInterval)
-	}
-	return nil, qerror.ZeppelinRunParagraphTimeout.Format(timeoutInSec)
 }
 
 func (c *Client) queryParagraphResult(noteId string, paragraphId string) (*ParagraphResult, error) {
