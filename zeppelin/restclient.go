@@ -67,7 +67,7 @@ func (c *Client) createNote(notePath string) (string, error) {
 	return c.createNoteWithGroup(notePath, "")
 }
 
-func (c *Client) deleteNote(noteId string) error {
+func (c *Client) DeleteNote(noteId string) error {
 	response, err := c.Delete(c.getBaseUrl()+fmt.Sprintf("/notebook/%s", noteId), http.Header{})
 	if err != nil {
 		return err

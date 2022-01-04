@@ -28,7 +28,7 @@ func Test_CreateNote(t *testing.T) {
 
 func Test_DeleteNote(t *testing.T) {
 	var noteId = "2GTBE85ZZ"
-	err := client.deleteNote(noteId)
+	err := client.DeleteNote(noteId)
 	if err != nil {
 		t.Error(err)
 	}
