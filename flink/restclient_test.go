@@ -20,7 +20,7 @@ func init() {
 }
 
 func Test_ListJobs(t *testing.T) {
-	jobs, err := client.listJobs(flinkUrl)
+	jobs, err := client.ListJobs(flinkUrl)
 	if err != nil {
 		t.Error(err)
 	}
@@ -30,7 +30,7 @@ func Test_ListJobs(t *testing.T) {
 }
 
 func Test_GetJob(t *testing.T) {
-	job, err := client.getJobInfoByJobId(flinkUrl, "d6c331d9ff06d75517ab9946cf884fea")
+	job, err := client.GetJobInfoByJobId(flinkUrl, "d6c331d9ff06d75517ab9946cf884fea")
 	if err != nil {
 		t.Error(err)
 	}

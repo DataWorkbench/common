@@ -101,24 +101,24 @@ func (c *Client) addParagraph(noteId string, title string, text string) (string,
 	return jsonparser.GetString(body, "body")
 }
 
-func (c *Client) updateParagraph(noteId string, paragraphId string, title string, text string) error {
-	reqObj := map[string]string{}
-	reqObj["title"] = title
-	reqObj["text"] = text
-	reqBytes, err := json.Marshal(reqObj)
-	if err != nil {
-		return err
-	}
-	response, err := c.Put(c.getBaseUrl()+fmt.Sprintf("/notebook/%s/paragraph/%s", noteId, paragraphId), strings.NewReader(string(reqBytes)), http.Header{})
-	if err != nil {
-		return err
-	}
-	body, err := checkResponse(response)
-	if err != nil {
-		return err
-	}
-	return checkBodyStatus(body)
-}
+//func (c *Client) updateParagraph(noteId string, paragraphId string, title string, text string) error {
+//	reqObj := map[string]string{}
+//	reqObj["title"] = title
+//	reqObj["text"] = text
+//	reqBytes, err := json.Marshal(reqObj)
+//	if err != nil {
+//		return err
+//	}
+//	response, err := c.Put(c.getBaseUrl()+fmt.Sprintf("/notebook/%s/paragraph/%s", noteId, paragraphId), strings.NewReader(string(reqBytes)), http.Header{})
+//	if err != nil {
+//		return err
+//	}
+//	body, err := checkResponse(response)
+//	if err != nil {
+//		return err
+//	}
+//	return checkBodyStatus(body)
+//}
 
 func (c *Client) submitParagraphWithSessionId(noteId string, paragraphId string, sessionId string) (*ParagraphResult, error) {
 	response, err := c.Post(c.getBaseUrl()+fmt.Sprintf("/notebook/job/%s/%s%s", noteId, paragraphId, queryString("sessionId", sessionId)),
@@ -148,9 +148,9 @@ func (c *Client) executeParagraphWithSessionId(noteId string, paragraphId string
 	return c.waitUtilParagraphFinish(noteId, paragraphId)
 }
 
-func (c *Client) executeParagraph(noteId string, paragraphId string) (*ParagraphResult, error) {
-	return c.executeParagraphWithSessionId(noteId, paragraphId, "")
-}
+//func (c *Client) executeParagraph(noteId string, paragraphId string) (*ParagraphResult, error) {
+//	return c.executeParagraphWithSessionId(noteId, paragraphId, "")
+//}
 
 func (c *Client) cancelParagraph(noteId string, paragraphId string) error {
 	response, err := c.Delete(c.getBaseUrl()+fmt.Sprintf("/notebook/job/%s/%s", noteId, paragraphId), http.Header{})

@@ -102,13 +102,18 @@ func (c *Client) savepoint(flinkUrl string, jobId string, target string, cancel 
 		return nil, err
 	}
 	response, err := c.Post(fmt.Sprintf("http://%s/jobs/%s/savepoints", flinkUrl, jobId), strings.NewReader(string(reqBytes)), http.Header{})
+	if err != nil {
+		return nil, err
+	}
 	bytes, err := c.checkResponse(response)
 	if err != nil {
 		return nil, err
 	}
 	var savepoint *Savepoint
-	if err = json.Unmarshal(bytes, savepoint); err != nil {
-		return nil, err
+	if bytes != nil {
+		if err = json.Unmarshal(bytes, savepoint); err != nil {
+			return nil, err
+		}
 	}
 	return savepoint, err
 }
@@ -138,11 +143,11 @@ func (c *Client) GetSavepoint(flinkUrl string, jobId string, requestId string) (
 	if err != nil {
 		return nil, err
 	}
-	var savepoint *Savepoint
-	if err = json.Unmarshal(bytes, savepoint); err != nil {
+	var savepoint Savepoint
+	if err = json.Unmarshal(bytes, &savepoint); err != nil {
 		return nil, err
 	}
-	return savepoint, nil
+	return &savepoint, nil
 }
 
 func (c *Client) checkResponse(response *http.Response) (res []byte, err error) {

@@ -105,7 +105,7 @@ func (z *ZSession) SubmitWithProperties(subInterpreter string, localProperties m
 	if subInterpreter != "" && len(subInterpreter) > 0 {
 		builder.WriteString("." + subInterpreter)
 	}
-	if localProperties != nil && len(localProperties) > 0 {
+	if len(localProperties) > 0 {
 		builder.WriteString("(")
 		var propertyStrs []string
 		for k, v := range localProperties {
@@ -141,7 +141,7 @@ func (z *ZSession) ExecuteWithProperties(subInterpreter string, localProperties 
 	if subInterpreter != "" && len(subInterpreter) > 0 {
 		builder.WriteString("." + subInterpreter)
 	}
-	if localProperties != nil && len(localProperties) > 0 {
+	if len(localProperties) > 0 {
 		builder.WriteString("(")
 		var propertyStrs []string
 		for k, v := range localProperties {
@@ -201,6 +201,9 @@ func (z *ZSession) WaitUntilRunning(statementId string) (*ExecuteResult, error) 
 
 func (z *ZSession) Reconnect() (err error) {
 	z.sessionInfo, err = z.zeppelinClient.getSession(z.GetSessionId())
+	if err != nil {
+		return
+	}
 	if !strings.EqualFold("Running", z.sessionInfo.State) {
 		return qerror.ZeppelinSessionNotRunning
 	}
