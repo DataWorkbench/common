@@ -86,16 +86,9 @@ func (c *Client) GetJobInfo(flinkUrl string, jobId string, jobName string) (*Job
 }
 
 func (c *Client) CancelJob(flinkUrl string, jobId string) error {
-	response, err := c.Patch(fmt.Sprintf("http://%s/jobs/%s", flinkUrl, jobId), strings.NewReader(""), http.Header{})
+	_, err := c.Patch(fmt.Sprintf("http://%s/jobs/%s", flinkUrl, jobId), strings.NewReader(""), http.Header{})
 	if err != nil {
 		return err
-	}
-	if response.StatusCode != 200 {
-		body, err := ioutil.ReadAll(response.Body)
-		if err != nil {
-			return err
-		}
-		return qerror.FlinkRestError.Format(response.StatusCode, response.Status, string(body))
 	}
 	return nil
 }
