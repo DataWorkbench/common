@@ -107,7 +107,7 @@ func Test_WaitUtilRunning(t *testing.T) {
 func Test_QueryParagraph(t *testing.T) {
 	var noteId = "2GRR3C4R6"
 	var paragraphId = "paragraph_1640924978975_1620534534"
-	result, err := client.queryParagraphResult(noteId, paragraphId)
+	result, err := client.QueryParagraphResult(noteId, paragraphId)
 	if err != nil {
 		t.Error(err)
 	}

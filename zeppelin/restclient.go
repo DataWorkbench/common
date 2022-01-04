@@ -133,7 +133,7 @@ func (c *Client) submitParagraphWithSessionId(noteId string, paragraphId string,
 	if err = checkBodyStatus(body); err != nil {
 		return nil, err
 	}
-	return c.queryParagraphResult(noteId, paragraphId)
+	return c.QueryParagraphResult(noteId, paragraphId)
 }
 
 func (c *Client) submitParagraph(noteId string, paragraphId string) (*ParagraphResult, error) {
@@ -166,7 +166,7 @@ func (c *Client) cancelParagraph(noteId string, paragraphId string) error {
 
 func (c *Client) waitUtilParagraphRunning(noteId string, paragraphId string) (*ParagraphResult, error) {
 	for {
-		paragraphResult, err := c.queryParagraphResult(noteId, paragraphId)
+		paragraphResult, err := c.QueryParagraphResult(noteId, paragraphId)
 		if err != nil {
 			return nil, err
 		}
@@ -182,7 +182,7 @@ func (c *Client) waitUtilParagraphRunning(noteId string, paragraphId string) (*P
 
 func (c *Client) waitUtilParagraphFinish(noteId string, paragraphId string) (*ParagraphResult, error) {
 	for {
-		paragraphResult, err := c.queryParagraphResult(noteId, paragraphId)
+		paragraphResult, err := c.QueryParagraphResult(noteId, paragraphId)
 		if err != nil {
 			return nil, err
 		}
@@ -193,7 +193,7 @@ func (c *Client) waitUtilParagraphFinish(noteId string, paragraphId string) (*Pa
 	}
 }
 
-func (c *Client) queryParagraphResult(noteId string, paragraphId string) (*ParagraphResult, error) {
+func (c *Client) QueryParagraphResult(noteId string, paragraphId string) (*ParagraphResult, error) {
 	response, err := c.Get(c.getBaseUrl()+fmt.Sprintf("/notebook/%s/paragraph/%s", noteId, paragraphId), http.Header{})
 	if err != nil {
 		return nil, err

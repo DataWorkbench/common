@@ -123,6 +123,7 @@ type ExecuteResult struct {
 	Status      Status
 	Results     []*Result
 	JobUrls     []string
+	JobId       string
 	Progress    int64
 	FlinkUrl    string
 	SessionInfo *SessionInfo

@@ -70,20 +70,20 @@ func (z *ZSession) Start() (err error) {
 		paragraphId     string
 		paragraphResult *ParagraphResult
 	)
-	if paragraphId, err = z.zeppelinClient.addParagraph(z.getNoteId(), "Session Configuration", builder.String()); err != nil {
+	if paragraphId, err = z.zeppelinClient.addParagraph(z.GetNoteId(), "Session Configuration", builder.String()); err != nil {
 		return
 	}
-	if paragraphResult, err = z.zeppelinClient.executeParagraphWithSessionId(z.getNoteId(), paragraphId, z.getSessionId()); err != nil {
+	if paragraphResult, err = z.zeppelinClient.executeParagraphWithSessionId(z.GetNoteId(), paragraphId, z.GetSessionId()); err != nil {
 		return
 	}
 	if !paragraphResult.Status.IsFinished() {
 		return qerror.ZeppelinConfigureFailed
 	}
 
-	if paragraphId, err = z.zeppelinClient.addParagraph(z.getNoteId(), "Session Init", "%"+z.interpreter+"(init=true)"); err != nil {
+	if paragraphId, err = z.zeppelinClient.addParagraph(z.GetNoteId(), "Session Init", "%"+z.interpreter+"(init=true)"); err != nil {
 		return
 	}
-	if paragraphResult, err = z.zeppelinClient.executeParagraphWithSessionId(z.getNoteId(), paragraphId, z.getSessionId()); err != nil {
+	if paragraphResult, err = z.zeppelinClient.executeParagraphWithSessionId(z.GetNoteId(), paragraphId, z.GetSessionId()); err != nil {
 		return
 	}
 	if !paragraphResult.Status.IsFinished() {
@@ -93,8 +93,8 @@ func (z *ZSession) Start() (err error) {
 }
 
 func (z *ZSession) Stop() error {
-	if z.getSessionId() != "" {
-		return z.zeppelinClient.stopSession(z.getSessionId())
+	if z.GetSessionId() != "" {
+		return z.zeppelinClient.stopSession(z.GetSessionId())
 	}
 	return nil
 }
@@ -116,11 +116,11 @@ func (z *ZSession) SubmitWithProperties(subInterpreter string, localProperties m
 	}
 	builder.WriteString(" " + code)
 	text := builder.String()
-	nextParagraphId, err := z.zeppelinClient.addParagraph(z.getNoteId(), "", text)
+	nextParagraphId, err := z.zeppelinClient.addParagraph(z.GetNoteId(), "", text)
 	if err != nil {
 		return nil, err
 	}
-	paragraphResult, err := z.zeppelinClient.submitParagraphWithSessionId(z.getNoteId(), nextParagraphId, z.getSessionId())
+	paragraphResult, err := z.zeppelinClient.submitParagraphWithSessionId(z.GetNoteId(), nextParagraphId, z.GetSessionId())
 	if err != nil {
 		return nil, err
 	}
@@ -152,11 +152,11 @@ func (z *ZSession) ExecuteWithProperties(subInterpreter string, localProperties 
 	}
 	builder.WriteString(" " + code)
 	text := builder.String()
-	nextParagraphId, err := z.zeppelinClient.addParagraph(z.getNoteId(), "", text)
+	nextParagraphId, err := z.zeppelinClient.addParagraph(z.GetNoteId(), "", text)
 	if err != nil {
 		return nil, err
 	}
-	paragraphResult, err := z.zeppelinClient.executeParagraphWithSessionId(z.getNoteId(), nextParagraphId, z.getSessionId())
+	paragraphResult, err := z.zeppelinClient.executeParagraphWithSessionId(z.GetNoteId(), nextParagraphId, z.GetSessionId())
 	if err != nil {
 		return nil, err
 	}
@@ -172,11 +172,11 @@ func (z *ZSession) Exec(code string) (*ExecuteResult, error) {
 }
 
 func (z *ZSession) Cancel(statementId string) error {
-	return z.zeppelinClient.cancelParagraph(z.getNoteId(), statementId)
+	return z.zeppelinClient.cancelParagraph(z.GetNoteId(), statementId)
 }
 
 func (z *ZSession) QueryStatement(statementId string) (*ExecuteResult, error) {
-	paragraphResult, err := z.zeppelinClient.queryParagraphResult(z.getNoteId(), statementId)
+	paragraphResult, err := z.zeppelinClient.QueryParagraphResult(z.GetNoteId(), statementId)
 	if err != nil {
 		return nil, err
 	}
@@ -184,7 +184,7 @@ func (z *ZSession) QueryStatement(statementId string) (*ExecuteResult, error) {
 }
 
 func (z *ZSession) WaitUntilFinished(statementId string) (*ExecuteResult, error) {
-	paragraphResult, err := z.zeppelinClient.waitUtilParagraphFinish(z.getNoteId(), statementId)
+	paragraphResult, err := z.zeppelinClient.waitUtilParagraphFinish(z.GetNoteId(), statementId)
 	if err != nil {
 		return nil, err
 	}
@@ -192,7 +192,7 @@ func (z *ZSession) WaitUntilFinished(statementId string) (*ExecuteResult, error)
 }
 
 func (z *ZSession) WaitUntilRunning(statementId string) (*ExecuteResult, error) {
-	paragraphResult, err := z.zeppelinClient.waitUtilParagraphRunning(z.getNoteId(), statementId)
+	paragraphResult, err := z.zeppelinClient.waitUtilParagraphRunning(z.GetNoteId(), statementId)
 	if err != nil {
 		return nil, err
 	}
@@ -200,21 +200,21 @@ func (z *ZSession) WaitUntilRunning(statementId string) (*ExecuteResult, error) 
 }
 
 func (z *ZSession) Reconnect() (err error) {
-	z.sessionInfo, err = z.zeppelinClient.getSession(z.getSessionId())
+	z.sessionInfo, err = z.zeppelinClient.getSession(z.GetSessionId())
 	if !strings.EqualFold("Running", z.sessionInfo.State) {
 		return qerror.ZeppelinSessionNotRunning
 	}
 	return nil
 }
 
-func (z *ZSession) getNoteId() string {
+func (z *ZSession) GetNoteId() string {
 	if z.sessionInfo != nil {
 		return z.sessionInfo.NoteId
 	}
 	return ""
 }
 
-func (z *ZSession) getSessionId() string {
+func (z *ZSession) GetSessionId() string {
 	if z.sessionInfo != nil {
 		return z.sessionInfo.SessionId
 	}
