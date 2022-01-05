@@ -126,7 +126,7 @@ var (
 		code:   "InvalidName",
 		status: 400,
 		enUS:   "The name is invalid, accepts 0~9、a~z、 A~Z、_ and can't begin or end with _.",
-		zhCN:   "工作空间名称不符合要求, 只允许数字,大小写字母和下划线, 并且不能以下划线开头或者结尾.",
+		zhCN:   "名称不符合要求, 只允许数字,大小写字母和下划线, 并且不能以下划线开头或者结尾.",
 	}
 )
 
