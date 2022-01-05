@@ -399,18 +399,11 @@ var (
 		zhCN:   "计算集群名称[%s]已存在.",
 	}
 
-	EngineInTransaction = &Error{
-		code:   "EngineInTransaction",
-		status: 403,
-		enUS:   "The engine[%s] is in transaction[%s].",
-		zhCN:   "计算引擎[%s]正在[%s]中.",
-	}
-
-	EngineCreateTimeout = &Error{
-		code:   "EngineCreateTimeout",
-		status: 500,
-		enUS:   "Create Engine[%s] timeout.",
-		zhCN:   "创建引擎[%s]超时.",
+	NetworkNoAvailableIpRange = &Error{
+		code:   "NoAvailableIpRange",
+		status: 400,
+		enUS:   "There is no available ip-range in vxnet[%s].",
+		zhCN:   "网络[%s]里没有可用的IP段.",
 	}
 )
 
