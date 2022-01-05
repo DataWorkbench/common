@@ -38,7 +38,7 @@ func NewZeppelinClient(config ClientConfig) *Client {
 
 func (c *Client) getBaseUrl() string {
 
-	return c.ClientConfig.ZeppelinRestUrl + "/api"
+	return "http://" + c.ClientConfig.ZeppelinRestUrl + "/api"
 }
 
 func (c *Client) createNoteWithGroup(notePath string, defaultInterpreterGroup string) (string, error) {
