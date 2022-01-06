@@ -37,11 +37,17 @@ func NewZeppelinClient(config ClientConfig) *Client {
 }
 
 func (c *Client) getBaseUrl() string {
-
 	return "http://" + c.ClientConfig.ZeppelinRestUrl + "/api"
 }
 
-func (c *Client) createNoteWithGroup(notePath string, defaultInterpreterGroup string) (string, error) {
+func (c *Client) CreateNoteWithGroup(notePath string, defaultInterpreterGroup string) (string, error) {
+	var response *http.Response
+	var err error
+	defer func() {
+		if response != nil && response.Body != nil {
+			_ = response.Body.Close()
+		}
+	}()
 	reqObj := map[string]interface{}{}
 	reqObj["name"] = notePath
 	reqObj["defaultInterpreterGroup"] = defaultInterpreterGroup
@@ -49,7 +55,7 @@ func (c *Client) createNoteWithGroup(notePath string, defaultInterpreterGroup st
 	if err != nil {
 		return "", err
 	}
-	response, err := c.Post(c.getBaseUrl()+"/notebook", strings.NewReader(string(reqBytes)), http.Header{})
+	response, err = c.Post(c.getBaseUrl()+"/notebook", strings.NewReader(string(reqBytes)), http.Header{})
 	if err != nil {
 		return "", err
 	}
@@ -63,12 +69,19 @@ func (c *Client) createNoteWithGroup(notePath string, defaultInterpreterGroup st
 	return jsonparser.GetString(body, "body")
 }
 
-func (c *Client) createNote(notePath string) (string, error) {
-	return c.createNoteWithGroup(notePath, "")
+func (c *Client) CreateNote(notePath string) (string, error) {
+	return c.CreateNoteWithGroup(notePath, "")
 }
 
 func (c *Client) DeleteNote(noteId string) error {
-	response, err := c.Delete(c.getBaseUrl()+fmt.Sprintf("/notebook/%s", noteId), http.Header{})
+	var response *http.Response
+	var err error
+	defer func() {
+		if response != nil && response.Body != nil {
+			_ = response.Body.Close()
+		}
+	}()
+	response, err = c.Delete(c.getBaseUrl()+fmt.Sprintf("/notebook/%s", noteId), http.Header{})
 	if err != nil {
 		return err
 	}
@@ -79,7 +92,14 @@ func (c *Client) DeleteNote(noteId string) error {
 	return checkBodyStatus(body)
 }
 
-func (c *Client) addParagraph(noteId string, title string, text string) (string, error) {
+func (c *Client) AddParagraph(noteId string, title string, text string) (string, error) {
+	var response *http.Response
+	var err error
+	defer func() {
+		if response != nil && response.Body != nil {
+			_ = response.Body.Close()
+		}
+	}()
 	reqObj := map[string]interface{}{}
 	reqObj["title"] = title
 	reqObj["text"] = text
@@ -87,7 +107,7 @@ func (c *Client) addParagraph(noteId string, title string, text string) (string,
 	if err != nil {
 		return "", err
 	}
-	response, err := c.Post(c.getBaseUrl()+fmt.Sprintf("/notebook/%s/paragraph", noteId), strings.NewReader(string(reqBytes)), http.Header{})
+	response, err = c.Post(c.getBaseUrl()+fmt.Sprintf("/notebook/%s/paragraph", noteId), strings.NewReader(string(reqBytes)), http.Header{})
 	if err != nil {
 		return "", err
 	}
@@ -120,8 +140,31 @@ func (c *Client) addParagraph(noteId string, title string, text string) (string,
 //	return checkBodyStatus(body)
 //}
 
-func (c *Client) submitParagraphWithSessionId(noteId string, paragraphId string, sessionId string) (*ParagraphResult, error) {
-	response, err := c.Post(c.getBaseUrl()+fmt.Sprintf("/notebook/job/%s/%s%s", noteId, paragraphId, queryString("sessionId", sessionId)),
+//func (c *Client) SubmitParagraphWithSessionId(noteId string, paragraphId string, sessionId string) (*ParagraphResult, error) {
+//	response, err := c.Post(c.getBaseUrl()+fmt.Sprintf("/notebook/job/%s/%s", noteId, paragraphId),
+//		strings.NewReader(""), http.Header{})
+//	if err != nil {
+//		return nil, err
+//	}
+//	body, err := checkResponse(response)
+//	if err != nil {
+//		return nil, err
+//	}
+//	if err = checkBodyStatus(body); err != nil {
+//		return nil, err
+//	}
+//	return c.QueryParagraphResult(noteId, paragraphId)
+//}
+
+func (c *Client) SubmitParagraph(noteId string, paragraphId string) (*ParagraphResult, error) {
+	var response *http.Response
+	var err error
+	defer func() {
+		if response != nil && response.Body != nil {
+			_ = response.Body.Close()
+		}
+	}()
+	response, err = c.Post(c.getBaseUrl()+fmt.Sprintf("/notebook/job/%s/%s", noteId, paragraphId),
 		strings.NewReader(""), http.Header{})
 	if err != nil {
 		return nil, err
@@ -136,24 +179,67 @@ func (c *Client) submitParagraphWithSessionId(noteId string, paragraphId string,
 	return c.QueryParagraphResult(noteId, paragraphId)
 }
 
-func (c *Client) submitParagraph(noteId string, paragraphId string) (*ParagraphResult, error) {
-	return c.submitParagraphWithSessionId(noteId, paragraphId, "")
+func (c *Client) Submit(interceptor string, secondIntp string, noteId string, code string) (*ParagraphResult, error) {
+	builder := strings.Builder{}
+	builder.WriteString("%" + interceptor)
+	if len(secondIntp) > 0 {
+		builder.WriteString("." + secondIntp)
+	}
+	builder.WriteString(" " + code)
+	paragraphId, err := c.AddParagraph(noteId, "code", builder.String())
+	if err != nil {
+		return nil, err
+	}
+	paragraphResult, err := c.SubmitParagraph(noteId, paragraphId)
+	if err != nil {
+		return nil, err
+	}
+	return paragraphResult, nil
 }
 
-func (c *Client) executeParagraphWithSessionId(noteId string, paragraphId string, sessionId string) (*ParagraphResult, error) {
-	_, err := c.submitParagraphWithSessionId(noteId, paragraphId, sessionId)
+//func (c *Client) executeParagraphWithSessionId(noteId string, paragraphId string, sessionId string) (*ParagraphResult, error) {
+//	_, err := c.SubmitParagraphWithSessionId(noteId, paragraphId, sessionId)
+//	if err != nil {
+//		return nil, err
+//	}
+//	return c.waitUtilParagraphFinish(noteId, paragraphId)
+//}
+
+func (c *Client) ExecuteParagraph(noteId string, paragraphId string) (*ParagraphResult, error) {
+	_, err := c.SubmitParagraph(noteId, paragraphId)
 	if err != nil {
 		return nil, err
 	}
 	return c.waitUtilParagraphFinish(noteId, paragraphId)
 }
 
-//func (c *Client) executeParagraph(noteId string, paragraphId string) (*ParagraphResult, error) {
-//	return c.executeParagraphWithSessionId(noteId, paragraphId, "")
-//}
+func (c *Client) Execute(interceptor string, secondIntp string, noteId string, code string) (*ParagraphResult, error) {
+	builder := strings.Builder{}
+	builder.WriteString("%" + interceptor)
+	if len(secondIntp) > 0 {
+		builder.WriteString("." + secondIntp)
+	}
+	builder.WriteString(" " + code)
+	paragraphId, err := c.AddParagraph(noteId, "code", builder.String())
+	if err != nil {
+		return nil, err
+	}
+	paragraphResult, err := c.ExecuteParagraph(noteId, paragraphId)
+	if err != nil {
+		return nil, err
+	}
+	return paragraphResult, nil
+}
 
-func (c *Client) cancelParagraph(noteId string, paragraphId string) error {
-	response, err := c.Delete(c.getBaseUrl()+fmt.Sprintf("/notebook/job/%s/%s", noteId, paragraphId), http.Header{})
+func (c *Client) CancelParagraph(noteId string, paragraphId string) error {
+	var response *http.Response
+	var err error
+	defer func() {
+		if response != nil && response.Body != nil {
+			_ = response.Body.Close()
+		}
+	}()
+	response, err = c.Delete(c.getBaseUrl()+fmt.Sprintf("/notebook/job/%s/%s", noteId, paragraphId), http.Header{})
 	if err != nil {
 		return err
 	}
@@ -194,7 +280,14 @@ func (c *Client) waitUtilParagraphFinish(noteId string, paragraphId string) (*Pa
 }
 
 func (c *Client) QueryParagraphResult(noteId string, paragraphId string) (*ParagraphResult, error) {
-	response, err := c.Get(c.getBaseUrl()+fmt.Sprintf("/notebook/%s/paragraph/%s", noteId, paragraphId), http.Header{})
+	var response *http.Response
+	var err error
+	defer func() {
+		if response != nil && response.Body != nil {
+			_ = response.Body.Close()
+		}
+	}()
+	response, err = c.Get(c.getBaseUrl()+fmt.Sprintf("/notebook/%s/paragraph/%s", noteId, paragraphId), http.Header{})
 	if err != nil {
 		return nil, err
 	}
@@ -208,64 +301,64 @@ func (c *Client) QueryParagraphResult(noteId string, paragraphId string) (*Parag
 	return NewParagraphResult(body)
 }
 
-func (c *Client) newSession(interpreter string) (*SessionInfo, error) {
-	response, err := c.Post(c.getBaseUrl()+fmt.Sprintf("/session%s", queryString("interpreter", interpreter)), strings.NewReader(""), http.Header{})
-	if err != nil {
-		return nil, err
-	}
-	body, err := checkResponse(response)
-	if err != nil {
-		return nil, err
-	}
-	if err = checkBodyStatus(body); err != nil {
-		return nil, err
-	}
-	return NewSessionInfo(body)
-}
+//func (c *Client) newSession(interpreter string) (*SessionInfo, error) {
+//	response, err := c.Post(c.getBaseUrl()+fmt.Sprintf("/session%s", queryString("interpreter", interpreter)), strings.NewReader(""), http.Header{})
+//	if err != nil {
+//		return nil, err
+//	}
+//	body, err := checkResponse(response)
+//	if err != nil {
+//		return nil, err
+//	}
+//	if err = checkBodyStatus(body); err != nil {
+//		return nil, err
+//	}
+//	return NewSessionInfo(body)
+//}
 
-func (c *Client) stopSession(sessionId string) error {
-	response, err := c.Delete(c.getBaseUrl()+fmt.Sprintf("/session/%s", sessionId), http.Header{})
-	if err != nil {
-		return err
-	}
-	body, err := checkResponse(response)
-	if err != nil {
-		return err
-	}
-	return checkBodyStatus(body)
-}
+//func (c *Client) stopSession(sessionId string) error {
+//	response, err := c.Delete(c.getBaseUrl()+fmt.Sprintf("/session/%s", sessionId), http.Header{})
+//	if err != nil {
+//		return err
+//	}
+//	body, err := checkResponse(response)
+//	if err != nil {
+//		return err
+//	}
+//	return checkBodyStatus(body)
+//}
 
-func (c *Client) getSession(sessionId string) (*SessionInfo, error) {
-	response, err := c.Get(c.getBaseUrl()+fmt.Sprintf("/session/%s", sessionId), http.Header{})
-	if err != nil {
-		return nil, err
-	}
-	if response.StatusCode == 404 {
-		body, err := ioutil.ReadAll(response.Body)
-		if err != nil {
-			return nil, err
-		}
-		if strings.Contains(string(body), "No such session") {
-			return nil, nil
-		}
-	}
-	body, err := checkResponse(response)
-	if err != nil {
-		return nil, err
-	}
-	if err = checkBodyStatus(body); err != nil {
-		return nil, err
-	}
-	return NewSessionInfo(body)
-}
+//func (c *Client) getSession(sessionId string) (*SessionInfo, error) {
+//	response, err := c.Get(c.getBaseUrl()+fmt.Sprintf("/session/%s", sessionId), http.Header{})
+//	if err != nil {
+//		return nil, err
+//	}
+//	if response.StatusCode == 404 {
+//		body, err := ioutil.ReadAll(response.Body)
+//		if err != nil {
+//			return nil, err
+//		}
+//		if strings.Contains(string(body), "No such session") {
+//			return nil, nil
+//		}
+//	}
+//	body, err := checkResponse(response)
+//	if err != nil {
+//		return nil, err
+//	}
+//	if err = checkBodyStatus(body); err != nil {
+//		return nil, err
+//	}
+//	return NewSessionInfo(body)
+//}
 
-func queryString(name string, value string) (queryStr string) {
-	queryStr = "?" + name
-	if value != "" && len(value) > 0 {
-		queryStr = queryStr + "=" + value
-	}
-	return queryStr
-}
+//func queryString(name string, value string) (queryStr string) {
+//	queryStr = "?" + name
+//	if value != "" && len(value) > 0 {
+//		queryStr = queryStr + "=" + value
+//	}
+//	return queryStr
+//}
 
 func checkResponse(response *http.Response) ([]byte, error) {
 	if response.StatusCode == 302 {
@@ -276,6 +369,9 @@ func checkResponse(response *http.Response) ([]byte, error) {
 		return nil, err
 	}
 	if response.StatusCode != 200 {
+		if body != nil && strings.Contains(string(body), "org.apache.zeppelin.notebook.exception.NotePathAlreadyExistsException") {
+			return nil, qerror.ZeppelinNoteAlreadyExists
+		}
 		return nil, qerror.CallZeppelinRestApiFailed.Format(response.StatusCode, response.Status, string(body))
 	}
 	return body, nil

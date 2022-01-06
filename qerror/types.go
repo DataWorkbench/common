@@ -566,6 +566,13 @@ var (
 		zhCN:   "zeppelin 服务异常",
 	}
 
+	ZeppelinNoteAlreadyExists = &Error{
+		code:   "ZeppelinNoteAlreadyExists",
+		status: 401,
+		enUS:   "zeppelin note already exists",
+		zhCN:   "notebook 已存在",
+	}
+
 	ZeppelinReturnStatusError = &Error{
 		code:   "ZeppelinReturnStatusError",
 		status: 500,
@@ -592,6 +599,13 @@ var (
 		status: 500,
 		enUS:   "fail to init zeppelin session",
 		zhCN:   "zeppelin session 初始化失败",
+	}
+
+	RegisterUDFFailed = &Error{
+		code:   "RegisterUDFFailed",
+		status: 500,
+		enUS:   "register udf failed",
+		zhCN:   "注册udf失败",
 	}
 
 	ZeppelinSessionNotRunning = &Error{

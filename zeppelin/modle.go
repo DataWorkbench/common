@@ -66,11 +66,13 @@ func valueOf(value string) Status {
 }
 
 type ParagraphResult struct {
+	NoteId      string    `json:"noteId"`
 	ParagraphId string    `json:"paragraphId"`
 	Status      Status    `json:"status"`
 	Progress    int64     `json:"progress"`
 	Results     []*Result `json:"results"`
 	JobUrls     []string  `json:"jobUrl"`
+	JobId       string    `json:"jobId"`
 }
 
 type Result struct {
@@ -118,45 +120,45 @@ func NewParagraphResult(value []byte) (*ParagraphResult, error) {
 	return &paragraphResult, nil
 }
 
-type ExecuteResult struct {
-	StatementId string
-	Status      Status
-	Results     []*Result
-	JobUrls     []string
-	JobId       string
-	Progress    int64
-	FlinkUrl    string
-	SessionInfo *SessionInfo
-}
+//type ExecuteResult struct {
+//	StatementId string
+//	Status      Status
+//	Results     []*Result
+//	JobUrls     []string
+//	JobId       string
+//	Progress    int64
+//	FlinkUrl    string
+//	SessionInfo *SessionInfo
+//}
+//
+//func NewExecuteResult(paragraphResult *ParagraphResult, sessionInfo *SessionInfo) *ExecuteResult {
+//	return &ExecuteResult{
+//		StatementId: paragraphResult.ParagraphId,
+//		Status:      paragraphResult.Status,
+//		Results:     paragraphResult.Results,
+//		JobUrls:     paragraphResult.JobUrls,
+//		Progress:    paragraphResult.Progress,
+//		SessionInfo: sessionInfo,
+//	}
+//}
+//
+//type SessionInfo struct {
+//	SessionId   string `json:"sessionId"`
+//	NoteId      string `json:"noteId"`
+//	Interpreter string `json:"interpreter"`
+//	State       string `json:"state"`
+//	WebUrl      string `json:"webUrl"`
+//	StartTime   string `json:"starTime"`
+//}
 
-func NewExecuteResult(paragraphResult *ParagraphResult, sessionInfo *SessionInfo) *ExecuteResult {
-	return &ExecuteResult{
-		StatementId: paragraphResult.ParagraphId,
-		Status:      paragraphResult.Status,
-		Results:     paragraphResult.Results,
-		JobUrls:     paragraphResult.JobUrls,
-		Progress:    paragraphResult.Progress,
-		SessionInfo: sessionInfo,
-	}
-}
-
-type SessionInfo struct {
-	SessionId   string `json:"sessionId"`
-	NoteId      string `json:"noteId"`
-	Interpreter string `json:"interpreter"`
-	State       string `json:"state"`
-	WebUrl      string `json:"webUrl"`
-	StartTime   string `json:"starTime"`
-}
-
-func NewSessionInfo(session []byte) (*SessionInfo, error) {
-	sessionInfo := SessionInfo{}
-	body, _, _, err := jsonparser.Get(session, "body")
-	if err != nil {
-		return nil, err
-	}
-	if err = json.Unmarshal(body, &sessionInfo); err != nil {
-		return nil, err
-	}
-	return &sessionInfo, nil
-}
+//func NewSessionInfo(session []byte) (*SessionInfo, error) {
+//	sessionInfo := SessionInfo{}
+//	body, _, _, err := jsonparser.Get(session, "body")
+//	if err != nil {
+//		return nil, err
+//	}
+//	if err = json.Unmarshal(body, &sessionInfo); err != nil {
+//		return nil, err
+//	}
+//	return &sessionInfo, nil
+//}
