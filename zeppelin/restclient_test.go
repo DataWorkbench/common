@@ -41,6 +41,14 @@ func Test_AddParagraph(t *testing.T) {
 	fmt.Println(paragraph)
 }
 
+func Test_ListNotes(t *testing.T) {
+	body, err := client.ListNotes()
+	if err != nil {
+		t.Error(err)
+	}
+	fmt.Println(body)
+}
+
 //func Test_DeleteNote(t *testing.T) {
 //	var noteId = "2GTBE85ZZ"
 //	err := client.DeleteNote(noteId)

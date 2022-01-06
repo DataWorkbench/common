@@ -73,6 +73,45 @@ func (c *Client) CreateNote(notePath string) (string, error) {
 	return c.CreateNoteWithGroup(notePath, "")
 }
 
+func (c *Client) ListNotes() (map[string]string, error) {
+	var response *http.Response
+	var err error
+	defer func() {
+		if response != nil && response.Body != nil {
+			_ = response.Body.Close()
+		}
+	}()
+	response, err = c.Get(c.getBaseUrl()+"/notebook", http.Header{})
+	body, err := checkResponse(response)
+	if err != nil {
+		return nil, err
+	}
+	if err = checkBodyStatus(body); err != nil {
+		return nil, err
+	}
+	result := map[string]string{}
+	_, err = jsonparser.ArrayEach(body, func(value []byte, dataType jsonparser.ValueType, offset int, err error) {
+		if err != nil {
+			return
+		}
+		id, err := jsonparser.GetString(value, "id")
+		if err != nil {
+			return
+		}
+		path, err := jsonparser.GetString(value, "path")
+		if err != nil {
+			return
+		}
+		if len(id) > 0 && len(path) > 0 {
+			result[id] = path
+		}
+	},"body")
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
 func (c *Client) DeleteNote(noteId string) error {
 	var response *http.Response
 	var err error
