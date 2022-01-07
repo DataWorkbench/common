@@ -103,7 +103,7 @@ func (c *Client) ListNotes() (map[string]string, error) {
 			return
 		}
 		if len(id) > 0 && len(path) > 0 {
-			result[id] = path
+			result[path] = id
 		}
 	}, "body")
 	if err != nil {
