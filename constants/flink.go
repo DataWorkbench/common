@@ -39,3 +39,13 @@ var FlinkConnectorJarMap = map[string]map[string][]string{
 		FlinkConnectorElasticsearch7: {"flink-sql-connector-elasticsearch7_2.11-1.12.3.jar"},
 	},
 }
+
+// FlinkClientHome represents the map to flink path of different flink version
+var FlinkClientHome = map[string]string{
+	FlinkVersion_011203_0211: "/zeppelin/flink/flink-1.12.3",
+}
+
+// FlinkDefaultConnectorPath represents the map to flink connector lib path of different flink version,such as flink-1.12.3 flink-1.13.5
+var FlinkDefaultConnectorPath = map[string]string{
+	FlinkVersion_011203_0211: "/zeppelin/flink/1.12_lib",
+}
