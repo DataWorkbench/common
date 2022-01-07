@@ -105,7 +105,7 @@ func (c *Client) ListNotes() (map[string]string, error) {
 		if len(id) > 0 && len(path) > 0 {
 			result[id] = path
 		}
-	},"body")
+	}, "body")
 	if err != nil {
 		return nil, err
 	}
@@ -218,11 +218,21 @@ func (c *Client) SubmitParagraph(noteId string, paragraphId string) (*ParagraphR
 	return c.QueryParagraphResult(noteId, paragraphId)
 }
 
-func (c *Client) Submit(interceptor string, secondIntp string, noteId string, code string) (*ParagraphResult, error) {
+func (c *Client) SubmitWithProperties(interceptor string, secondIntp string,
+	noteId string, code string, properties map[string]string) (*ParagraphResult, error) {
 	builder := strings.Builder{}
 	builder.WriteString("%" + interceptor)
 	if len(secondIntp) > 0 {
 		builder.WriteString("." + secondIntp)
+	}
+	if properties != nil && len(properties) > 0 {
+		builder.WriteString("(")
+		var propertyStr []string
+		for k, v := range properties {
+			propertyStr = append(propertyStr, fmt.Sprintf("\"%s\"=\"%s\"", k, v))
+		}
+		builder.WriteString(strings.Join(propertyStr, ","))
+		builder.WriteString(")")
 	}
 	builder.WriteString(" " + code)
 	paragraphId, err := c.AddParagraph(noteId, "code", builder.String())
@@ -234,6 +244,10 @@ func (c *Client) Submit(interceptor string, secondIntp string, noteId string, co
 		return nil, err
 	}
 	return paragraphResult, nil
+}
+
+func (c *Client) Submit(interceptor string, secondIntp string, noteId string, code string) (*ParagraphResult, error) {
+	return c.SubmitWithProperties(interceptor,secondIntp,noteId,code, map[string]string{})
 }
 
 //func (c *Client) executeParagraphWithSessionId(noteId string, paragraphId string, sessionId string) (*ParagraphResult, error) {
