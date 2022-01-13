@@ -247,7 +247,7 @@ func (c *Client) SubmitWithProperties(interceptor string, secondIntp string,
 }
 
 func (c *Client) Submit(interceptor string, secondIntp string, noteId string, code string) (*ParagraphResult, error) {
-	return c.SubmitWithProperties(interceptor,secondIntp,noteId,code, map[string]string{})
+	return c.SubmitWithProperties(interceptor, secondIntp, noteId, code, map[string]string{})
 }
 
 //func (c *Client) executeParagraphWithSessionId(noteId string, paragraphId string, sessionId string) (*ParagraphResult, error) {
