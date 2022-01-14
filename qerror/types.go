@@ -597,7 +597,7 @@ var (
 	ZeppelinInitFailed = &Error{
 		code:   "ZeppelinInitFailed",
 		status: 500,
-		enUS:   "fail to init zeppelin session",
+		enUS:   "fail to init zeppelin session %s",
 		zhCN:   "zeppelin session 初始化失败",
 	}
 

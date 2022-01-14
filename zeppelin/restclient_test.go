@@ -46,7 +46,12 @@ func Test_ListNotes(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	fmt.Println(body)
+	noteId := body["/flink-udf"]
+	fmt.Println(noteId)
+	err = client.DeleteNote(noteId)
+	if err != nil {
+		t.Error(err)
+	}
 }
 
 //func Test_DeleteNote(t *testing.T) {
