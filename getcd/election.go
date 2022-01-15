@@ -76,5 +76,4 @@ LOOP:
 	}
 
 	_ = nl.Close()
-	return
 }

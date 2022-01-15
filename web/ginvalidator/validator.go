@@ -7,17 +7,20 @@ import (
 	"github.com/creasty/defaults"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
+	"github.com/yu31/proto-go-plugin/pkg/protodefaults"
+	"github.com/yu31/proto-go-plugin/pkg/protovalidator"
 )
 
 func New() binding.StructValidator {
 	sv := &structValidator{
 		validate: validator.New(),
 	}
+
 	sv.validate.SetTagName("binding")
 	sv.validate.RegisterTagNameFunc(func(field reflect.StructField) string {
-		tag := field.Tag.Get("params")
+		tag := field.Tag.Get("json")
 		if tag == "" {
-			tag = field.Tag.Get("json")
+			return ""
 		}
 		name := strings.SplitN(tag, ",", 2)[0]
 		if name == "-" {
@@ -36,17 +39,26 @@ type structValidator struct {
 
 // ValidateStruct receives any kind of type, but only performed struct or pointer to struct type.
 func (v *structValidator) ValidateStruct(obj interface{}) error {
-	value := reflect.ValueOf(obj)
-	valueType := value.Kind()
-	if valueType == reflect.Ptr {
-		valueType = value.Elem().Kind()
-	}
-	if valueType == reflect.Struct {
-		// Set default value
+	if t, ok := obj.(protodefaults.Defaults); ok {
+		t.SetDefaults()
+	} else {
 		if err := defaults.Set(obj); err != nil {
+			if err.Error() == "not a struct pointer" {
+				err = nil
+			}
 			return err
 		}
+	}
+
+	if t, ok := obj.(protovalidator.Validator); ok {
+		if err := t.Validate(); err != nil {
+			return err
+		}
+	} else {
 		if err := v.validate.Struct(obj); err != nil {
+			if _, x := err.(*validator.InvalidValidationError); x {
+				err = nil
+			}
 			return err
 		}
 	}

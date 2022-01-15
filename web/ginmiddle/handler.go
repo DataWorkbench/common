@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"github.com/yu31/proto-go-plugin/pkg/protovalidator"
 
 	"github.com/DataWorkbench/common/gtrace"
 	"github.com/DataWorkbench/common/qerror"
@@ -43,8 +44,10 @@ func ErrorHandler() gin.HandlerFunc {
 		var err *qerror.Error
 
 		switch et := ginErr.Err.(type) {
+		case *protovalidator.ValidateError:
+			err = protovalidatorToQError(et)
 		case validator.ValidationErrors:
-			err = validatorErrorsToString(et)
+			err = validatorErrorsToQError(et)
 		case qerror.Error:
 			err = &et
 		case *qerror.Error:
@@ -61,7 +64,12 @@ func ErrorHandler() gin.HandlerFunc {
 	}
 }
 
-func validatorErrorsToString(errs validator.ValidationErrors) (err *qerror.Error) {
+func protovalidatorToQError(v *protovalidator.ValidateError) (err *qerror.Error) {
+	err = qerror.ParameterValidationError.Format(v.Error())
+	return
+}
+
+func validatorErrorsToQError(errs validator.ValidationErrors) (err *qerror.Error) {
 	if len(errs) == 0 {
 		return qerror.Internal
 	}

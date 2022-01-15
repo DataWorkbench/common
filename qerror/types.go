@@ -128,6 +128,13 @@ var (
 		enUS:   "The name is invalid, accepts 0~9、a~z、 A~Z、_ and can't begin or end with _.",
 		zhCN:   "名称不符合要求, 只允许数字,大小写字母和下划线, 并且不能以下划线开头或者结尾.",
 	}
+
+	ParameterValidationError = &Error{
+		code:   "ParameterValidationError",
+		status: 400,
+		enUS:   "%s",
+		zhCN:   "%s",
+	}
 )
 
 // Error for quota.

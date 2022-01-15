@@ -22,10 +22,10 @@ func traceUnaryServerInterceptor(lp *glog.Logger) grpc.UnaryServerInterceptor {
 		nl := lp.Clone()
 		nl.WithFields().AddString(gtrace.IdKey, tid)
 
-		nl.Debug().String("unary receive", info.FullMethod).RawString("request", pbMsgToString(nl, req)).Fire()
+		nl.Debug().String("grpc unary receive", info.FullMethod).RawString("request", pbMsgToString(nl, req)).Fire()
 
 		// Validated request parameters
-		if err = validateRequestArgument(req, nl); err != nil {
+		if err = validateRequestParameters(req, nl); err != nil {
 			return
 		}
 
@@ -33,9 +33,9 @@ func traceUnaryServerInterceptor(lp *glog.Logger) grpc.UnaryServerInterceptor {
 		ctx = glog.WithContext(ctx, nl)
 		resp, err = handler(ctx, req)
 		if err != nil {
-			nl.Error().Error("unary handle error", err).Fire()
+			nl.Error().Error("grpc unary handle error", err).Fire()
 		} else {
-			nl.Debug().RawString("unary reply", pbMsgToString(nl, resp)).Fire()
+			nl.Debug().RawString("grpc unary reply", pbMsgToString(nl, resp)).Fire()
 		}
 
 		// Close the logger instances
@@ -51,11 +51,11 @@ func recoverUnaryServerInterceptor() grpc.UnaryServerInterceptor {
 		defer func() {
 			if r := recover(); r != nil || panicked {
 				lg := glog.FromContext(ctx)
-				lg.Error().Any("unary server panic", r).Fire()
+				lg.Error().Any("grpc unary server panic", r).Fire()
 
 				buf := make([]byte, 2048)
 				n := runtime.Stack(buf, true)
-				lg.Error().RawString("error stack trace", string(buf[0:n])).Fire()
+				lg.Error().RawString("grpc error stack trace", string(buf[0:n])).Fire()
 
 				err = status.Errorf(codes.Internal, "unary server panic: %v", r)
 			}
@@ -89,7 +89,7 @@ func traceStreamServerInterceptor(lp *glog.Logger) grpc.StreamServerInterceptor 
 		nl.WithFields().AddString(gtrace.IdKey, tid)
 
 		nl.Debug().
-			String("stream receive", info.FullMethod).
+			String("grpc stream receive", info.FullMethod).
 			Bool("ClientStream", info.IsClientStream).
 			Bool("ServerStream", info.IsServerStream).
 			Fire()
@@ -98,9 +98,9 @@ func traceStreamServerInterceptor(lp *glog.Logger) grpc.StreamServerInterceptor 
 		ctx = glog.WithContext(ctx, nl)
 		err := handler(srv, &serverStreamWrap{ServerStream: ss, ctx: ctx})
 		if err != nil {
-			nl.Error().Error("stream error", err).Fire()
+			nl.Error().Error("grpc stream error", err).Fire()
 		} else {
-			nl.Debug().String("stream done", info.FullMethod).Fire()
+			nl.Debug().String("grpc stream done", info.FullMethod).Fire()
 		}
 
 		// Close the logger instances
@@ -117,11 +117,11 @@ func recoverStreamServerInterceptor() grpc.StreamServerInterceptor {
 			if r := recover(); r != nil || panicked {
 				ctx := ss.Context()
 				lg := glog.FromContext(ctx)
-				lg.Error().Any("stream server panic", r).Fire()
+				lg.Error().Any("grpc stream server panic", r).Fire()
 
 				buf := make([]byte, 2048)
 				n := runtime.Stack(buf, true)
-				lg.Error().RawString("error stack trace", string(buf[0:n])).Fire()
+				lg.Error().RawString("grpc error stack trace", string(buf[0:n])).Fire()
 
 				err = status.Errorf(codes.Internal, "stream server panic: %v", r)
 			}
