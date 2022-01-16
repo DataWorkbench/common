@@ -12,6 +12,10 @@ import (
 	"github.com/DataWorkbench/common/gtrace"
 )
 
+var ignoreServerUnaryServerMethod = map[string]bool{
+	"/grpc.health.v1.Health/Check": true,
+}
+
 // traceUnaryServerInterceptor for trace the request.
 // - extract trace id from incoming metadata and store it to context.
 // - creates an new logger object with trace id and store it to context.
@@ -25,8 +29,10 @@ func traceUnaryServerInterceptor(lp *glog.Logger) grpc.UnaryServerInterceptor {
 		nl.Debug().String("grpc unary receive", info.FullMethod).RawString("request", pbMsgToString(nl, req)).Fire()
 
 		// Validated request parameters
-		if err = validateRequestParameters(req, nl); err != nil {
-			return
+		if !ignoreServerUnaryServerMethod[info.FullMethod] {
+			if err = validateRequestParameters(req, nl); err != nil {
+				return
+			}
 		}
 
 		ctx = gtrace.ContextWithId(ctx, tid)

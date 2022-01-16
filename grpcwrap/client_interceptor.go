@@ -22,8 +22,7 @@ func traceUnaryClientInterceptor() grpc.UnaryClientInterceptor {
 		}
 
 		ctx = injectTraceContext(ctx)
-		err := invoker(ctx, method, req, reply, cc, opts...)
-		if err != nil {
+		if err := invoker(ctx, method, req, reply, cc, opts...); err != nil {
 			lg.Error().Error("grpc invoker error", err).Fire()
 			return err
 		}
