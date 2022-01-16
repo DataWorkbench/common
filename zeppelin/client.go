@@ -341,7 +341,7 @@ func (c *Client) ExecuteParagraph(ctx context.Context, noteId string, paragraphI
 	if err != nil {
 		return nil, err
 	}
-	return c.WaitUntilFinish(ctx, noteId, paragraphId, 2000)
+	return c.WaitUntilFinish(ctx, noteId, paragraphId, 10000)
 }
 
 func (c *Client) Execute(ctx context.Context, intp string, secondIntp string, noteId string, code string) (*ParagraphResult, error) {
