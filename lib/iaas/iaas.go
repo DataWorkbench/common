@@ -203,19 +203,23 @@ func (c *Client) sendRequest(ctx context.Context, params map[string]interface{},
 	if err != nil {
 		return
 	}
+
+	var bodyBytes []byte
+
+	if response.Body != nil && response.ContentLength != 0 {
+		if bodyBytes, err = ioutil.ReadAll(response.Body); err != nil {
+			lg.Error().Error("read response body error", err).Fire()
+			return
+		}
+		lg.Debug().RawString("response body from iaas", string(bodyBytes)).Fire()
+	}
+
 	if response.StatusCode != 200 {
 		err = fmt.Errorf("unexpected response status code %d from iaas", response.StatusCode)
 		return
 	}
 
 	if respBody != nil {
-		var bodyBytes []byte
-		if bodyBytes, err = ioutil.ReadAll(response.Body); err != nil {
-			return
-		}
-
-		lg.Debug().RawString("response body from iaas", string(bodyBytes)).Fire()
-
 		if err = json.Unmarshal(bodyBytes, respBody); err != nil {
 			err = fmt.Errorf("unmarsahl iass response error: %v", err)
 			return
