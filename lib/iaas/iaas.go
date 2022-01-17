@@ -364,12 +364,6 @@ func (c *Client) DescribeVxnetById(ctx context.Context, vxnetId string) (vxnet *
 	return
 }
 
-// update ak / sk for DescribeVxnetResources
-func (c *Client) UpdateAkSk(ak AccessKey) {
-	c.cfg.AccessKeyId = ak.AccessKeyId
-	c.cfg.SecretAccessKey = ak.SecretAccessKey
-}
-
 // DescribeVxnetResources query the vxnet's resources.
 // Notice: must access with the owner's assessKey/secretKey.
 func (c *Client) DescribeVxnetResources(ctx context.Context, vxnetId string, limit int, offset int, opts ...Option) (
