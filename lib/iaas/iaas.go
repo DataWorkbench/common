@@ -384,3 +384,18 @@ func (c *Client) DescribeVxnetResources(ctx context.Context, vxnetId string, lim
 	vxnetResourceSet = body.VxnetResourceSet
 	return
 }
+
+// GetBalance for query the user balance info by specified userId.
+func (c *Client) GetBalance(ctx context.Context, userId string) (balanceSet *GetBalanceOutput, err error) {
+	params := map[string]interface{}{
+		"action": "GetBalance",
+		"zone":   c.cfg.Zone,
+		"user":   userId,
+	}
+	var body GetBalanceOutput
+	if err = c.sendRequest(ctx, params, &body); err != nil {
+		return
+	}
+	balanceSet = &body
+	return
+}

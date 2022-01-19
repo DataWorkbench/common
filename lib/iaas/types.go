@@ -1,5 +1,7 @@
 package iaas
 
+import "encoding/json"
+
 type ResponseBody interface {
 	ReturnCode() int
 	ReturnMessage() string
@@ -180,5 +182,93 @@ func (b *DescribeVxnetResourcesOutput) ReturnCode() int {
 }
 
 func (b *DescribeVxnetResourcesOutput) ReturnMessage() string {
+	return b.Message
+}
+
+type CouponsConditions struct {
+	Zones         []string `json:"zones"`
+	ResourceTypes []string `json:"resource_types"`
+	Apps          []string `json:"apps"`
+}
+
+type Coupons struct {
+	// Status: activated, ?
+	Status    string `json:"status"`
+	Balance   string `json:"balance"`
+	StartTime string `json:"start_time"`
+	EndTime   string `json:"end_time"`
+
+	// "[{\"zones\":[\"all\"],\"resource_types\":[\"all\", \"cluster_app_service\"],\"apps\":[{\"app_id\": \"app-00r26u27\"}]}]"
+	Conditions string `json:"conditions"`
+
+	// Thus field may be useful.
+	UserId     string `json:"user_id"`
+	RootUserId string `json:"root_user_id"`
+	UsageMode  string `json:"usage_mode"`
+	CouponId   string `json:"coupon_id"`
+
+	// Thus field is useless.
+	//
+	//Category       string      `json:"category"`
+	//ParentCouponId string      `json:"parent_coupon_id"`
+	//SubCategory    string      `json:"sub_category"`
+	//ResourceId     string      `json:"resource_id"`
+	//CouponTypeId   interface{} `json:"coupon_type_id"`
+	//Value          string      `json:"value"`
+	//Remarks        interface{} `json:"remarks"`
+	//ConsoleId      string      `json:"console_id"`
+	//Dispatcher     interface{} `json:"dispatcher"`
+	//CreateTime     string      `json:"create_time"`
+	//StatusTime     interface{} `json:"status_time"`
+	//UpdateTime     string      `json:"update_time"`
+}
+
+func (c *Coupons) ParseConditions() (output []*CouponsConditions, err error) {
+	if c.Conditions == "" {
+		return
+	}
+	err = json.Unmarshal([]byte(c.Conditions), output)
+	if err != nil {
+		return
+	}
+	return
+}
+
+const BillingPaidMode = "prepaid"
+
+// GetBalanceOutput is the type of response body of action "GetBalance"
+type GetBalanceOutput struct {
+	RetCode int    `json:"ret_code"`
+	Message string `json:"message"`
+
+	PaidMode      string     `json:"paid_mode"` // prepaid, ?
+	Bonus         string     `json:"bonus"`
+	SharedBonus   string     `json:"shared_bonus"`
+	Balance       string     `json:"balance"`
+	SharedBalance string     `json:"shared_balance"`
+	Coupons       []*Coupons `json:"coupons"`
+	SharedCoupons []*Coupons `json:"shared_coupons"`
+
+	// Thus field may be useful.
+	UserId         string `json:"user_id"`
+	RootUserId     string `json:"root_user_id"`
+	UserType       int    `json:"user_type"`
+	TotalSum       string `json:"total_sum"`
+	TotalSharedSum string `json:"total_shared_sum"`
+
+	// Thus field is useless.
+	//
+	//SharedPaidMode string        `json:"shared_paid_mode"`
+	//IncomeHkd      string        `json:"income_hkd"`
+	//IncomeUsd      string        `json:"income_usd"`
+	//Preference     int           `json:"preference"`
+	//IncomeCny      string        `json:"income_cny"`
+}
+
+func (b *GetBalanceOutput) ReturnCode() int {
+	return b.RetCode
+}
+
+func (b *GetBalanceOutput) ReturnMessage() string {
 	return b.Message
 }
