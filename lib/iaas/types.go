@@ -227,7 +227,8 @@ func (c *Coupons) ParseConditions() (output []*CouponsConditions, err error) {
 	if c.Conditions == "" {
 		return
 	}
-	err = json.Unmarshal([]byte(c.Conditions), output)
+	output = make([]*CouponsConditions, 0)
+	err = json.Unmarshal([]byte(c.Conditions), &output)
 	if err != nil {
 		return
 	}

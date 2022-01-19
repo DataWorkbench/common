@@ -4,13 +4,14 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/DataWorkbench/common/qerror"
-	"github.com/DataWorkbench/common/web/ghttp"
-	"github.com/buger/jsonparser"
 	"io/ioutil"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/DataWorkbench/common/qerror"
+	"github.com/DataWorkbench/common/web/ghttp"
+	"github.com/buger/jsonparser"
 )
 
 type Client struct {
@@ -302,7 +303,7 @@ func (c *Client) SubmitWithProperties(ctx context.Context, intp string, secondIn
 	if len(secondIntp) > 0 {
 		sb.WriteString("." + secondIntp)
 	}
-	if properties != nil && len(properties) > 0 {
+	if len(properties) > 0 {
 		sb.WriteString("(")
 		var propStr []string
 		for k, v := range properties {
@@ -323,7 +324,7 @@ func (c *Client) Submit(ctx context.Context, intp string, secondIntp string, not
 	return c.SubmitWithProperties(ctx, intp, secondIntp, noteId, code, map[string]string{})
 }
 
-func (c *Client) WaitUntilFinish(ctx context.Context, noteId string, paragraphId string, intervalMs time.Duration) (*ParagraphResult, error) {
+func (c *Client) WaitUntilFinish(ctx context.Context, noteId string, paragraphId string, interval time.Duration) (*ParagraphResult, error) {
 	for {
 		paragraphResult, err := c.QueryParagraphResult(ctx, noteId, paragraphId)
 		if err != nil {
@@ -332,7 +333,7 @@ func (c *Client) WaitUntilFinish(ctx context.Context, noteId string, paragraphId
 		if paragraphResult.Status.IsCompleted() {
 			return paragraphResult, nil
 		}
-		time.Sleep(time.Millisecond * intervalMs)
+		time.Sleep(time.Millisecond * interval)
 	}
 }
 

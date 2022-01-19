@@ -13,6 +13,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/backoff"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/keepalive"
 
 	"github.com/DataWorkbench/common/gtrace"
@@ -63,7 +64,8 @@ func NewConn(ctx context.Context, cfg *ClientConfig, options ...ClientOption) (c
 
 	var dialOpts []grpc.DialOption
 	// Set and add insecure
-	dialOpts = append(dialOpts, grpc.WithInsecure())
+	//dialOpts = append(dialOpts, grpc.WithInsecure())
+	dialOpts = append(dialOpts, grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 	// set and add connect params
 	dialOpts = append(dialOpts, grpc.WithConnectParams(grpc.ConnectParams{
