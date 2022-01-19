@@ -34,14 +34,15 @@ func BuildSV1StringToSignature(method string, signPath string, headers http.Head
 	var queryParts []string
 	for _, key := range qKeys {
 		values := query[key]
-		key = url.QueryEscape(key)
+		//key = url.QueryEscape(key)
 		if len(values) == 0 {
 			queryParts = append(queryParts, key+"=")
 			continue
 		}
 		sort.Strings(values)
 		for _, v := range values {
-			queryParts = append(queryParts, key+"="+url.QueryEscape(v))
+			//queryParts = append(queryParts, key + "=" + url.QueryEscape(v))
+			queryParts = append(queryParts, key+"="+v)
 		}
 	}
 	// Build canonicalize resource

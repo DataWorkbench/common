@@ -1,4 +1,5 @@
 package flink
+
 //
 //import (
 //	"encoding/json"
