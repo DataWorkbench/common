@@ -4,6 +4,7 @@ import (
 	"context"
 	"math"
 	"net"
+	"reflect"
 	"time"
 
 	"github.com/DataWorkbench/glog"
@@ -44,7 +45,7 @@ func NewServer(ctx context.Context, cfg *ServerConfig, options ...ServerOption) 
 
 	defer func() {
 		if err != nil {
-			lp.Error().Error("create grpc server error", err).Fire()
+			lp.Error().Error("gRPC server initialization error", err).Fire()
 		}
 	}()
 
@@ -94,11 +95,14 @@ func NewServer(ctx context.Context, cfg *ServerConfig, options ...ServerOption) 
 	}
 
 	// Register the health server that used by k8s health probe.
-	grpc_health_v1.RegisterHealthServer(s.gRPC, health.NewServer())
+	//grpc_health_v1.RegisterHealthServer(s.gRPC, health.NewServer())
+	s.RegisterService(&grpc_health_v1.Health_ServiceDesc, health.NewServer())
 
 	return s, nil
 }
 
+// Deprecated: use Server.RegisterService instead.
+//
 // Register registers a service and its implementation to gRPC server.
 // It is called from the IDL generated code. This must be called before
 // invoking Serve.
@@ -106,13 +110,26 @@ func (s *Server) Register(f func(s *GServer)) {
 	f(s.gRPC)
 }
 
+// RegisterService is wrapper for grpc.Server.RegisterService.
+func (s *Server) RegisterService(sd *grpc.ServiceDesc, impl interface{}) {
+	sdType := reflect.TypeOf(sd.HandlerType).Elem()
+	sdName := sdType.PkgPath() + "." + sdType.Name()
+
+	implType := reflect.TypeOf(impl).Elem()
+	implName := implType.PkgPath() + "." + implType.Name()
+
+	s.lp.Info().String("gRPC server register service", sdName).String("impl", implName).Fire()
+
+	s.gRPC.RegisterService(sd, impl)
+}
+
 // ListenAndServe creates an net listener by config and called  grpc.Server.Serve
 func (s *Server) ListenAndServe() error {
-	s.lp.Info().String("gRPC server listening", s.cfg.Address).Fire()
+	s.lp.Info().String("gRPC server start listening", s.cfg.Address).Fire()
 
 	lis, err := net.Listen("tcp", s.cfg.Address)
 	if err != nil {
-		s.lp.Error().Error("gRPC server create listen error", err).Fire()
+		s.lp.Error().Error("gRPC server create listener error", err).Fire()
 		return err
 	}
 
@@ -131,7 +148,7 @@ func (s *Server) GracefulStop() {
 	if s == nil {
 		return
 	}
-	s.lp.Info().Msg("waiting for gRPC server stop").Fire()
+	s.lp.Info().Msg("gRPC server waiting for stop").Fire()
 	s.gRPC.GracefulStop()
 	s.lp.Info().Msg("gRPC server stopped").Fire()
 }
