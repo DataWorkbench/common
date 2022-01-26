@@ -17,7 +17,7 @@ func traceUnaryClientInterceptor() grpc.UnaryClientInterceptor {
 		lg.Debug().String("grpc unary invoker", method).RawString("request", pbMsgToString(lg, req)).Fire()
 
 		// Validated request parameters
-		if err := validateRequestParameters(req, lg); err != nil {
+		if err := validateRequestParameters(lg, method, req); err != nil {
 			return err
 		}
 
@@ -30,7 +30,7 @@ func traceUnaryClientInterceptor() grpc.UnaryClientInterceptor {
 		lg.Debug().RawString("grpc receive reply", pbMsgToString(lg, reply)).Fire()
 
 		// Validated reply parameters
-		if err := validateReplyParameters(reply, lg); err != nil {
+		if err := validateReplyParameters(lg, method, reply); err != nil {
 			return err
 		}
 		return nil

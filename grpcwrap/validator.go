@@ -13,11 +13,15 @@ import (
 //}
 
 // validateRequestParameters helper for validate the request arguments
-func validateRequestParameters(i interface{}, logger *glog.Logger) error {
-	// Set defaults values.
-	protodefaults.CallDefaultsIfExists(i)
+func validateRequestParameters(logger *glog.Logger, method string, req interface{}) error {
+	if excludeTraceMethod[method] {
+		return nil
+	}
 
-	if v, ok := i.(protovalidator.Validator); ok {
+	// Set defaults values.
+	protodefaults.CallDefaultsIfExists(req)
+
+	if v, ok := req.(protovalidator.Validator); ok {
 		if err := v.Validate(); err != nil {
 			logger.Error().Error("grpc invalid request parameters", err).Fire()
 			return err
@@ -29,11 +33,15 @@ func validateRequestParameters(i interface{}, logger *glog.Logger) error {
 }
 
 // validateReplyParameters helper for validate the reply arguments
-func validateReplyParameters(i interface{}, logger *glog.Logger) error {
-	// Set defaults values.
-	protodefaults.CallDefaultsIfExists(i)
+func validateReplyParameters(logger *glog.Logger, method string, reply interface{}) error {
+	if excludeTraceMethod[method] {
+		return nil
+	}
 
-	if v, ok := i.(protovalidator.Validator); ok {
+	// Set defaults values.
+	protodefaults.CallDefaultsIfExists(reply)
+
+	if v, ok := reply.(protovalidator.Validator); ok {
 		if err := v.Validate(); err != nil {
 			logger.Error().Error("grpc invalid reply parameters", err).Fire()
 			return err

@@ -74,7 +74,7 @@ func NewServer(ctx context.Context, cfg *ServerConfig, options ...ServerOption) 
 
 	// Set and add Unary Server Interceptor
 	srvOpts = append(srvOpts, grpc.ChainUnaryInterceptor(
-		otgrpc.OpenTracingServerInterceptor(tracer),
+		otgrpc.OpenTracingServerInterceptor(tracer, otgrpc.IncludingSpans(traceSpanInclusionFunc)),
 		traceUnaryServerInterceptor(lp),
 		recoverUnaryServerInterceptor(),
 		grpc_prometheus.UnaryServerInterceptor,
@@ -82,7 +82,7 @@ func NewServer(ctx context.Context, cfg *ServerConfig, options ...ServerOption) 
 
 	// Set and add Stream Server Interceptor
 	srvOpts = append(srvOpts, grpc.ChainStreamInterceptor(
-		otgrpc.OpenTracingStreamServerInterceptor(tracer),
+		otgrpc.OpenTracingStreamServerInterceptor(tracer, otgrpc.IncludingSpans(traceSpanInclusionFunc)),
 		traceStreamServerInterceptor(lp),
 		recoverStreamServerInterceptor(),
 		grpc_prometheus.StreamServerInterceptor,
