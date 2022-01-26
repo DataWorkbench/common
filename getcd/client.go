@@ -38,7 +38,7 @@ func NewClient(ctx context.Context, cfg *Config) (cli *Client, err error) {
 		grpc_prometheus.StreamClientInterceptor,
 	))
 
-	lg.Debug().String("connecting to etcd endpoints", cfg.Endpoints).Fire()
+	lg.Debug().String("etcd: connecting to server endpoints", cfg.Endpoints).Fire()
 	cli, err = etcdv3.New(etcdv3.Config{
 		Endpoints:   strings.Split(cfg.Endpoints, ","),
 		DialTimeout: cfg.DialTimeout,
@@ -46,9 +46,9 @@ func NewClient(ctx context.Context, cfg *Config) (cli *Client, err error) {
 	})
 
 	if err != nil {
-		lg.Error().Error("connects to etcd error", err).Fire()
+		lg.Error().Error("etcd: connects to server error", err).Fire()
 		return
 	}
-	lg.Debug().Msg("successful connection to etcd").Fire()
+	lg.Debug().Msg("etcd: successful connection to server").Fire()
 	return
 }

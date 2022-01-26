@@ -49,12 +49,12 @@ func NewMySQLConn(ctx context.Context, cfg *MySQLConfig, options ...Option) (db 
 
 	defer func() {
 		if err != nil {
-			lp.Error().Error("create mysql connection error", err).Fire()
+			lp.Error().Error("gorm: create mysql connection error", err).Fire()
 			db = nil
 		}
 	}()
 
-	lp.Info().Msg("connecting to mysql").String("hosts", cfg.Hosts).String("database", cfg.Database).Fire()
+	lp.Info().Msg("gorm: connecting to mysql").String("hosts", cfg.Hosts).String("database", cfg.Database).Fire()
 
 	hosts := strings.Split(strings.ReplaceAll(cfg.Hosts, " ", ""), ",")
 	if len(hosts) == 0 {

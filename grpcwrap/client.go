@@ -46,11 +46,11 @@ func NewConn(ctx context.Context, cfg *ClientConfig, options ...ClientOption) (c
 
 	defer func() {
 		if err != nil {
-			lp.Error().Error("gRPC client connected to server error", err).Fire()
+			lp.Error().Error("gRPC client: connected to server error", err).Fire()
 		}
 	}()
 
-	lp.Info().Msg("gRPC client connecting to server").String("address", cfg.Address).Fire()
+	lp.Info().Msg("gRPC client: connecting to server").String("address", cfg.Address).Fire()
 
 	// TODO: support balance
 	// address format "127.0.0.1:50001" or "127.0.0.1:50001, 127.0.0.1:50002, 127.0.0.1:50003"

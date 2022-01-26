@@ -59,11 +59,11 @@ func (s *Server) ListenAndServe() (err error) {
 		return
 	}
 
-	s.lp.Info().String("prometheus metrics server listening", s.cfg.Address+s.cfg.URLPath).Fire()
+	s.lp.Info().String("prometheus metrics: server listening", s.cfg.Address+s.cfg.URLPath).Fire()
 
 	err = s.h.ListenAndServe()
 	if err != nil && err != http.ErrServerClosed {
-		s.lp.Error().Error("listen and serve prometheus metrics server error", err).Fire()
+		s.lp.Error().Error("prometheus metrics: listen and serve error", err).Fire()
 		return err
 	}
 	return
@@ -73,12 +73,12 @@ func (s *Server) Close() (err error) {
 	if s == nil {
 		return
 	}
-	s.lp.Info().Msg("waiting for prometheus metrics server close").Fire()
+	s.lp.Info().Msg("prometheus metrics: waiting for server close").Fire()
 	if err = s.h.Close(); err != nil {
-		s.lp.Error().Error("prometheus metrics server close error", err).Fire()
+		s.lp.Error().Error("prometheus metrics: server close error", err).Fire()
 		return
 	}
-	s.lp.Info().Msg("prometheus metrics server closed").Fire()
+	s.lp.Info().Msg("prometheus metrics: server closed").Fire()
 	return
 }
 
@@ -86,11 +86,11 @@ func (s *Server) Shutdown(ctx context.Context) (err error) {
 	if s == nil {
 		return
 	}
-	s.lp.Info().Msg("waiting for prometheus metrics server shutdown").Fire()
+	s.lp.Info().Msg("prometheus metrics: waiting for server shutdown").Fire()
 	if err = s.h.Shutdown(ctx); err != nil {
-		s.lp.Error().Error("prometheus metrics server shutdown error", err).Fire()
+		s.lp.Error().Error("prometheus metrics: shutdown server error", err).Fire()
 		return
 	}
-	s.lp.Info().Msg("prometheus metrics server shutdown").Fire()
+	s.lp.Info().Msg("prometheus metrics: shutdown server done").Fire()
 	return
 }
