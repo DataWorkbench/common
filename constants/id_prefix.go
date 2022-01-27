@@ -2,39 +2,47 @@ package constants
 
 // Declares id prefix
 const (
-	// IdPrefixSpace represents the id prefix of workspace.
-	IdPrefixSpace = "wks-"
+	// IdPrefixWorkspace represents the id prefix of `workspace`.
+	IdPrefixWorkspace = "wks-"
 
-	// IdPrefixRoleSystem represents the id prefix of system role.
-	IdPrefixRoleSystem = "wrs-"
+	// IdPrefixRoleSystem represents the id prefix of `role system`.
+	IdPrefixRoleSystem = "ros-"
+	//IdPrefixRoleSystem = "wrs-"
 
-	// IdPrefixRoleCustom represents the id prefix of custom role.
-	IdPrefixRoleCustom = "wrc-"
+	// IdPrefixRoleCustom represents the id prefix of `role custom`.
+	IdPrefixRoleCustom = "roc-"
+	//IdPrefixRoleCustom = "wrc-"
 
-	// IdPrefixStreamFlow represents the id prefix of stream workflow.
-	IdPrefixStreamFlow = "wkf-"
+	// IdPrefixStreamJob represents the id prefix of `stream job`.
+	IdPrefixStreamJob = "stj-"
 
-	// IdPrefixStreamFlowCycleInst represents the id prefixof stream workflow cycle instance.
-	IdPrefixStreamFlowCycleInst = "sci-"
+	// IdPrefixStreamInstance represents the id prefix of `stream instance`.
+	IdPrefixStreamInstance = "sti-"
 
-	// IdPrefixStreamFlowTestInst represents the id prefix of stream workflow test instance.
-	IdPrefixStreamFlowTestInst = "sti-"
+	// IdPrefixFlinkCluster represents the id prefix of `cluster flink`.
+	IdPrefixFlinkCluster = "cfi-"
 
-	// IdPrefixEngine represents the id prefix of engine.
-	IdPrefixEngine = "eng-"
+	// IdPrefixNetwork represents the id prefix of `network`.
+	IdPrefixNetwork = "net-"
+
+	// IdPrefixDatasource represents the id prefix of `datasource meta`.
+	IdPrefixDatasource = "som-"
+
+	//// IdPrefixStreamFlow represents the id prefix of stream workflow.
+	//IdPrefixStreamFlow = "wkf-"
+
+	//// IdPrefixStreamFlowCycleInst represents the id prefixof stream workflow cycle instance.
+	//IdPrefixStreamFlowCycleInst = "sci-"
+
+	//// IdPrefixEngine represents the id prefix of engine.
+	//IdPrefixEngine = "eng-"
 
 	// IdPrefixMonitorRule represents the id prefix of monitor rule.
 	IdPrefixMonitorRule = "mor-"
 
-	SourceManagerIDPrefix = "som-"
-	SourceTablesIDPrefix  = "sot-"
-	JobIDPrefix           = "job-"
-	UdfManagerIDPrefix    = "udf-"
-	FileMangerIDPrefix    = "res-"
-
-	// IdPrefixFlinkCluster represents the id prefix of flink cluster.
-	IdPrefixFlinkCluster = "cfi-"
-
-	// IdPrefixNetwork represents the id prefix of network.
-	IdPrefixNetwork = "net-"
+	//SourceManagerIDPrefix = "som-"
+	SourceTablesIDPrefix = "sot-"
+	JobIDPrefix          = "job-"
+	UdfManagerIDPrefix   = "udf-"
+	FileMangerIDPrefix   = "res-"
 )

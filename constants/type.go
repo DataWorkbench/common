@@ -1,5 +1,6 @@
 package constants
 
+// Deprecated: use gosql instead.
 // JSONString used to convert a json format type to a string.
 type JSONString string
 
