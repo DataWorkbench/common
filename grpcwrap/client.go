@@ -41,7 +41,7 @@ type ClientConfig struct {
 
 // NewConn return an new grpc.ClientConn
 // NOTICE: Must set glog.loggerT into the ctx by glow.WithContext
-func NewConn(ctx context.Context, cfg *ClientConfig, options ...ClientOption) (conn *ClientConn, err error) {
+func NewConn(ctx context.Context, cfg *ClientConfig) (conn *ClientConn, err error) {
 	lp := glog.FromContext(ctx)
 
 	defer func() {

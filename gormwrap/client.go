@@ -44,7 +44,7 @@ type MySQLConfig struct {
 
 // NewMySQLConn return a grom.DB by mysql driver
 // NOTICE: Must set glog.Logger into the ctx by glow.WithContext
-func NewMySQLConn(ctx context.Context, cfg *MySQLConfig, options ...Option) (db *gorm.DB, err error) {
+func NewMySQLConn(ctx context.Context, cfg *MySQLConfig) (db *gorm.DB, err error) {
 	lp := glog.FromContext(ctx)
 
 	defer func() {

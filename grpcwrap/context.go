@@ -3,7 +3,6 @@ package grpcwrap
 import (
 	"context"
 
-	"github.com/DataWorkbench/glog"
 	"google.golang.org/grpc/metadata"
 
 	"github.com/DataWorkbench/common/gtrace"
@@ -37,21 +36,4 @@ func extractTraceContext(ctx context.Context) string {
 		return ids[0]
 	}
 	return ""
-}
-
-// ContextWithRequest set "*glog.Logger" into context.Context and set "reqId" into
-// grpc outgoing metadata
-//
-// Deprecated: use gtrace.ContextWithId(ctx, tid) and glog.WithContext(ctx, nl) instead.
-//
-func ContextWithRequest(ctx context.Context, l *glog.Logger, reqId string) context.Context {
-	if l == nil {
-		panic("grpcwrap:ContextWithRequest: logger is nil")
-	}
-	if reqId == "" {
-		panic("grpcwrap:ContextWithRequest: request id is nil")
-	}
-	ctx = glog.WithContext(ctx, l)
-	ctx = gtrace.ContextWithId(ctx, reqId)
-	return ctx
 }

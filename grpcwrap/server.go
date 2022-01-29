@@ -40,7 +40,7 @@ type Server struct {
 
 // NewServer return a new Server
 // NOTICE: Must set glog.loggerT into the ctx by glow.WithContext
-func NewServer(ctx context.Context, cfg *ServerConfig, options ...ServerOption) (s *Server, err error) {
+func NewServer(ctx context.Context, cfg *ServerConfig) (s *Server, err error) {
 	lp := glog.FromContext(ctx)
 
 	defer func() {
@@ -99,15 +99,6 @@ func NewServer(ctx context.Context, cfg *ServerConfig, options ...ServerOption) 
 	s.RegisterService(&grpc_health_v1.Health_ServiceDesc, health.NewServer())
 
 	return s, nil
-}
-
-// Deprecated: use Server.RegisterService instead.
-//
-// Register registers a service and its implementation to gRPC server.
-// It is called from the IDL generated code. This must be called before
-// invoking Serve.
-func (s *Server) Register(f func(s *GServer)) {
-	f(s.gRPC)
 }
 
 // RegisterService is wrapper for grpc.Server.RegisterService.
