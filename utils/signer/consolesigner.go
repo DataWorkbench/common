@@ -13,7 +13,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/DataWorkbench/gproto/pkg/accountpb"
+	"github.com/DataWorkbench/gproto/pkg/types/pbrequest"
 )
 
 type ConsoleSigner struct {
@@ -28,7 +28,7 @@ func (s *ConsoleSigner) Init(accessKeyID string, secretAccessKey string, zone st
 	s.Zone = zone
 }
 
-func (s *ConsoleSigner) CalculateSignature(req *accountpb.ValidateRequestSignatureRequest) string {
+func (s *ConsoleSigner) CalculateSignature(req *pbrequest.ValidateRequestSignature) string {
 	m := md5.New()
 	m.Write([]byte(req.ReqBody))
 	stringToSign := strings.ToUpper(req.ReqMethod) + "\n" + req.ReqPath + "\n" + req.ReqQueryString + "\n" + hex.EncodeToString(m.Sum(nil))
@@ -61,7 +61,7 @@ func (s *ConsoleSigner) buildReqUrl(request *http.Request) string {
 	return request.URL.Path + "/"
 }
 
-func (s *ConsoleSigner) BuildValidateSignatureRequest(request *http.Request) *accountpb.ValidateRequestSignatureRequest {
+func (s *ConsoleSigner) BuildValidateSignatureRequest(request *http.Request) *pbrequest.ValidateRequestSignature {
 	reqBody := s.buildReqBody(request)
 	params := request.URL.Query()
 	keys := []string{}
@@ -98,7 +98,7 @@ func (s *ConsoleSigner) BuildValidateSignatureRequest(request *http.Request) *ac
 
 	urlParams := strings.Join(parts, "&")
 
-	return &accountpb.ValidateRequestSignatureRequest{
+	return &pbrequest.ValidateRequestSignature{
 		ReqMethod:      request.Method,
 		ReqPath:        s.buildReqUrl(request),
 		ReqSignature:   signature,

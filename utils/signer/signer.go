@@ -3,7 +3,7 @@ package signer
 import (
 	"net/http"
 
-	"github.com/DataWorkbench/gproto/pkg/accountpb"
+	"github.com/DataWorkbench/gproto/pkg/types/pbrequest"
 )
 
 const (
@@ -13,8 +13,8 @@ const (
 )
 
 type Signer interface {
-	CalculateSignature(req *accountpb.ValidateRequestSignatureRequest) string
-	BuildValidateSignatureRequest(request *http.Request) *accountpb.ValidateRequestSignatureRequest
+	CalculateSignature(req *pbrequest.ValidateRequestSignature) string
+	BuildValidateSignatureRequest(request *http.Request) *pbrequest.ValidateRequestSignature
 	Init(accessKeyID string, secretAccessKey string, zone string)
 }
 

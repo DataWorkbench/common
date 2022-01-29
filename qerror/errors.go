@@ -3,12 +3,12 @@ package qerror
 import (
 	"fmt"
 
-	"github.com/DataWorkbench/gproto/pkg/model"
+	"github.com/DataWorkbench/gproto/pkg/types/pbmodel"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
-type pbError = model.Error
+type pbError = pbmodel.Error
 
 type Error struct {
 	code   string // error code

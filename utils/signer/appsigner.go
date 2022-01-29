@@ -3,7 +3,7 @@ package signer
 import (
 	"net/http"
 
-	"github.com/DataWorkbench/gproto/pkg/accountpb"
+	"github.com/DataWorkbench/gproto/pkg/types/pbrequest"
 )
 
 type AppSigner struct {
@@ -18,10 +18,10 @@ func (s *AppSigner) Init(accessKeyID string, secretAccessKey string, zone string
 	s.Zone = zone
 }
 
-func (s *AppSigner) CalculateSignature(req *accountpb.ValidateRequestSignatureRequest) string {
+func (s *AppSigner) CalculateSignature(req *pbrequest.ValidateRequestSignature) string {
 	return ""
 }
 
-func (s *AppSigner) BuildValidateSignatureRequest(request *http.Request) *accountpb.ValidateRequestSignatureRequest {
-	return &accountpb.ValidateRequestSignatureRequest{}
+func (s *AppSigner) BuildValidateSignatureRequest(request *http.Request) *pbrequest.ValidateRequestSignature {
+	return &pbrequest.ValidateRequestSignature{}
 }

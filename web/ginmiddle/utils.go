@@ -6,7 +6,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/DataWorkbench/gproto/pkg/model"
+	"github.com/DataWorkbench/gproto/pkg/types/pbmodel"
 )
 
 // ParseOpName to parse the operation name from func name.
@@ -18,13 +18,13 @@ func ParseOpName(i interface{}) string {
 }
 
 // ParseOpType to parse the operation type from http Method.
-func ParseOpType(method string) model.Operation_Type {
-	var opType model.Operation_Type
+func ParseOpType(method string) pbmodel.Operation_Type {
+	var opType pbmodel.Operation_Type
 	switch method {
 	case http.MethodGet, http.MethodHead:
-		opType = model.Operation_Read
+		opType = pbmodel.Operation_Read
 	case http.MethodPost, http.MethodPut, http.MethodDelete:
-		opType = model.Operation_Write
+		opType = pbmodel.Operation_Write
 	default:
 		panic("unsupported operation type")
 	}
