@@ -8,17 +8,37 @@
 *gz
 *tar
 
-# Test binary, built with `go test -c`
-*.test
-.profile
+# tmp files generated via tools
+*.tmp
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
-# tmp files generated via tools
-*.tmp
+# Maven
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+# https://github.com/takari/maven-wrapper#usage-without-binary-jar
+.mvn/wrapper/maven-wrapper.jar
+target
 
+# Golang
+*.test
+*.profile
+
+# Python
+*.pyc
+
+# IntelliJ IDEA
 .idea
-.build
 .editorconfig
+*.iml
+
+# environment variable
+project_env.sh
 
