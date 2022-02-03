@@ -5,8 +5,8 @@ github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
 github.com/DataWorkbench/glog v0.0.0-20210809050640-4960fd6de6ab h1:qQ6Nd6amyEXvslSxP+62TITT2fbPHKjt0rbyjzzfoP8=
 github.com/DataWorkbench/glog v0.0.0-20210809050640-4960fd6de6ab/go.mod h1:zymxJLXn162xdWYUqIb729S3ZzRQpdTj/LwnW+xxru4=
-github.com/DataWorkbench/gproto v0.0.0-20220129195357-34752dda1fc0 h1:WUeJ3ztWFzVbEQSCF42zxhTaNY1j97ZRvpwGxy/+pRw=
-github.com/DataWorkbench/gproto v0.0.0-20220129195357-34752dda1fc0/go.mod h1:Befn9nSf3EtcIQdgCoDoJISbUmrPngDOMeYCY3/rSEg=
+github.com/DataWorkbench/gproto v0.0.0-20220203115455-814de350e0e0 h1:BpKWQ0SostLFSfUe5PxESgDXg2LSEnd30dOAdxfRz1Q=
+github.com/DataWorkbench/gproto v0.0.0-20220203115455-814de350e0e0/go.mod h1:OwdlVaVYjhBox3l6Gj1+0f2uU16r7g7xSb0fPXY0CeI=
 github.com/HdrHistogram/hdrhistogram-go v1.0.1 h1:GX8GAYDuhlFQnI2fRDHQhTlkHMz8bEn0jTI6LJU0mpw=
 github.com/HdrHistogram/hdrhistogram-go v1.0.1/go.mod h1:BWJ+nMSHY3L41Zj7CA3uXnloDp7xxV0YvstAE7nKTaM=
 github.com/Shopify/sarama v1.29.1 h1:wBAacXbYVLmWieEA/0X/JagDdCZ8NVFOfS6l6+2u5S0=
@@ -289,6 +289,8 @@ github.com/yu31/gcron v0.0.0-20220109164512-f4b84f672fef/go.mod h1:jW6Lqn5d71rdp
 github.com/yu31/gostructs v0.0.0-20220107115217-dc0130426169/go.mod h1:2nxYgIcGxEN5nRc3n3pRusl7ys+oEM14uInKe+WtouQ=
 github.com/yu31/proto-go-plugin v0.0.0-20220128082659-9e9b692f37d1 h1:E+wu/xxmLFxY1x3D3Qj8ayjGrg0KBiUFgaGPG14VR4Q=
 github.com/yu31/proto-go-plugin v0.0.0-20220128082659-9e9b692f37d1/go.mod h1:lBRwHCDgHbXv5dTPwKbXlGMcBsaBTGqe9syOw5R3s8Q=
+github.com/yu31/protoc-plugin v0.0.0-20220203110934-7f035b2a8f28 h1:XMNeN4NwxM1zGDndKCaM0OKs6mJ+mXNO+0UDOvKp460=
+github.com/yu31/protoc-plugin v0.0.0-20220203110934-7f035b2a8f28/go.mod h1:9OjgxZBT7i/e4V7OAubCmFXzlw2Llde6WF+PbHla2HY=
 github.com/yu31/snowflake v0.0.0-20210309213122-580647caa2bb h1:4icwEahXE3BzVfq8II9ajyxo3NuP7CSiDG2Gr9HsRCk=
 github.com/yu31/snowflake v0.0.0-20210309213122-580647caa2bb/go.mod h1:kj86CfGUK7fPMCyw7lN1CgNDJ57GmtZgyzPqftMd0kQ=
 github.com/yu31/timewheel v0.0.0-20220109163912-40e763c466a9/go.mod h1:hKPiak/CDrs1AIcTOag/Ztk9JdSETveAEbFBxQmkZ88=

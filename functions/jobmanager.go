@@ -15,10 +15,10 @@ package functions
 //	"github.com/DataWorkbench/common/constants"
 //	"github.com/DataWorkbench/common/grpcwrap"
 //	"github.com/DataWorkbench/glog"
-//	"github.com/DataWorkbench/gproto/pkg/jobdevpb"
-//	"github.com/DataWorkbench/gproto/pkg/model"
-//	"github.com/DataWorkbench/gproto/pkg/request"
-//	"github.com/DataWorkbench/gproto/pkg/response"
+//	"github.com/DataWorkbench/gproto/xgo/jobdevpb"
+//	"github.com/DataWorkbench/gproto/xgo/model"
+//	"github.com/DataWorkbench/gproto/xgo/request"
+//	"github.com/DataWorkbench/gproto/xgo/response"
 //	"gorm.io/gorm"
 //)
 //

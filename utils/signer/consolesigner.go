@@ -13,7 +13,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/DataWorkbench/gproto/pkg/types/pbrequest"
+	"github.com/DataWorkbench/gproto/xgo/types/pbrequest"
 )
 
 type ConsoleSigner struct {

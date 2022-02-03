@@ -6,7 +6,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/DataWorkbench/gproto/pkg/types/pbmodel"
+	"github.com/DataWorkbench/gproto/xgo/types/pbmodel"
 )
 
 // ParseOpName to parse the operation name from func name.

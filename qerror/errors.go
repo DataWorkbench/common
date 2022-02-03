@@ -3,7 +3,7 @@ package qerror
 import (
 	"fmt"
 
-	"github.com/DataWorkbench/gproto/pkg/types/pbmodel"
+	"github.com/DataWorkbench/gproto/xgo/types/pbmodel"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

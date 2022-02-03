@@ -3,7 +3,7 @@ package signer
 import (
 	"net/http"
 
-	"github.com/DataWorkbench/gproto/pkg/types/pbrequest"
+	"github.com/DataWorkbench/gproto/xgo/types/pbrequest"
 )
 
 const (
