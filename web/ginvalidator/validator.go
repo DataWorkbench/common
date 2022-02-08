@@ -7,8 +7,8 @@ import (
 	"github.com/creasty/defaults"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
-	"github.com/yu31/proto-go-plugin/pkg/protodefaults"
-	"github.com/yu31/proto-go-plugin/pkg/protovalidator"
+	"github.com/yu31/protoc-plugin/xgo/pkg/protodefaults"
+	"github.com/yu31/protoc-plugin/xgo/pkg/protovalidator"
 )
 
 func New() binding.StructValidator {

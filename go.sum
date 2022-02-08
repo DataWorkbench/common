@@ -287,10 +287,10 @@ github.com/yu31/dqueue v0.0.0-20220109113339-2dc95440c13c/go.mod h1:VvTk7r7w2dUN
 github.com/yu31/gcron v0.0.0-20220109164512-f4b84f672fef h1:T0gr9qfea07R2S9E3EVzWsJRuZHYjXCcGmtWTRjITfU=
 github.com/yu31/gcron v0.0.0-20220109164512-f4b84f672fef/go.mod h1:jW6Lqn5d71rdpbAC198RuOCjuSMq9XeGLmueQe6HIXY=
 github.com/yu31/gostructs v0.0.0-20220107115217-dc0130426169/go.mod h1:2nxYgIcGxEN5nRc3n3pRusl7ys+oEM14uInKe+WtouQ=
-github.com/yu31/proto-go-plugin v0.0.0-20220128082659-9e9b692f37d1 h1:E+wu/xxmLFxY1x3D3Qj8ayjGrg0KBiUFgaGPG14VR4Q=
-github.com/yu31/proto-go-plugin v0.0.0-20220128082659-9e9b692f37d1/go.mod h1:lBRwHCDgHbXv5dTPwKbXlGMcBsaBTGqe9syOw5R3s8Q=
 github.com/yu31/protoc-plugin v0.0.0-20220203110934-7f035b2a8f28 h1:XMNeN4NwxM1zGDndKCaM0OKs6mJ+mXNO+0UDOvKp460=
 github.com/yu31/protoc-plugin v0.0.0-20220203110934-7f035b2a8f28/go.mod h1:9OjgxZBT7i/e4V7OAubCmFXzlw2Llde6WF+PbHla2HY=
+github.com/yu31/protoc-plugin v0.0.0-20220204051042-6ae48e54d91b h1:l/Ie0G9t3FdxwaDVlLI8mFZM1HjpaIa7eexg/Z5Bnl8=
+github.com/yu31/protoc-plugin v0.0.0-20220204051042-6ae48e54d91b/go.mod h1:9OjgxZBT7i/e4V7OAubCmFXzlw2Llde6WF+PbHla2HY=
 github.com/yu31/snowflake v0.0.0-20210309213122-580647caa2bb h1:4icwEahXE3BzVfq8II9ajyxo3NuP7CSiDG2Gr9HsRCk=
 github.com/yu31/snowflake v0.0.0-20210309213122-580647caa2bb/go.mod h1:kj86CfGUK7fPMCyw7lN1CgNDJ57GmtZgyzPqftMd0kQ=
 github.com/yu31/timewheel v0.0.0-20220109163912-40e763c466a9/go.mod h1:hKPiak/CDrs1AIcTOag/Ztk9JdSETveAEbFBxQmkZ88=

@@ -26,7 +26,7 @@ require (
 	github.com/stretchr/testify v1.7.0
 	github.com/uber/jaeger-client-go v2.29.1+incompatible
 	github.com/uber/jaeger-lib v2.4.0+incompatible // indirect
-	github.com/yu31/proto-go-plugin v0.0.0-20220128082659-9e9b692f37d1
+	github.com/yu31/protoc-plugin v0.0.0-20220204051042-6ae48e54d91b
 	github.com/yu31/snowflake v0.0.0-20210309213122-580647caa2bb
 	go.etcd.io/etcd/api/v3 v3.5.0
 	go.etcd.io/etcd/client/v3 v3.5.0

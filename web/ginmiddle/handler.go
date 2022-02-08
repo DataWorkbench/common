@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
-	"github.com/yu31/proto-go-plugin/pkg/protovalidator"
+	"github.com/yu31/protoc-plugin/xgo/pkg/protovalidator"
 
 	"github.com/DataWorkbench/common/gtrace"
 	"github.com/DataWorkbench/common/qerror"

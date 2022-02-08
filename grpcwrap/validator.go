@@ -2,8 +2,8 @@ package grpcwrap
 
 import (
 	"github.com/DataWorkbench/glog"
-	"github.com/yu31/proto-go-plugin/pkg/protodefaults"
-	"github.com/yu31/proto-go-plugin/pkg/protovalidator"
+	"github.com/yu31/protoc-plugin/xgo/pkg/protodefaults"
+	"github.com/yu31/protoc-plugin/xgo/pkg/protovalidator"
 )
 
 //// validator defines interface grpc_validator.validator
