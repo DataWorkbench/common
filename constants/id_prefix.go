@@ -28,21 +28,13 @@ const (
 	// IdPrefixDatasource represents the id prefix of `datasource meta`.
 	IdPrefixDatasource = "som-"
 
-	//// IdPrefixStreamFlow represents the id prefix of stream workflow.
-	//IdPrefixStreamFlow = "wkf-"
-
-	//// IdPrefixStreamFlowCycleInst represents the id prefixof stream workflow cycle instance.
-	//IdPrefixStreamFlowCycleInst = "sci-"
-
-	//// IdPrefixEngine represents the id prefix of engine.
-	//IdPrefixEngine = "eng-"
-
 	// IdPrefixMonitorRule represents the id prefix of monitor rule.
 	IdPrefixMonitorRule = "mor-"
 
-	//SourceManagerIDPrefix = "som-"
+	// IDPrefixUDF represents the id prefix of UDF.
+	IDPrefixUDF = "udf-"
+
 	SourceTablesIDPrefix = "sot-"
 	JobIDPrefix          = "job-"
-	UdfManagerIDPrefix   = "udf-"
 	FileMangerIDPrefix   = "res-"
 )
