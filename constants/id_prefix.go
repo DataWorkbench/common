@@ -31,10 +31,13 @@ const (
 	// IdPrefixMonitorRule represents the id prefix of monitor rule.
 	IdPrefixMonitorRule = "mor-"
 
-	// IDPrefixUDF represents the id prefix of UDF.
-	IDPrefixUDF = "udf-"
+	// IdPrefixUDF represents the id prefix of UDF.
+	IdPrefixUDF = "udf-"
 
+	// IdPrefixResourceFile represents the id prefix of resource file.
+	IdPrefixResourceFile = "res-"
+
+	// FIXME: removed follow.
 	SourceTablesIDPrefix = "sot-"
 	JobIDPrefix          = "job-"
-	FileMangerIDPrefix   = "res-"
 )
