@@ -192,15 +192,15 @@ var (
 	QuotaInsufficientFlinkClusterCU = &Error{
 		code:   "QuotaInsufficientFlinkClusterCU",
 		status: 403,
-		enUS:   "Limit exceeded of single flink cu quota. quota is [%d] and already use [%d].",
-		zhCN:   "单个 Flink 计算集群的 CU 个数超出配额限制. 配额 [%d], 已使用 [%d].",
+		enUS:   "Limit exceeded of single flink cu quota. quota is [%f] and already use [%f].",
+		zhCN:   "单个 Flink 计算集群的 CU 个数超出配额限制. 配额 [%f], 已使用 [%f].",
 	}
 
 	QuotaInsufficientFlinkClusterCUTotal = &Error{
 		code:   "QuotaInsufficientFlinkClusterCUTotal",
 		status: 403,
-		enUS:   "Limit exceeded of total cu quota. quota is [%d] and already use [%d].",
-		zhCN:   "所有 Flink 计算集群的 CU 个数超出配额限制. 配额 [%d], 已使用 [%d].",
+		enUS:   "Limit exceeded of total cu quota. quota is [%f] and already use [%f].",
+		zhCN:   "所有 Flink 计算集群的 CU 个数超出配额限制. 配额 [%f], 已使用 [%f].",
 	}
 
 	QuotaInsufficientNetworkLimit = &Error{
