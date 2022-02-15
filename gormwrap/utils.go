@@ -8,12 +8,20 @@ import (
 // equal to any value in "items".
 func BuildClauseExpressionEQWithOR(column string, items []string) clause.Expression {
 	if len(items) == 0 {
-		panic("gorm BuildClauseExpressionEQWithOR: items is empty")
+		panic("gorm BuildClauseExpressionEQWithOR: items cannot be empty")
+	}
+
+	if column == "" {
+		panic("gorm BuildClauseExpressionEQWithOR: column cannot be empty")
 	}
 
 	eqExpr := make([]clause.Expression, len(items))
 	for i := 0; i < len(items); i++ {
-		eqExpr[i] = clause.Eq{Column: column, Value: items[i]}
+		value := items[i]
+		if value == "" {
+			panic("gorm BuildClauseExpressionEQWithOR: the item value cannot be empty")
+		}
+		eqExpr[i] = clause.Eq{Column: column, Value: value}
 	}
 	var expr clause.Expression
 	if len(eqExpr) == 1 {

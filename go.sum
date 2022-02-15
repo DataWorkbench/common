@@ -7,6 +7,8 @@ github.com/DataWorkbench/glog v0.0.0-20210809050640-4960fd6de6ab h1:qQ6Nd6amyEXv
 github.com/DataWorkbench/glog v0.0.0-20210809050640-4960fd6de6ab/go.mod h1:zymxJLXn162xdWYUqIb729S3ZzRQpdTj/LwnW+xxru4=
 github.com/DataWorkbench/gproto v0.0.0-20220211040701-3fce79caf130 h1:nSSFFOJx4UcadiOQaAe8nP84PzaToCq+QtlrgsTC+B8=
 github.com/DataWorkbench/gproto v0.0.0-20220211040701-3fce79caf130/go.mod h1:OwdlVaVYjhBox3l6Gj1+0f2uU16r7g7xSb0fPXY0CeI=
+github.com/DataWorkbench/gproto v0.0.0-20220215103309-a6839677a3d0 h1:YRGLEUGhMZI3pNHLCwkYRKElOJmxd9Sx6f0ak35Jxsc=
+github.com/DataWorkbench/gproto v0.0.0-20220215103309-a6839677a3d0/go.mod h1:OwdlVaVYjhBox3l6Gj1+0f2uU16r7g7xSb0fPXY0CeI=
 github.com/HdrHistogram/hdrhistogram-go v1.0.1 h1:GX8GAYDuhlFQnI2fRDHQhTlkHMz8bEn0jTI6LJU0mpw=
 github.com/HdrHistogram/hdrhistogram-go v1.0.1/go.mod h1:BWJ+nMSHY3L41Zj7CA3uXnloDp7xxV0YvstAE7nKTaM=
 github.com/Shopify/sarama v1.29.1 h1:wBAacXbYVLmWieEA/0X/JagDdCZ8NVFOfS6l6+2u5S0=
