@@ -35,14 +35,7 @@ var (
 		zhCN:   "权限拒绝",
 	}
 
-	InvalidRequest = &Error{
-		code:   "InvalidRequest",
-		status: 400,
-		enUS:   "The requests you provided is invalid.",
-		zhCN:   "无效的请求",
-	}
-
-	// NotActive render message if accessing resource is inactive and operation not allows.
+	// ResourceNotActive render message if accessing resource is inactive and operation not allows.
 	ResourceNotActive = &Error{
 		code:   "ResourceNotActive",
 		status: 403,
@@ -50,7 +43,7 @@ var (
 		zhCN:   "资源 [%s] 已被禁用, 禁止访问.",
 	}
 
-	// NotExists render message if accessing resource not exists.
+	// ResourceNotExists render message if accessing resource not exists.
 	ResourceNotExists = &Error{
 		code:   "ResourceNotExists",
 		status: 404,
@@ -58,8 +51,7 @@ var (
 		zhCN:   "资源 [%s] 不存在",
 	}
 
-	// AlreadyExists render message if creating resource already exists.
-	// ResourceInUsing
+	// ResourceAlreadyExists render message if creating resource already exists.
 	ResourceAlreadyExists = &Error{
 		code:   "ResourceAlreadyExists",
 		status: 409,
@@ -67,12 +59,13 @@ var (
 		zhCN:   "资源 [%s] 已存在",
 	}
 
-	//ResourceIsUsing = &Error{
-	//	code:   "ResourceIsUsing",
-	//	status: http.StatusProcessing,
-	//	enUS:   "The resource is using.",
-	//	zhCN:   "资源正在使用",
-	//}
+	// ResourceIsInUsing render message if be deletion resource is using by other module.
+	ResourceIsInUsing = &Error{
+		code:   "ResourceIsInUsing",
+		status: 403,
+		enUS:   "The resource [%s] is used by [%s]",
+		zhCN:   "资源 [%s] 正在被 [%s] 使用中",
+	}
 )
 
 // parameters error
@@ -117,6 +110,12 @@ var (
 	}
 	ParameterValidationError = &Error{
 		code:   "ParameterValidationError",
+		status: 400,
+		enUS:   "%s",
+		zhCN:   "%s",
+	}
+	InvalidRequest = &Error{
+		code:   "InvalidRequest",
 		status: 400,
 		enUS:   "%s",
 		zhCN:   "%s",
@@ -295,6 +294,13 @@ var (
 
 // workspace error
 var (
+	SpaceProhibitDelete = &Error{
+		code:   "SpaceProhibitDelete",
+		status: 403,
+		enUS:   "The workspace [%s] cannot be deleted, Please delete all flink clusters in the space first.",
+		zhCN:   "工作空间 [%s] 不能被删除, 请先删除空间内的所有计算集群.",
+	}
+
 //SpaceNotExists = &Error{
 //	code:   "SpaceNotExists",
 //	status: 404,
