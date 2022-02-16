@@ -293,6 +293,29 @@ func (c *Client) DescribeAccessKeysByOwner(ctx context.Context, owner string) (a
 	return
 }
 
+// DescribeRoutersByOwner query the route info of specified owner.
+func (c *Client) DescribeRoutersByOwner(ctx context.Context, owner string) (resp *DescribeRoutersOutput, err error) {
+	params := map[string]interface{}{
+		"action":      "DescribeRouters",
+		"routers":     []string{},
+		"zone":        c.cfg.Zone,
+		"status":      []string{"pending", "active", "poweroffed", "suspended"},
+		"router_type": []int{1, 0, 2, 3},
+		"mode":        0,
+		"verbose":     0,
+		"limit":       100,
+		"offset":      0,
+		"owner":       owner,
+	}
+
+	var body DescribeRoutersOutput
+	if err = c.sendRequest(ctx, params, &body); err != nil {
+		return
+	}
+	resp = &body
+	return
+}
+
 // DescribeRoutersById query the route info of specified routerId.
 func (c *Client) DescribeRoutersById(ctx context.Context, routerId string) (router *Router, err error) {
 	params := map[string]interface{}{
