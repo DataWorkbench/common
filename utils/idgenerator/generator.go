@@ -4,11 +4,7 @@ import (
 	"encoding/binary"
 	"encoding/hex"
 	"fmt"
-	"hash/crc32"
 	"log"
-	"math/rand"
-	"net"
-	"time"
 	"unsafe"
 
 	"github.com/yu31/snowflake"
@@ -22,8 +18,10 @@ type IDGenerator struct {
 }
 
 // New return an new IDGenerator
-func New(prefix string) *IDGenerator {
-	worker, err := snowflake.New(defaultInstanceID())
+func New(prefix string, opts ...Option) *IDGenerator {
+	cfg := applyOptions(opts...)
+	instanceId := getInstanceId(&cfg)
+	worker, err := snowflake.New(instanceId)
 	if err != nil {
 		panic(fmt.Errorf("unexpected error %v", err))
 	}
@@ -33,6 +31,16 @@ func New(prefix string) *IDGenerator {
 		prefix: prefix,
 	}
 	return g
+}
+
+// Take return a new unique id that format with `prefix` + `16 bytes string`.
+func (g *IDGenerator) Take() (string, error) {
+	id, err := g.worker.Next()
+	if err != nil {
+		log.Printf("IDGenerator: take new id from worker error: %v\n", err)
+		return "", err
+	}
+	return g.encode(id), nil
 }
 
 func (g *IDGenerator) encode(x int64) string {
@@ -47,31 +55,4 @@ func (g *IDGenerator) encode(x int64) string {
 	hex.Encode(dst[lp:], buf)
 
 	return *(*string)(unsafe.Pointer(&dst))
-}
-
-// Take return a new unique id
-func (g *IDGenerator) Take() (string, error) {
-	id, err := g.worker.Next()
-	if err != nil {
-		log.Printf("IDGenerator: take new id from worker error: %v\n", err)
-		return "", err
-	}
-	return g.encode(id), nil
-}
-
-func defaultInstanceID() int64 {
-	var ret int64
-
-	itf, err := net.Interfaces()
-	if err == nil {
-		h := crc32.NewIEEE()
-		for i := range itf {
-			_, _ = h.Write(itf[i].HardwareAddr)
-		}
-		ret = int64(h.Sum32())
-	} else {
-		ret = rand.New(rand.NewSource(time.Now().UnixNano())).Int63()
-	}
-
-	return ret % 1024
 }

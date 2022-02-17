@@ -291,8 +291,8 @@ github.com/yu31/protoc-plugin v0.0.0-20220203110934-7f035b2a8f28 h1:XMNeN4NwxM1z
 github.com/yu31/protoc-plugin v0.0.0-20220203110934-7f035b2a8f28/go.mod h1:9OjgxZBT7i/e4V7OAubCmFXzlw2Llde6WF+PbHla2HY=
 github.com/yu31/protoc-plugin v0.0.0-20220204051042-6ae48e54d91b h1:l/Ie0G9t3FdxwaDVlLI8mFZM1HjpaIa7eexg/Z5Bnl8=
 github.com/yu31/protoc-plugin v0.0.0-20220204051042-6ae48e54d91b/go.mod h1:9OjgxZBT7i/e4V7OAubCmFXzlw2Llde6WF+PbHla2HY=
-github.com/yu31/snowflake v0.0.0-20210309213122-580647caa2bb h1:4icwEahXE3BzVfq8II9ajyxo3NuP7CSiDG2Gr9HsRCk=
-github.com/yu31/snowflake v0.0.0-20210309213122-580647caa2bb/go.mod h1:kj86CfGUK7fPMCyw7lN1CgNDJ57GmtZgyzPqftMd0kQ=
+github.com/yu31/snowflake v0.0.0-20220217043813-1552fe47d479 h1:prR7+f1tbpn7rRDiJjUAddLVxVZNLncwd0bZGzH4Eyo=
+github.com/yu31/snowflake v0.0.0-20220217043813-1552fe47d479/go.mod h1:kj86CfGUK7fPMCyw7lN1CgNDJ57GmtZgyzPqftMd0kQ=
 github.com/yu31/timewheel v0.0.0-20220109163912-40e763c466a9/go.mod h1:hKPiak/CDrs1AIcTOag/Ztk9JdSETveAEbFBxQmkZ88=
 github.com/yuin/goldmark v1.1.27/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=
 github.com/yuin/goldmark v1.2.1/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9decYSb74=

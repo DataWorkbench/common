@@ -7,11 +7,9 @@ const (
 
 	// IdPrefixRoleSystem represents the id prefix of `role system`.
 	IdPrefixRoleSystem = "ros-"
-	//IdPrefixRoleSystem = "wrs-"
 
 	// IdPrefixRoleCustom represents the id prefix of `role custom`.
 	IdPrefixRoleCustom = "roc-"
-	//IdPrefixRoleCustom = "wrc-"
 
 	// IdPrefixStreamJob represents the id prefix of `stream job`.
 	IdPrefixStreamJob = "stj-"
@@ -38,6 +36,24 @@ const (
 	IdPrefixResourceFile = "res-"
 
 	// FIXME: removed follow.
-	SourceTablesIDPrefix = "sot-"
-	JobIDPrefix          = "job-"
+	//SourceTablesIDPrefix = "sot-"
+	//JobIDPrefix          = "job-"
+)
+
+// Defines the id for IdGenerator. To prevent ID conflicts.
+const (
+	IdInstanceWorkspace int64 = iota + 1
+	IdInstanceStreamJob
+	IdInstanceStreamInstance
+	IdInstanceFlinkCluster
+	IdInstanceNetwork
+	IdInstanceDataSource
+	IdInstanceUDF
+	IdInstanceResourceFile
+)
+
+// Defines the id for IdGenerator. To prevent version conflicts.
+const (
+	VerInstanceStreamJob int64 = iota + 201
+	VerInstanceResourceFile
 )
