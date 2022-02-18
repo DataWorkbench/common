@@ -14,8 +14,14 @@ const (
 	// IdPrefixStreamJob represents the id prefix of `stream job`.
 	IdPrefixStreamJob = "stj-"
 
+	// IdPrefixSyncJob represents the id prefix of `stream job`.
+	IdPrefixSyncJob = "syj-"
+
 	// IdPrefixStreamInstance represents the id prefix of `stream instance`.
 	IdPrefixStreamInstance = "sti-"
+
+	// IdPrefixSyncInstance represents the id prefix of `stream instance`.
+	IdPrefixSyncInstance = "syi-"
 
 	// IdPrefixFlinkCluster represents the id prefix of `cluster flink`.
 	IdPrefixFlinkCluster = "cfi-"

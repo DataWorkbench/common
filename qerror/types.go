@@ -371,6 +371,23 @@ var (
 	}
 )
 
+// sync job error.
+var (
+	SyncJobScheduleNotSet = &Error{
+		code:   "ScheduleNotSet",
+		status: 400,
+		enUS:   "The sync job [%s] not set schedule properties.",
+		zhCN:   "同步作业[%s]未设置调度属性",
+	}
+
+	SyncJobArgsNotSet = &Error{
+		code:   "ArgsNotSet",
+		status: 400,
+		enUS:   "The sync job [%s] not set config parameters ",
+		zhCN:   "同步作业[%s]未设置配置参数",
+	}
+)
+
 // instance error
 var (
 //InstanceNotExists = &Error{
