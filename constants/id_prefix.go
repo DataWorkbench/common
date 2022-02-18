@@ -50,6 +50,7 @@ const (
 const (
 	IdInstanceWorkspace int64 = iota + 1
 	IdInstanceStreamJob
+	IdInstanceSyncJob
 	IdInstanceStreamInstance
 	IdInstanceFlinkCluster
 	IdInstanceNetwork
@@ -61,5 +62,6 @@ const (
 // Defines the id for IdGenerator. To prevent version conflicts.
 const (
 	VerInstanceStreamJob int64 = iota + 201
+	VerInstanceSyncJob   int64 = iota + 201
 	VerInstanceResourceFile
 )
