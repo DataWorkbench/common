@@ -9,8 +9,8 @@ import (
 	etcdv3 "go.etcd.io/etcd/client/v3"
 )
 
-// RetryWatch putCallback func(k, v []byte), delCallback func(k, v []byte)
-func RetryWatch(ctx context.Context, cli *Client, key string, handler func(eventType EventType, kv *KeyValue)) {
+// RetryWatch do watch the specified key(prefix) and auto retry when etcd error.
+func RetryWatch(ctx context.Context, cli *Client, key string, handler func(ctx context.Context, eventType EventType, kv *KeyValue)) {
 	// new logger.
 	nl := glog.FromContext(ctx)
 
@@ -29,12 +29,17 @@ func RetryWatch(ctx context.Context, cli *Client, key string, handler func(event
 		var resp *etcdv3.GetResponse
 		resp, err = cli.Get(ctx, key, etcdv3.WithPrefix(), etcdv3.WithLimit(100), etcdv3.WithRev(revision))
 		if err != nil {
-			nl.Error().Error("etcd: get exists keys error", err).String("key", key).Fire()
+			if err == context.Canceled {
+				nl.Warn().Msg("etcd: context canceled when get exists key, return now").Fire()
+				return
+			}
+			nl.Error().Msg("etcd: get exists keys failed, retry after 10s").String("key", key).Error("error", err).Fire()
+			time.Sleep(time.Second * 10)
 			continue
 		}
 
 		for _, kv := range resp.Kvs {
-			handler(EventPUT, kv)
+			handler(ctx, EventPUT, kv)
 		}
 
 		revision = resp.Header.Revision + 1
@@ -49,9 +54,9 @@ LOOP:
 			for _, event := range resp.Events {
 				switch event.Type {
 				case mvccpb.PUT:
-					handler(EventPUT, event.Kv)
+					handler(ctx, EventPUT, event.Kv)
 				case mvccpb.DELETE:
-					handler(EventDELETE, event.Kv)
+					handler(ctx, EventDELETE, event.Kv)
 				}
 			}
 		case <-ctx.Done():

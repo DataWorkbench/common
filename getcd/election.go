@@ -23,27 +23,27 @@ LOOP:
 		}
 		sleep = true
 
-		nl.Info().Msg("start leader election").Fire()
+		nl.Info().Msg("etcd: start leader election").Fire()
 		sess, err := concurrency.NewSession(cli, concurrency.WithTTL(60))
 		if err != nil {
-			nl.Error().Error("concurrency new session error", err).Msg("continue").Fire()
+			nl.Error().Msg("etcd: concurrency new session failed and retry now").Error("error", err).Fire()
 			continue LOOP
 		}
 
 		election := concurrency.NewElection(sess, key)
 		if err = election.Campaign(ctx, value); err != nil {
 			if err == context.Canceled {
-				nl.Info().Msg("ctx canceled, stop campaign").Fire()
+				nl.Info().Msg("etcd: ctx canceled, stop campaign").Fire()
 				break LOOP
 			}
-			nl.Error().Error("election campaign error", err).Msg("continue").Fire()
+			nl.Error().Msg("etcd: election campaign failed and retry now").Error("error", err).Fire()
 			continue LOOP
 		}
 
-		nl.Info().Msg("current worker is leader and start of term").Fire()
+		nl.Info().Msg("etcd: current worker is leader and start of term").Fire()
 
 		// start and load crontab.
-		ctxCancel, cancel := context.WithCancel(context.Background())
+		ctxCancel, cancel := context.WithCancel(ctx)
 
 		exitC := make(chan struct{})
 
@@ -54,7 +54,7 @@ LOOP:
 
 		select {
 		case <-sess.Done():
-			nl.Info().Msg("etcd session done and continue to re-election").Fire()
+			nl.Info().Msg("etcd: session done and continue to re-election").Fire()
 
 			cancel()
 			// wait for notify callback func exit.
@@ -62,14 +62,14 @@ LOOP:
 
 			continue LOOP
 		case <-ctx.Done():
-			nl.Info().Msg("receive ctx done signal and end of term").Fire()
+			nl.Info().Msg("etcd: receive ctx done signal and end of term").Fire()
 
 			cancel()
 			// wait for notify callback func exit.
 			<-exitC
 
 			if err = election.Resign(context.Background()); err != nil {
-				nl.Error().Error("etcd election resign error", err).Fire()
+				nl.Error().Error("etcd: election resign error", err).Fire()
 			}
 			break LOOP
 		}

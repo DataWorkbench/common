@@ -13,10 +13,10 @@ func NewMutex(ctx context.Context, cli *Client, key string) (mutex *Mutex, err e
 
 	var session *concurrency.Session
 
-	nl.Debug().Msg("creating a session for mutex").String("key", key).Fire()
+	nl.Debug().Msg("etcd: creating a session for mutex").String("key", key).Fire()
 	session, err = concurrency.NewSession(cli)
 	if err != nil {
-		nl.Debug().Error("create session error", err).Fire()
+		nl.Debug().Error("etcd: create session error", err).Fire()
 		return
 	}
 	mutex = concurrency.NewMutex(session, key)
