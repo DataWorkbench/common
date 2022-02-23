@@ -6,7 +6,8 @@ import (
 
 // BuildClauseExpressionEQWithOR used to construct the conditions that the specified column
 // equal to any value in "items".
-// Deprecated: use gormwrap.BuildConditionClauseInWithString instead.
+//
+// Deprecated: Use gormwrap.BuildConditionClauseInWithString instead.
 func BuildClauseExpressionEQWithOR(column string, items []string) clause.Expression {
 	if len(items) == 0 {
 		panic("gormwrap BuildClauseExpressionEQWithOR: items cannot be empty")
