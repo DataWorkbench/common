@@ -18,13 +18,13 @@ func ParseOpName(i interface{}) string {
 }
 
 // ParseOpType to parse the operation type from http Method.
-func ParseOpType(method string) pbmodel.Operation_Type {
-	var opType pbmodel.Operation_Type
+func ParseOpType(method string) pbmodel.APIDesc_Kind {
+	var opType pbmodel.APIDesc_Kind
 	switch method {
 	case http.MethodGet, http.MethodHead:
-		opType = pbmodel.Operation_Read
+		opType = pbmodel.APIDesc_Read
 	case http.MethodPost, http.MethodPut, http.MethodDelete:
-		opType = pbmodel.Operation_Write
+		opType = pbmodel.APIDesc_Write
 	default:
 		panic("unsupported operation type")
 	}

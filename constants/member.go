@@ -8,3 +8,11 @@ const (
 	RoleIdSpaceOperator  = IdPrefixRoleSystem + "1000000000000004"
 	RoleIdSpaceVisitor   = IdPrefixRoleSystem + "1000000000000005"
 )
+
+const (
+	RoleNameSpaceOwner     = "空间所有者"
+	RoleNameSpaceAdmin     = "空间管理员"
+	RoleNameSpaceDeveloper = "开发"
+	RoleNameSpaceOperator  = "运维"
+	RoleNameSpaceVisitor   = "访客"
+)
