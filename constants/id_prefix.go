@@ -32,21 +32,21 @@ const (
 	// IdPrefixDatasource represents the id prefix of `datasource meta`.
 	IdPrefixDatasource = "som-"
 
-	// IdPrefixMonitorRule represents the id prefix of monitor rule.
-	IdPrefixMonitorRule = "mor-"
-
-	// IdPrefixUDF represents the id prefix of UDF.
+	// IdPrefixUDF represents the id prefix of `UDF`.
 	IdPrefixUDF = "udf-"
 
-	// IdPrefixResourceFile represents the id prefix of resource file.
+	// IdPrefixResourceFile represents the id prefix of `resource file`.
 	IdPrefixResourceFile = "res-"
 
-	// FIXME: removed follow.
-	//SourceTablesIDPrefix = "sot-"
-	//JobIDPrefix          = "job-"
+	// IdPrefixMonitorRule represents the id prefix of `monitor rule`.
+	IdPrefixMonitorRule = "mor-"
+
+	// IdPrefixProjectModule represents the id prefix of `project module`
+	IdPrefixProjectModule = "pmo-"
 )
 
 // Defines the id for IdGenerator. To prevent ID conflicts.
+// The newly added instance must be in the last.
 const (
 	IdInstanceWorkspace int64 = iota + 1
 	IdInstanceStreamJob
@@ -60,8 +60,9 @@ const (
 )
 
 // Defines the id for IdGenerator. To prevent version conflicts.
+// The newly added instance must be in the last.
 const (
 	VerInstanceStreamJob int64 = iota + 201
-	VerInstanceSyncJob   int64 = iota + 201
+	VerInstanceSyncJob
 	VerInstanceResourceFile
 )

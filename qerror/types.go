@@ -323,30 +323,30 @@ var (
 
 // member error
 var (
-	//MemberNotExists = &Error{
-	//	code:   "MemberNotExists",
-	//	status: 404,
-	//	enUS:   "The member [%s] does not exists.",
-	//	zhCN:   "成员[%s]不存在.",
-	//}
-	//MemberAlreadyExists = &Error{
-	//	code:   "MemberAlreadyExists",
-	//	status: 409,
-	//	enUS:   "The member [%s] has been exists.",
-	//	zhCN:   "空间成员[%s]已存在.",
-	//}
-	SpaceOwnerCannotBeDeletion = &Error{
-		code:   "SpaceOwnerCannotDeletion",
-		status: 403,
-		enUS:   "The member of workspace owner cannot be deleted.",
-		zhCN:   "空间所有者不允许被删除.",
-	}
-	SpaceOwnerCannotBeUpdated = &Error{
-		code:   "SpaceOwnerCannotBeUpdated",
-		status: 403,
-		enUS:   "The member of workspace owner cannot be updated.",
-		zhCN:   "空间所有者不允许被修改",
-	}
+//MemberNotExists = &Error{
+//	code:   "MemberNotExists",
+//	status: 404,
+//	enUS:   "The member [%s] does not exists.",
+//	zhCN:   "成员[%s]不存在.",
+//}
+//MemberAlreadyExists = &Error{
+//	code:   "MemberAlreadyExists",
+//	status: 409,
+//	enUS:   "The member [%s] has been exists.",
+//	zhCN:   "空间成员[%s]已存在.",
+//}
+//SpaceOwnerCannotBeDeletion = &Error{
+//	code:   "SpaceOwnerCannotDeletion",
+//	status: 403,
+//	enUS:   "The member of workspace owner cannot be deleted.",
+//	zhCN:   "空间所有者不允许被删除.",
+//}
+//SpaceOwnerCannotBeUpdated = &Error{
+//	code:   "SpaceOwnerCannotBeUpdated",
+//	status: 403,
+//	enUS:   "The member of workspace owner cannot be updated.",
+//	zhCN:   "空间所有者不允许被修改",
+//}
 )
 
 // stream job error.

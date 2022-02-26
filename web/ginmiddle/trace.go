@@ -57,8 +57,9 @@ func Trace(ctx context.Context) gin.HandlerFunc {
 			nl.Error().Error("extract parent span from request headers error", err).Fire()
 		}
 		// Start a new span for this request.
+		funcName := ParseHandlerFuncName(c.Handler())
 		span := tracer.StartSpan(
-			ParseOpName(c.Handler()), opentracing.ChildOf(parentSpan),
+			funcName, opentracing.ChildOf(parentSpan),
 			spanKindTag, ginComponentTag,
 		)
 		// Inherit or generate trace id.

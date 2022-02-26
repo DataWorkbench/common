@@ -9,24 +9,24 @@ import (
 	"github.com/DataWorkbench/gproto/xgo/types/pbmodel"
 )
 
-// ParseOpName to parse the operation name from func name.
-func ParseOpName(i interface{}) string {
-	funcName := runtime.FuncForPC(reflect.ValueOf(i).Pointer()).Name()
-	fields := strings.Split(funcName, "/")
-	opName := strings.Split(fields[len(fields)-1], ".")[1]
-	return opName
+// ParseHandlerFuncName to parse the func name from handler func .
+func ParseHandlerFuncName(i interface{}) string {
+	funcPath := runtime.FuncForPC(reflect.ValueOf(i).Pointer()).Name()
+	fields := strings.Split(funcPath, "/")
+	funcName := strings.Split(fields[len(fields)-1], ".")[1]
+	return funcName
 }
 
-// ParseOpType to parse the operation type from http Method.
-func ParseOpType(method string) pbmodel.APIDesc_Kind {
-	var opType pbmodel.APIDesc_Kind
+// ParseAPIPermType to parse the operation permission type from http Method.
+func ParseAPIPermType(method string) pbmodel.ProjectAPI_PermType {
+	var opType pbmodel.ProjectAPI_PermType
 	switch method {
 	case http.MethodGet, http.MethodHead:
-		opType = pbmodel.APIDesc_Read
+		opType = pbmodel.ProjectAPI_Read
 	case http.MethodPost, http.MethodPut, http.MethodDelete:
-		opType = pbmodel.APIDesc_Write
+		opType = pbmodel.ProjectAPI_Write
 	default:
-		panic("unsupported operation type")
+		panic("unsupported api type")
 	}
 	return opType
 }
