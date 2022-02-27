@@ -204,11 +204,23 @@ var (
 		enUS:   "Limit exceeded of workspace number quota. quota is [%d] and already use [%d].",
 		zhCN:   "工作空间个数超出配额限制. 配额 [%d], 已使用 [%d].",
 	}
+	QuotaInsufficientMemberLimit = &Error{
+		code:   "QuotaInsufficientMemberLimit",
+		status: 403,
+		enUS:   "Limit exceeded of workspace member number quota. quota is [%d] and already use [%d].",
+		zhCN:   "工作空间成员个数超出配额限制. 配额 [%d], 已使用 [%d].",
+	}
 	QuotaInsufficientStreamJobLimit = &Error{
 		code:   "QuotaInsufficientStreamJobLimit",
 		status: 403,
 		enUS:   "Limit exceeded of steam job number quota. quota is [%d] and already use [%d].",
 		zhCN:   "实时计算作业个数超出配额限制. 配额 [%d], 已使用 [%d].",
+	}
+	QuotaInsufficientSyncJobLimit = &Error{
+		code:   "QuotaInsufficientSyncJobLimit",
+		status: 403,
+		enUS:   "Limit exceeded of sync job number quota. quota is [%d] and already use [%d].",
+		zhCN:   "数据集成作业个数超出配额限制. 配额 [%d], 已使用 [%d].",
 	}
 	QuotaInsufficientDataSourceLimit = &Error{
 		code:   "QuotaInsufficientDataSourceLimit",
@@ -216,8 +228,8 @@ var (
 		enUS:   "Limit exceeded of data source number quota. quota is [%d] and already use [%d].",
 		zhCN:   "数据源个数超出配额限制. 配额 [%d], 已使用 [%d].",
 	}
-	QuotaInsufficientDataUDFLimit = &Error{
-		code:   "QuotaInsufficientDataUDFLimit",
+	QuotaInsufficientUDFLimit = &Error{
+		code:   "QuotaInsufficientUDFLimit",
 		status: 403,
 		enUS:   "Limit exceeded of udf number quota. quota is [%d] and already use [%d].",
 		zhCN:   "函数个数超出配额限制. 配额 [%d], 已使用 [%d].",
@@ -228,8 +240,8 @@ var (
 		enUS:   "Limit exceeded of resource number quota. quota is [%d] and already use [%d].",
 		zhCN:   "文件个数超出配额限制. 配额 [%d], 已使用 [%d].",
 	}
-	QuotaInsufficientFileSize = &Error{
-		code:   "QuotaInsufficientFileSize",
+	QuotaInsufficientFileSizeSingle = &Error{
+		code:   "QuotaInsufficientFileSizeSingle",
 		status: 403,
 		enUS:   "Limit exceeded of single file size quota. quota is [%d] and already use [%d].",
 		zhCN:   "单个文件大小超出配额限制. 配额 [%d], 已使用 [%d].",
@@ -247,14 +259,12 @@ var (
 		enUS:   "Limit exceeded of flink cluster number quota. quota is [%d] and already use [%d].",
 		zhCN:   "Flink 计算集群个数超出配额限制. 配额 [%d], 已使用 [%d].",
 	}
-
-	QuotaInsufficientFlinkClusterCU = &Error{
-		code:   "QuotaInsufficientFlinkClusterCU",
+	QuotaInsufficientFlinkClusterCUSingle = &Error{
+		code:   "QuotaInsufficientFlinkClusterCUSingle",
 		status: 403,
 		enUS:   "Limit exceeded of single flink cu quota. quota is [%0.1f] and already use [%0.1f].",
 		zhCN:   "单个 Flink 计算集群的 CU 个数超出配额限制. 配额 [%0.1f], 已使用 [%0.1f].",
 	}
-
 	QuotaInsufficientFlinkClusterCUTotal = &Error{
 		code:   "QuotaInsufficientFlinkClusterCUTotal",
 		status: 403,
