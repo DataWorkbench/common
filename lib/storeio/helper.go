@@ -1,19 +1,38 @@
 package storeio
 
-import (
-	"fmt"
-)
-
 const (
 	filePathPrefix = "/dataomnis/resource"
 )
 
-// GenerateFileRootDir generate the root dir of resource file.
-func GenerateFileRootDir(spaceId string) string {
-	return fmt.Sprintf("%s/%s", filePathPrefix, spaceId)
+// GenerateWorkspaceDir generate the directory path of specified workspace.
+func GenerateWorkspaceDir(spaceId string) string {
+	if spaceId == "" {
+		panic("GenerateWorkspaceDir: spaceId cannot be empty")
+	}
+	return filePathPrefix + "/" + spaceId
 }
 
-// GenerateFilePath to generate a path that store the file.
-func GenerateFilePath(spaceId string, fileId string, version string) string {
-	return fmt.Sprintf("%s/%s.%s", GenerateFileRootDir(spaceId), fileId, version)
+// GenerateResourceFileDir generate the root directory of resource file.
+func GenerateResourceFileDir(spaceId, fileId string) string {
+	if spaceId == "" {
+		panic("GenerateResourceFileDir: spaceId cannot be empty")
+	}
+	if fileId == "" {
+		panic("GenerateResourceFileDir: fileId cannot be empty")
+	}
+	return filePathPrefix + "/" + spaceId + "/" + fileId
+}
+
+// GenerateResourceFilePath generate the file path of resource file.
+func GenerateResourceFilePath(spaceId, fileId, version string) string {
+	if spaceId == "" {
+		panic("GenerateResourceFilePath: spaceId cannot be empty")
+	}
+	if fileId == "" {
+		panic("GenerateResourceFilePath: fileId cannot be empty")
+	}
+	if version == "" {
+		panic("GenerateResourceFilePath: version cannot be empty")
+	}
+	return filePathPrefix + "/" + spaceId + "/" + fileId + "/" + version
 }
