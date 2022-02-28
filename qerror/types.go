@@ -124,6 +124,18 @@ var (
 
 // sign error
 var (
+	InvalidSession = &Error{
+		code:   "InvalidSession",
+		status: 400,
+		enUS:   "The session[%s] is invalid",
+		zhCN:   "无效的session[%s]",
+	}
+	UserNameOrPasswordError = &Error{
+		code:   "UserNameOrPasswordError",
+		status: 400,
+		enUS:   "The user name or password is invalid",
+		zhCN:   "用户名或密码错误",
+	}
 	AccessKeyNotExists = &Error{
 		code:   "AccessKeyNotExist",
 		status: 403,
