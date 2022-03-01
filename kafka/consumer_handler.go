@@ -21,7 +21,7 @@ var (
 	_ sarama.ConsumerGroupHandler = (*consumerHandler)(nil)
 )
 
-// type helpful for caller reference.
+// ConsumerMessage type helpful for caller reference.
 type ConsumerMessage = sarama.ConsumerMessage
 
 // MessageHandler callback the consumed messages, these messages are come from the same topic-partition in every calls.
@@ -84,17 +84,17 @@ func newConsumerHandler(ctx context.Context, handler MessageHandler, options ...
 	return h
 }
 
-// sarama calls Setup before ConsumeClaim.
+// Setup sarama calls Setup before ConsumeClaim.
 func (h *consumerHandler) Setup(sess sarama.ConsumerGroupSession) (err error) {
 	return
 }
 
-// sarama calls Cleanup after ConsumeClaim.
+// Cleanup sarama calls Cleanup after ConsumeClaim.
 func (h *consumerHandler) Cleanup(sess sarama.ConsumerGroupSession) (err error) {
 	return
 }
 
-// saram calls it when consume start.
+// ConsumeClaim saram calls it when consume start.
 func (h *consumerHandler) ConsumeClaim(sess sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) (err error) {
 	lg := h.lp.Clone()
 

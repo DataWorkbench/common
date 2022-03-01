@@ -14,8 +14,7 @@ type VerGenerator struct {
 // New return an new VerGenerator
 func New(opts ...Option) *VerGenerator {
 	cfg := applyOptions(opts...)
-	instanceId := getInstanceId(&cfg)
-	worker, err := snowflake.New(instanceId)
+	worker, err := snowflake.New(cfg.instanceId)
 	if err != nil {
 		panic(fmt.Errorf("unexpected error %v", err))
 	}

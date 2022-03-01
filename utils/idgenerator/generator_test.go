@@ -15,9 +15,9 @@ func TestNew(t *testing.T) {
 	require.NotNil(t, g.worker)
 }
 
-func TestDefaultInstanceID(t *testing.T) {
+func TestRandomInstanceID(t *testing.T) {
 	for i := 0; i < 10; i++ {
-		id := defaultInstanceID()
+		id := randomInstanceID()
 		fmt.Println(id)
 	}
 }
@@ -26,42 +26,40 @@ func TestIDGenerator_Take(t *testing.T) {
 	prefix := "wks-"
 	g := New(prefix)
 
-	id, err := g.Take()
-	require.Nil(t, err, "%+v", err)
-	require.True(t, strings.HasPrefix(id, prefix), id)
-	require.Equal(t, len(id), 20)
+	t.Run("Take", func(t *testing.T) {
+		id, err := g.Take()
+		require.Nil(t, err, "%+v", err)
+		require.True(t, strings.HasPrefix(id, prefix), id)
+		require.Equal(t, len(id), 20)
+	})
 }
 
 func TestIDGenerator_TakeMany(t *testing.T) {
 	g := New("wks-")
-	for i := 0; i < 10; i++ {
-		id, err := g.Take()
-		require.Nil(t, err, "%+v", err)
-		require.Equal(t, len(id), 20)
-		fmt.Println(id)
-	}
+	t.Run("Take2", func(t *testing.T) {
+		for i := 0; i < 10; i++ {
+			id, err := g.Take()
+			require.Nil(t, err, "%+v", err)
+			require.Equal(t, len(id), 20)
+			fmt.Println(id)
+		}
+	})
 }
 
-func TestIDGenerator_TakeUnique(t *testing.T) {
+func TestIDGenerator_UniqueTake(t *testing.T) {
 	g := New("wks-")
 
-	n := 10000000
-	idMap := make(map[string]struct{})
-
-	var lastId string
-	for i := 0; i < n; i++ {
-		id, err := g.Take()
-		require.Nil(t, err, "%+v", err)
-		require.Equal(t, len(id), 20)
-		idMap[id] = struct{}{}
-
-		if lastId != "" {
-			require.True(t, id > lastId)
+	n := 1000000
+	t.Run("Take", func(t *testing.T) {
+		idMap := make(map[string]struct{})
+		for i := 0; i < n; i++ {
+			id, err := g.Take()
+			require.Nil(t, err, "%+v", err)
+			require.Equal(t, len(id), 20)
+			idMap[id] = struct{}{}
 		}
-		lastId = id
-	}
-
-	require.Equal(t, len(idMap), n)
+		require.Equal(t, len(idMap), n)
+	})
 }
 
 func BenchmarkGenerator_Take(b *testing.B) {

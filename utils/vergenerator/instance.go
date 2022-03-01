@@ -9,14 +9,7 @@ import (
 	"time"
 )
 
-func getInstanceId(cfg *config) int64 {
-	if cfg.instanceId != nil {
-		return *cfg.instanceId
-	}
-	return defaultInstanceID()
-}
-
-func defaultInstanceID() int64 {
+func randomInstanceID() int64 {
 	var ret int64
 
 	itf, err := net.Interfaces()
@@ -35,5 +28,5 @@ func defaultInstanceID() int64 {
 			ret = n.Int64()
 		}
 	}
-	return ret % 1024
+	return ret % 512
 }
