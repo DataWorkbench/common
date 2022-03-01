@@ -25,11 +25,11 @@ GENERATE_GO = _generate_go() {                     \
 
 .PHONY: test
 test:
-	@[[ ${VERBOSE} = "yes" ]] && set -x; go test -race -v ./... -test.count=1 -failfast
+	@[[ ${VERBOSE} = "yes" ]] && set -x; go test -race -v -test.count=1 -failfast ./...
 
 .PHONY: bench
 bench:
-	@[[ ${VERBOSE} = "yes" ]] && set -x; go test -test.bench="." -test.run="Benchmark" -benchmem -count=1
+	@[[ ${VERBOSE} = "yes" ]] && set -x; go test -test.bench="." -benchmem -count=1 -test.run="Benchmark"
 
 
 .PHONY: format

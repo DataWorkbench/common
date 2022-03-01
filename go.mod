@@ -22,6 +22,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.11.0
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475
+	github.com/speps/go-hashids/v2 v2.0.1
 	github.com/stretchr/objx v0.3.0 // indirect
 	github.com/stretchr/testify v1.7.0
 	github.com/uber/jaeger-client-go v2.29.1+incompatible
@@ -30,7 +31,7 @@ require (
 	github.com/yu31/snowflake v0.0.0-20220217043813-1552fe47d479
 	go.etcd.io/etcd/api/v3 v3.5.0
 	go.etcd.io/etcd/client/v3 v3.5.0
-	golang.org/x/crypto v0.0.0-20220214200702-86341886e292 // indirect
+	golang.org/x/crypto v0.0.0-20220214200702-86341886e292
 	google.golang.org/grpc v1.44.0
 	google.golang.org/protobuf v1.27.1
 	gorm.io/driver/mysql v1.0.3

@@ -32,17 +32,17 @@ const (
 	// IdPrefixDatasource represents the id prefix of `datasource meta`.
 	IdPrefixDatasource = "som-"
 
-	// IdPrefixUDF represents the id prefix of `UDF`.
-	IdPrefixUDF = "udf-"
-
 	// IdPrefixResourceFile represents the id prefix of `resource file`.
 	IdPrefixResourceFile = "res-"
+
+	// IdPrefixProjectModule represents the id prefix of `project module`
+	IdPrefixProjectModule = "pmo-"
 
 	// IdPrefixMonitorRule represents the id prefix of `monitor rule`.
 	IdPrefixMonitorRule = "mor-"
 
-	// IdPrefixProjectModule represents the id prefix of `project module`
-	IdPrefixProjectModule = "pmo-"
+	// IdPrefixUDF represents the id prefix of `UDF`.
+	IdPrefixUDF = "udf-"
 )
 
 // Defines the id for IdGenerator. To prevent ID conflicts.
@@ -50,13 +50,14 @@ const (
 const (
 	IdInstanceWorkspace int64 = iota + 1
 	IdInstanceStreamJob
-	IdInstanceSyncJob
 	IdInstanceStreamInstance
+	IdInstanceSyncJob
+	IdInstanceSyncInstance
 	IdInstanceFlinkCluster
 	IdInstanceNetwork
 	IdInstanceDataSource
-	IdInstanceUDF
 	IdInstanceResourceFile
+	IdInstanceUDF
 )
 
 // Defines the id for IdGenerator. To prevent version conflicts.

@@ -1,4 +1,4 @@
-package idgenerator
+package idgeneratorv2
 
 import (
 	crand "crypto/rand"

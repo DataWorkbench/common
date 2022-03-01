@@ -1,12 +1,10 @@
-package idgenerator
+package idgeneratorv2
 
 import (
-	"encoding/binary"
-	"encoding/hex"
 	"fmt"
 	"log"
-	"unsafe"
 
+	"github.com/speps/go-hashids/v2"
 	"github.com/yu31/snowflake"
 )
 
@@ -15,6 +13,7 @@ import (
 type IDGenerator struct {
 	prefix string
 	worker *snowflake.Snowflake
+	hashId *hashids.HashID
 }
 
 // New return an new IDGenerator
@@ -25,9 +24,19 @@ func New(prefix string, opts ...Option) *IDGenerator {
 		panic(fmt.Errorf("IDGenerator: unexpected error %v", err))
 	}
 
+	hd := hashids.NewData()
+	hd.Alphabet = cfg.hashAlphabet
+	hd.MinLength = cfg.hashMinLength
+	hd.Salt = cfg.hashSalt
+	hashId, err := hashids.NewWithData(hd)
+	if err != nil {
+		panic(fmt.Errorf("IDGenerator: unexpected error: %v", err))
+	}
+
 	g := &IDGenerator{
 		prefix: prefix,
 		worker: worker,
+		hashId: hashId,
 	}
 	return g
 }
@@ -43,15 +52,9 @@ func (g *IDGenerator) Take() (string, error) {
 }
 
 func (g *IDGenerator) encode(x int64) (string, error) {
-	buf := make([]byte, 8)
-
-	binary.BigEndian.PutUint64(buf, uint64(x))
-
-	lp := len(g.prefix)
-	dst := make([]byte, lp+hex.EncodedLen(len(buf)))
-
-	copy(dst[:lp], g.prefix)
-	hex.Encode(dst[lp:], buf)
-
-	return *(*string)(unsafe.Pointer(&dst)), nil
+	id, err := g.hashId.EncodeInt64([]int64{x})
+	if err != nil {
+		return "", err
+	}
+	return g.prefix + id, nil
 }
