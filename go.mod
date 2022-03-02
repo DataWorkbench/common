@@ -3,7 +3,7 @@ module github.com/DataWorkbench/common
 go 1.15
 
 require (
-	github.com/DataWorkbench/glog v0.0.0-20210809050640-4960fd6de6ab
+	github.com/DataWorkbench/glog v0.0.0-20220302035436-25a1ae256704
 	github.com/DataWorkbench/gproto v0.0.0-20220226075252-3c1f412ed3a5
 	github.com/HdrHistogram/hdrhistogram-go v1.0.1 // indirect
 	github.com/Shopify/sarama v1.29.1
@@ -34,6 +34,7 @@ require (
 	golang.org/x/crypto v0.0.0-20220214200702-86341886e292
 	google.golang.org/grpc v1.44.0
 	google.golang.org/protobuf v1.27.1
+	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 	gorm.io/driver/mysql v1.0.3
 	gorm.io/gorm v1.20.6
 )
