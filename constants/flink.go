@@ -1,8 +1,21 @@
 package constants
 
+import (
+	"strings"
+
+	uuid "github.com/satori/go.uuid"
+)
+
 const (
 	FlinkVersion_011203_0211 = "flink-1.12.3-scala_2.11"
 )
+
+// GenerateFlinkJobId for generate a flink job id with spaceId and instanceId by uuid v3.
+func GenerateFlinkJobId(spaceId, instanceId string) string {
+	name := spaceId + "/" + instanceId
+	uid := uuid.NewV3(uuid.NamespaceOID, name).String()
+	return strings.ReplaceAll(uid, "-", "")
+}
 
 const (
 	FlinkConnectorMySQL          = "flink-connector-mysql"
