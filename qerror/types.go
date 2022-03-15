@@ -124,12 +124,19 @@ var (
 
 // sign error
 var (
+	InvalidProvider = &Error{
+		code:   "InvalidProvider",
+		status: 400,
+		enUS:   "The provider[%s] is invalid",
+		zhCN:   "无效的provider[%s]",
+	}
 	InvalidSession = &Error{
 		code:   "InvalidSession",
 		status: 400,
 		enUS:   "The session[%s] is invalid",
 		zhCN:   "无效的session[%s]",
 	}
+
 	UserNameOrPasswordError = &Error{
 		code:   "UserNameOrPasswordError",
 		status: 400,
