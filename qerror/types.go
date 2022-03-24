@@ -513,19 +513,12 @@ var (
 
 // notifier error
 var (
-//SendingNotificationFailed = &Error{
-//	code:   "SendingNotificationFailed",
-//	status: 500,
-//	enUS:   "failed to send notifier post to user [%s]",
-//	zhCN:   "向用户[%s]发送通知失败.",
-//}
-//
-//NotificationChannelConfigInvalid = &Error{
-//	code:   "NotificationChannelConfigInvalid",
-//	status: 500,
-//	enUS:   "notifier channel config not valid",
-//	zhCN:   "通知渠道配置不合法",
-//}
+	SendingNotificationFailed = &Error{
+		code:   "SendingNotificationFailed",
+		status: 500,
+		enUS:   "failed to send notifier post to user [%s]",
+		zhCN:   "向用户[%s]发送通知失败.",
+	}
 )
 
 // logmanager error

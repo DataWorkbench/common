@@ -43,6 +43,9 @@ const (
 
 	// IdPrefixUDF represents the id prefix of `UDF`.
 	IdPrefixUDF = "udf-"
+
+	// IdPrefixNotifier
+	IdPrefixNotifier = "nof-"
 )
 
 // Defines the id for IdGenerator. To prevent ID conflicts.

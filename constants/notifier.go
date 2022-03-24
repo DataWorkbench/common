@@ -8,8 +8,8 @@ const (
 	PostStatusFinished        = "finished"
 	NotifyTypeEmail           = "email"
 	NotifyTypeSMS             = "sms"
-	SMTPChannel               = "SMTPChannel"
-	SDKChannel                = "SDKChannel"
+	PlatformIAAS              = "iaas"
+	PlatformPrivate           = "private_cloud"
 
 	CodeSuccess = 0
 )
