@@ -680,3 +680,27 @@ var (
 	//	zhCN:   "Flink Job 不存在",
 	//}
 )
+
+// api dashboard
+var (
+	RouteNotExist = &Error{
+		code:   "RouteNotExist",
+		status: 400,
+		enUS:   "API Route ID [%s] not exist",
+		zhCN:   "API Route ID [%s] 不存在",
+	}
+
+	UpstreamNotExit = &Error{
+		code:   "UpstreamNotExist",
+		status: 400,
+		enUS:   "Upstream ID [%s] not exist",
+		zhCN:   "Upstream ID [%s] 不存在",
+	}
+
+	ParamNotValid = &Error{
+		code:   "ParamNotValid",
+		status: 400,
+		enUS:   "Param not valid, [%s]",
+		zhCN:   "Param not valid, [%s]",
+	}
+)
