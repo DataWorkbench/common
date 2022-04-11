@@ -422,3 +422,92 @@ func (c *Client) GetBalance(ctx context.Context, userId string) (balanceSet *Get
 	balanceSet = &body
 	return
 }
+
+// DescribeJobById is wrapper for DescribeJobs, only query one.
+func (c *Client) DescribeJobById(ctx context.Context, jobId string) (jobSet *JobSet, err error) {
+	ret, err := c.DescribeJobs(ctx, []string{jobId}, nil)
+	if err != nil {
+		return
+	}
+	if len(ret) != 1 {
+		err = errors.New("iaas job not exists")
+		return
+	}
+	jobSet = ret[0]
+	return
+}
+
+func (c *Client) DescribeJobs(ctx context.Context, jobs []string, jobAction []string) (jobSet []*JobSet, err error) {
+	params := map[string]interface{}{
+		"action":     "DescribeJobs",
+		"zone":       c.cfg.Zone,
+		"jobs":       jobs,
+		"job_action": jobAction,
+	}
+	var body DescribeJobsOutput
+	if err = c.sendRequest(ctx, params, &body); err != nil {
+		return
+	}
+	jobSet = body.JobSet
+	return
+}
+
+func (c *Client) AllocateVips(ctx context.Context, input *AllocateVipsInput) (jobId string, vips []string, err error) {
+	params := map[string]interface{}{
+		"action":      "AllocateVips",
+		"zone":        c.cfg.Zone,
+		"vxnet_id":    input.VxnetId,
+		"vip_name":    input.VipName,
+		"vip_addrs":   input.VipAddrs,
+		"count":       len(input.VipAddrs),
+		"target_user": input.TargetUser,
+		"vip_range":   input.VipRange,
+	}
+	var body AllocateVipsOutput
+	if err = c.sendRequest(ctx, params, &body); err != nil {
+		return
+	}
+	jobId = body.JobId
+	vips = body.Vips
+	return
+}
+
+func (c *Client) ReleaseVips(ctx context.Context, vips []string) (jobId string, err error) {
+	params := map[string]interface{}{
+		"action": "ReleaseVips",
+		"zone":   c.cfg.Zone,
+		"vips":   vips,
+	}
+	var body ReleaseVipsOutput
+	if err = c.sendRequest(ctx, params, &body); err != nil {
+		return
+	}
+	jobId = body.JobId
+	return
+}
+
+func (c *Client) DescribeVips(ctx context.Context, input *DescribeVipsInput) (vipSet []*VipSet, err error) {
+	params := map[string]interface{}{
+		"action":    "DescribeVips",
+		"zone":      c.cfg.Zone,
+		"vxnets":    input.Vxnets,
+		"limit":     input.Limit,
+		"offset":    input.Offset,
+		"vips":      input.Vips,
+		"vip_addrs": input.VipAddrs,
+		//"owner":     input.Owner,
+		//"vip_name":  input.VipName,
+	}
+	if input.Owner != "" {
+		params["owner"] = input.Owner
+	}
+	if input.VipName != "" {
+		params["vip_name"] = input.VipName
+	}
+	var body DescribeVipsOutput
+	if err = c.sendRequest(ctx, params, &body); err != nil {
+		return
+	}
+	vipSet = body.VipSet
+	return
+}

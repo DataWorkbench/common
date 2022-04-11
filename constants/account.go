@@ -73,5 +73,5 @@ const (
 	AccessKeyStatusDisable = "disable"
 	SessionLength          = 50
 	SessionLetters         = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-	ProviderEnfi = "enfi"
+	ProviderEnfi           = "enfi"
 )

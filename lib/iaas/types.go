@@ -273,3 +273,107 @@ func (b *GetBalanceOutput) ReturnCode() int {
 func (b *GetBalanceOutput) ReturnMessage() string {
 	return b.Message
 }
+
+const (
+	JobSetStatusSuccessful = "successful"
+)
+
+type JobSet struct {
+	Status    string `json:"status"`
+	JobAction string `json:"job_action"`
+}
+
+type DescribeJobsOutput struct {
+	RetCode    int       `json:"ret_code"`
+	Message    string    `json:"message"`
+	TotalCount int       `json:"total_count"`
+	JobSet     []*JobSet `json:"job_set"`
+}
+
+func (b *DescribeJobsOutput) ReturnCode() int {
+	return b.RetCode
+}
+
+func (b *DescribeJobsOutput) ReturnMessage() string {
+	return b.Message
+}
+
+type DescribeVipsInput struct {
+	Limit    int      `json:"limit"`
+	Offset   int      `json:"offset"`
+	Vxnets   []string `json:"vxnets"`    // list of vxnet id.
+	Vips     []string `json:"vips"`      // list id of vip. e.g []string{"vip-xxx", "vip-xxx}
+	VipAddrs []string `json:"vip_addrs"` // ip address of vip. e.g: []string{"127.0.0.1", "127.0.0.1"}
+	VipName  string   `json:"vip_name"`
+	Owner    string   `json:"owner"`
+}
+
+type AllocateVipsInput struct {
+	VxnetId    string   `json:"vxnet_id"`    // required.
+	VipName    string   `json:"vip_name"`    // required
+	TargetUser string   `json:"target_user"` // required. the user who will own this vip.
+	VipAddrs   []string `json:"vip_addrs"`   // e.g: []string{"172.20.0.105", "172.20.0.106", "172.20.0.107"},
+	VipRange   string   `json:"vip_range"`   // e.g: 172.20.0.105-172.20.0.108, contains 105 and 108. mutex with VipAddrs.
+}
+
+type VipSet struct {
+	InstanceNaem string      `json:"instance_naem"`
+	EipId        string      `json:"eip_id"`
+	VxnetId      string      `json:"vxnet_id"`
+	VipId        string      `json:"vip_id"`
+	RootUserId   string      `json:"root_user_id"`
+	ConsoleId    string      `json:"console_id"`
+	InstanceId   string      `json:"instance_id"`
+	Controller   string      `json:"controller"`
+	CreateTime   string      `json:"create_time"`
+	VipAddr      string      `json:"vip_addr"`
+	NeedSg       int         `json:"need_sg"`
+	Owner        string      `json:"owner"`
+	NicId        string      `json:"nic_id"`
+	VipName      string      `json:"vip_name"`
+	Description  interface{} `json:"description"`
+}
+
+type DescribeVipsOutput struct {
+	RetCode    int       `json:"ret_code"`
+	Message    string    `json:"message"`
+	TotalCount int       `json:"total_count"`
+	VipSet     []*VipSet `json:"vip_set"`
+}
+
+func (b *DescribeVipsOutput) ReturnCode() int {
+	return b.RetCode
+}
+
+func (b *DescribeVipsOutput) ReturnMessage() string {
+	return b.Message
+}
+
+type AllocateVipsOutput struct {
+	RetCode int      `json:"ret_code"`
+	Message string   `json:"message"`
+	Vips    []string `json:"vips"` // the list of vip id.
+	JobId   string   `json:"job_id"`
+}
+
+func (b *AllocateVipsOutput) ReturnCode() int {
+	return b.RetCode
+}
+
+func (b *AllocateVipsOutput) ReturnMessage() string {
+	return b.Message
+}
+
+type ReleaseVipsOutput struct {
+	RetCode int    `json:"ret_code"`
+	Message string `json:"message"`
+	JobId   string `json:"job_id"`
+}
+
+func (b *ReleaseVipsOutput) ReturnCode() int {
+	return b.RetCode
+}
+
+func (b *ReleaseVipsOutput) ReturnMessage() string {
+	return b.Message
+}

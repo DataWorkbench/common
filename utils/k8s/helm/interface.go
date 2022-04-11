@@ -10,7 +10,6 @@ type Values interface {
 	Parse() (string, error)
 }
 
-
 // helm chart interface
 // Chart is the proxy of helm chart that with the Values Configuration.
 type Chart interface {
@@ -31,7 +30,6 @@ type Chart interface {
 
 	IsDryRun() bool
 }
-
 
 // helm client interface for dataomnis-service
 type Helm interface {

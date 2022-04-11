@@ -44,8 +44,8 @@ func (h *Host) endpoint() string {
 }
 
 type Connection struct {
-	mux      sync.Mutex
-	client  *ssh.Client
+	mux    sync.Mutex
+	client *ssh.Client
 }
 
 func (c *Connection) Close() {
@@ -99,7 +99,7 @@ func (c *Connection) Mkdir(dir string) ([]byte, error) {
 	return session.CombinedOutput(cmd)
 }
 
-func NewConnection(host *Host)(*Connection, error) {
+func NewConnection(host *Host) (*Connection, error) {
 	if err := host.validate(); err != nil {
 		return nil, errors.Wrap(err, "validate Host failed")
 	}

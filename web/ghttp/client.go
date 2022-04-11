@@ -21,7 +21,7 @@ type ClientConfig struct {
 	IdleConnTimeout       time.Duration `json:"idle_conn_timeout"       yaml:"idle_conn_timeout"       env:"IDLE_CONN_TIMEOUT,default=30s"       validate:"required"`
 	MaxIdleConns          int           `json:"max_idle_conns"          yaml:"max_idle_conns"          env:"MAX_IDLE_CONNS,default=128"          validate:"required"`
 	MaxIdleConnsPerHost   int           `json:"max_idle_conns_per_host" yaml:"max_idle_conns_per_host" env:"MAX_IDLE_CONNS_PER_HOST,default=128" validate:"required"`
-	HttpProxy string `json:"http_proxy" yaml:"http_proxy" env:"HTTP_PROXY"`
+	HttpProxy             string        `json:"http_proxy" yaml:"http_proxy" env:"HTTP_PROXY"`
 }
 
 // NewClientConfig return a ClientConfig that can be used in most scenarios;
@@ -56,7 +56,7 @@ func NewClient(ctx context.Context, cfg *ClientConfig) *Client {
 		Control:       nil,
 	}
 	var proxy func(*http.Request) (*url.URL, error) = nil
-	if cfg.HttpProxy != ""{
+	if cfg.HttpProxy != "" {
 		proxy = func(_ *http.Request) (*url.URL, error) {
 			return url.Parse(cfg.HttpProxy)
 		}

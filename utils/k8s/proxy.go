@@ -4,8 +4,8 @@ import (
 	"context"
 	"github.com/DataWorkbench/glog"
 	corev1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
 )
@@ -69,7 +69,7 @@ func (p Proxy) CheckPodsReady(ctx context.Context, namespace string, ops metav1.
 	return true, nil
 }
 
-func (p Proxy)CopyConfigmap(ctx context.Context, oriNamespace, namespace, name string) error {
+func (p Proxy) CopyConfigmap(ctx context.Context, oriNamespace, namespace, name string) error {
 	_, err := p.Client.CoreV1().ConfigMaps(namespace).Get(ctx, name, metav1.GetOptions{})
 	if err != nil {
 		if errors.IsNotFound(err) {
@@ -96,7 +96,6 @@ func (p Proxy)CopyConfigmap(ctx context.Context, oriNamespace, namespace, name s
 	// exist, return
 	return err
 }
-
 
 // if kubeConfPath == "", create k8s client auth by ServiceAccount in RBAC (/var/run/secrets/kubernetes.io/serviceaccount)
 // otherwise kube client auth by kubeConfig in kubeConfPaths

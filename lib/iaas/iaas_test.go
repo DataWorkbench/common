@@ -2,6 +2,7 @@ package iaas_test
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
 	"github.com/DataWorkbench/common/lib/iaas"
@@ -43,4 +44,51 @@ func TestGetBalance(t *testing.T) {
 	balance, err := iaasClient.GetBalance(ctx, "usr-fkc8HdBQ")
 	require.Nil(t, err)
 	_ = balance
+}
+
+func TestAllocateVips(t *testing.T) {
+	iaasClient := getIaasClient()
+
+	vxnetId := "vxnet-mmwa7o8"
+	//owner := "usr-saZdUr2m"
+	//vipName := "dataomnis-flink-cfi-xxxxxxxxxxxxxxxx"
+	//
+	//jobId, vips, err := iaasClient.AllocateVips(ctx, &iaas.AllocateVipsInput{
+	//	VxnetId:    vxnetId,
+	//	VipName:    vipName,
+	//	TargetUser: owner,
+	//	VipAddrs:   nil,
+	//	VipRange:   "172.20.0.105-172.20.0.106",
+	//})
+	//require.Nil(t, err)
+	//fmt.Println(vips)
+	//
+	//// check and wait the job success.
+	//for {
+	//	jobSet, err := iaasClient.DescribeJobById(ctx, jobId)
+	//	require.Nil(t, err)
+	//	if jobSet.Status == iaas.JobSetStatusSuccessful {
+	//		break
+	//	}
+	//	time.Sleep(time.Second * 1)
+	//}
+
+	vipSet, err := iaasClient.DescribeVips(ctx, &iaas.DescribeVipsInput{
+		Limit:    20,
+		Offset:   0,
+		Vxnets:   []string{vxnetId},
+		Vips:     nil,
+		VipAddrs: nil,
+		//VipName:  vipName,
+		Owner: "",
+	})
+	require.Nil(t, err)
+
+	for _, vip := range vipSet {
+		fmt.Println(vip.VipAddr)
+	}
+
+	//vips := []string{"vip-5kn6n07j", "vip-d7bcte3p", "vip-sqco6hfb", "vip-1q3jze3a"}
+	//err = iaasClient.ReleaseVips(ctx, vips)
+	//require.Nil(t, err)
 }

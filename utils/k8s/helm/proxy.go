@@ -71,7 +71,7 @@ func NewProxy(namespace, kubeConfPath string, logger *glog.Logger, debug bool) (
 		namespace:       namespace,
 		repositoryCache: DefaultHelmRepoCache,
 		logger:          logger,
-		client: client,
+		client:          client,
 	}, err
 }
 
