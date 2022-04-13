@@ -34,9 +34,11 @@ func getIaasClient() *iaas.Client {
 
 func TestDescribeIaasVxnet(t *testing.T) {
 	iaasClient := getIaasClient()
-	vxnet, err := iaasClient.DescribeVxnetById(ctx, "vxnet-xxxxx")
-	require.NotNil(t, err)
+	vxnet, err := iaasClient.DescribeVxnetById(ctx, "vxnet-mmwa7o8")
+	require.Nil(t, err)
 	_ = vxnet
+	//ipNetwork := strings.Join(strings.Split(vxnet.Router.ManagerIp, ".")[:3], ".")
+	//fmt.Println(ipNetwork)
 }
 
 func TestGetBalance(t *testing.T) {
@@ -68,12 +70,13 @@ func TestAllocateVips(t *testing.T) {
 	//	jobSet, err := iaasClient.DescribeJobById(ctx, jobId)
 	//	require.Nil(t, err)
 	//	if jobSet.Status == iaas.JobSetStatusSuccessful {
+	//		fmt.Println("vip create successful")
 	//		break
 	//	}
-	//	time.Sleep(time.Second * 1)
+	//	time.Sleep(time.Second * 2)
 	//}
 
-	vipSet, err := iaasClient.DescribeVips(ctx, &iaas.DescribeVipsInput{
+	output, err := iaasClient.DescribeVips(ctx, &iaas.DescribeVipsInput{
 		Limit:    20,
 		Offset:   0,
 		Vxnets:   []string{vxnetId},
@@ -84,7 +87,7 @@ func TestAllocateVips(t *testing.T) {
 	})
 	require.Nil(t, err)
 
-	for _, vip := range vipSet {
+	for _, vip := range output.VipSet {
 		fmt.Println(vip.VipAddr)
 	}
 
@@ -92,3 +95,13 @@ func TestAllocateVips(t *testing.T) {
 	//err = iaasClient.ReleaseVips(ctx, vips)
 	//require.Nil(t, err)
 }
+
+//func TestDescribeAllVxnetResources(t *testing.T)  {
+//	iaasClient := getIaasClient()
+//	vxnetId := "vxnet-mmwa7o8"
+//
+//	vxnetResourceSet, err := iaasClient.DescribeAllVxnetResources(ctx, vxnetId)
+//	require.Nil(t, err)
+//	fmt.Println(len(vxnetResourceSet))
+//}
+//

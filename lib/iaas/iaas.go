@@ -387,11 +387,8 @@ func (c *Client) DescribeVxnetById(ctx context.Context, vxnetId string) (vxnet *
 	return
 }
 
-// DescribeVxnetResources query the vxnet's resources.
-// Notice: must access with the owner's assessKey/secretKey.
-func (c *Client) DescribeVxnetResources(ctx context.Context, vxnetId string, limit int, offset int, opts ...Option) (
-	vxnetResourceSet []*VxnetResource, err error) {
-
+func (c *Client) describeVxnetResources(ctx context.Context, vxnetId string, limit int, offset int, opts ...Option) (
+	output *DescribeVxnetResourcesOutput, err error) {
 	params := map[string]interface{}{
 		"action": "DescribeVxnetResources",
 		"vxnet":  vxnetId,
@@ -404,7 +401,55 @@ func (c *Client) DescribeVxnetResources(ctx context.Context, vxnetId string, lim
 	if err = c.sendRequest(ctx, params, &body, opts...); err != nil {
 		return
 	}
-	vxnetResourceSet = body.VxnetResourceSet
+	output = &body
+	return
+}
+
+// DescribeVxnetResources query the vxnet's resources.
+// Notice: must access with the owner's assessKey/secretKey.
+func (c *Client) DescribeVxnetResources(ctx context.Context, vxnetId string, limit int, offset int, opts ...Option) (
+	vxnetResourceSet []*VxnetResource, err error) {
+
+	var output *DescribeVxnetResourcesOutput
+	output, err = c.describeVxnetResources(ctx, vxnetId, limit, offset, opts...)
+	if err != nil {
+		return
+	}
+	vxnetResourceSet = output.VxnetResourceSet
+	return
+}
+
+// DescribeAllVxnetResources query the vxnet's all resources.
+// Notice: must access with the owner's assessKey/secretKey.
+func (c *Client) DescribeAllVxnetResources(ctx context.Context, vxnetId string, opts ...Option) (
+	vxnetResourceSet []*VxnetResource, err error) {
+
+	var output *DescribeVxnetResourcesOutput
+
+	setup := 0
+	offset := 0
+	limit := 100
+
+LOOP:
+	for {
+		// To avoid dead loop.
+		if setup >= 10 {
+			err = errors.New("DescribeAllVxnetResources: exception occurred in IaaS")
+			return nil, err
+		}
+
+		output, err = c.describeVxnetResources(ctx, vxnetId, limit, offset, opts...)
+		if err != nil {
+			return nil, err
+		}
+		vxnetResourceSet = append(vxnetResourceSet, output.VxnetResourceSet...)
+
+		if len(vxnetResourceSet) >= output.TotalCount {
+			break LOOP
+		}
+		offset = len(vxnetResourceSet)
+		setup++
+	}
 	return
 }
 
@@ -486,7 +531,7 @@ func (c *Client) ReleaseVips(ctx context.Context, vips []string) (jobId string, 
 	return
 }
 
-func (c *Client) DescribeVips(ctx context.Context, input *DescribeVipsInput) (vipSet []*VipSet, err error) {
+func (c *Client) DescribeVips(ctx context.Context, input *DescribeVipsInput) (output *DescribeVipsOutput, err error) {
 	params := map[string]interface{}{
 		"action":    "DescribeVips",
 		"zone":      c.cfg.Zone,
@@ -508,6 +553,38 @@ func (c *Client) DescribeVips(ctx context.Context, input *DescribeVipsInput) (vi
 	if err = c.sendRequest(ctx, params, &body); err != nil {
 		return
 	}
-	vipSet = body.VipSet
+	output = &body
+	return
+}
+
+func (c *Client) DescribeAllVips(ctx context.Context, input *DescribeVipsInput) (vipSet []*VipSet, err error) {
+	var output *DescribeVipsOutput
+
+	setup := 0
+	offset := 0
+	limit := 100
+
+LOOP:
+	for {
+		// To avoid dead loop.
+		if setup >= 10 {
+			err = errors.New("DescribeAllVips: exception occurred in IaaS")
+			return nil, err
+		}
+		input.Limit = limit
+		input.Offset = offset
+
+		output, err = c.DescribeVips(ctx, input)
+		if err != nil {
+			return nil, err
+		}
+		vipSet = append(vipSet, output.VipSet...)
+
+		if len(vipSet) >= output.TotalCount {
+			break LOOP
+		}
+		offset = len(vipSet)
+		setup++
+	}
 	return
 }
