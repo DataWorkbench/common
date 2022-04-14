@@ -376,7 +376,7 @@ func DescribeDatasourceTableSchemaHive(ctx context.Context, url *pbdatasource.Hi
 	return
 }
 
-// DescribeDataSourceTableSchema get the table schema of specified table in datasource.
+//DescribeDataSourceTableSchema get the table schema of specified table in datasource.
 func DescribeDataSourceTableSchema(ctx context.Context, sourceType pbmodel.DataSource_Type, sourceURL *pbmodel.DataSource_URL, tableName string) (*pbresponse.DescribeDataSourceTableSchema, error) {
 
 	var columns []*pbdatasource.TableColumn
