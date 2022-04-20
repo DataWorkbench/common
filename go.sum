@@ -47,8 +47,8 @@ github.com/DATA-DOG/go-sqlmock v1.5.0 h1:Shsta01QNfFxHCfpW6YH2STWB0MudeXXEWMr20O
 github.com/DATA-DOG/go-sqlmock v1.5.0/go.mod h1:f/Ixk793poVmq4qj/V1dPUg2JEAKC73Q5eFN3EC/SaM=
 github.com/DataWorkbench/glog v0.0.0-20220302035436-25a1ae256704 h1:XRck+LCallgKe6pR28PXsPadPTozMPwvrcx0GVf/b6g=
 github.com/DataWorkbench/glog v0.0.0-20220302035436-25a1ae256704/go.mod h1:zymxJLXn162xdWYUqIb729S3ZzRQpdTj/LwnW+xxru4=
-github.com/DataWorkbench/gproto v0.0.0-20220414035219-cee20b75739d h1:Y0oDB8dxUgJzgtcnF5KyPm4Nnp10gvys8tFDEllALkY=
-github.com/DataWorkbench/gproto v0.0.0-20220414035219-cee20b75739d/go.mod h1:OwdlVaVYjhBox3l6Gj1+0f2uU16r7g7xSb0fPXY0CeI=
+github.com/DataWorkbench/gproto v0.0.0-20220420085920-2f499b139536 h1:gcx75qiu/aI9O9r0w0vTu5/ZKOjI4fuVXsWP4fu++gU=
+github.com/DataWorkbench/gproto v0.0.0-20220420085920-2f499b139536/go.mod h1:FTxdaY0yL7zQcqfBWB9t8KubyDUyy1B+JvqjQlmVt5c=
 github.com/HdrHistogram/hdrhistogram-go v1.0.1 h1:GX8GAYDuhlFQnI2fRDHQhTlkHMz8bEn0jTI6LJU0mpw=
 github.com/HdrHistogram/hdrhistogram-go v1.0.1/go.mod h1:BWJ+nMSHY3L41Zj7CA3uXnloDp7xxV0YvstAE7nKTaM=
 github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible/go.mod h1:r7JcOSlj0wfOMncg0iLm8Leh48TZaKVeNIfJntJ2wa0=
@@ -1011,9 +1011,8 @@ github.com/yu31/dqueue v0.0.0-20220109113339-2dc95440c13c/go.mod h1:VvTk7r7w2dUN
 github.com/yu31/gcron v0.0.0-20220109164512-f4b84f672fef h1:T0gr9qfea07R2S9E3EVzWsJRuZHYjXCcGmtWTRjITfU=
 github.com/yu31/gcron v0.0.0-20220109164512-f4b84f672fef/go.mod h1:jW6Lqn5d71rdpbAC198RuOCjuSMq9XeGLmueQe6HIXY=
 github.com/yu31/gostructs v0.0.0-20220107115217-dc0130426169/go.mod h1:2nxYgIcGxEN5nRc3n3pRusl7ys+oEM14uInKe+WtouQ=
-github.com/yu31/protoc-plugin v0.0.0-20220203110934-7f035b2a8f28/go.mod h1:9OjgxZBT7i/e4V7OAubCmFXzlw2Llde6WF+PbHla2HY=
-github.com/yu31/protoc-plugin v0.0.0-20220204051042-6ae48e54d91b h1:l/Ie0G9t3FdxwaDVlLI8mFZM1HjpaIa7eexg/Z5Bnl8=
-github.com/yu31/protoc-plugin v0.0.0-20220204051042-6ae48e54d91b/go.mod h1:9OjgxZBT7i/e4V7OAubCmFXzlw2Llde6WF+PbHla2HY=
+github.com/yu31/protoc-plugin v0.0.0-20220417185426-73bdbff89e31 h1:lU75sD8R/33zXdz77rThQfYrTbNbEndZnEolUC17ntg=
+github.com/yu31/protoc-plugin v0.0.0-20220417185426-73bdbff89e31/go.mod h1:9OjgxZBT7i/e4V7OAubCmFXzlw2Llde6WF+PbHla2HY=
 github.com/yu31/snowflake v0.0.0-20220217043813-1552fe47d479 h1:prR7+f1tbpn7rRDiJjUAddLVxVZNLncwd0bZGzH4Eyo=
 github.com/yu31/snowflake v0.0.0-20220217043813-1552fe47d479/go.mod h1:kj86CfGUK7fPMCyw7lN1CgNDJ57GmtZgyzPqftMd0kQ=
 github.com/yu31/timewheel v0.0.0-20220109163912-40e763c466a9/go.mod h1:hKPiak/CDrs1AIcTOag/Ztk9JdSETveAEbFBxQmkZ88=

@@ -5,7 +5,7 @@ go 1.15
 require (
 	github.com/ClickHouse/clickhouse-go/v2 v2.0.12
 	github.com/DataWorkbench/glog v0.0.0-20220302035436-25a1ae256704
-	github.com/DataWorkbench/gproto v0.0.0-20220414035219-cee20b75739d
+	github.com/DataWorkbench/gproto v0.0.0-20220420085920-2f499b139536
 	github.com/HdrHistogram/hdrhistogram-go v1.0.1 // indirect
 	github.com/Shopify/sarama v1.29.1
 	github.com/buger/jsonparser v1.1.1
@@ -38,7 +38,7 @@ require (
 	github.com/tsuna/gohbase v0.0.0-20220316190246-5d94cc15d57f
 	github.com/uber/jaeger-client-go v2.29.1+incompatible
 	github.com/uber/jaeger-lib v2.4.0+incompatible // indirect
-	github.com/yu31/protoc-plugin v0.0.0-20220204051042-6ae48e54d91b
+	github.com/yu31/protoc-plugin v0.0.0-20220417185426-73bdbff89e31
 	github.com/yu31/snowflake v0.0.0-20220217043813-1552fe47d479
 	go.etcd.io/etcd/api/v3 v3.5.0
 	go.etcd.io/etcd/client/v3 v3.5.0

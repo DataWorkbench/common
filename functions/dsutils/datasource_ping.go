@@ -250,7 +250,7 @@ func pingElasticSearch(url *pbdatasource.ElasticSearchURL) (err error) {
 }
 
 func pingMongoDb(url *pbdatasource.MongoDbURL) (err error) {
-	session, err := mgo.Dial(fmt.Sprintf("%s:%d", url.Host, url.Port))
+	session, err := mgo.Dial(fmt.Sprintf("%s:%d", url.Hosts[0].Host, url.Hosts[0].Port))
 	if err != nil {
 		return err
 	}
