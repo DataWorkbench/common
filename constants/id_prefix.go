@@ -38,14 +38,14 @@ const (
 	// IdPrefixProjectModule represents the id prefix of `project module`
 	IdPrefixProjectModule = "pmo-"
 
-	// IdPrefixMonitorRule represents the id prefix of `monitor rule`.
-	IdPrefixMonitorRule = "mor-"
+	// IdPrefixAlertPolicy represents the id prefix of `alert policy`.
+	IdPrefixAlertPolicy = "alt-"
 
-	// IdPrefixUDF represents the id prefix of `UDF`.
-	IdPrefixUDF = "udf-"
-
-	// IdPrefixNotifier
+	// IdPrefixNotifier represents the id prefix of `Notifier`
 	IdPrefixNotifier = "nof-"
+
+	//// IdPrefixUDF represents the id prefix of `UDF`.
+	//IdPrefixUDF = "udf-"
 )
 
 // Defines the id for IdGenerator. To prevent ID conflicts.
@@ -60,7 +60,7 @@ const (
 	IdInstanceNetwork
 	IdInstanceDataSource
 	IdInstanceResourceFile
-	IdInstanceUDF
+	IdInstanceAlertPolicy
 )
 
 // Defines the id for IdGenerator. To prevent version conflicts.
