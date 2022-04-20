@@ -196,6 +196,9 @@ func pingFtp(url *pbdatasource.FtpURL) (err error) {
 		return err
 	}
 	err = conn.Login(url.User, url.Password)
+	if err != nil {
+		return err
+	}
 	_ = conn.Close()
 	return nil
 }

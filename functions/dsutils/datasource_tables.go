@@ -311,7 +311,7 @@ func DescribeDatasourceTablesElasticSearch(ctx context.Context, url *pbdatasourc
 }
 
 func DescribeDatasourceTablesMongodb(ctx context.Context, url *pbdatasource.MongoDbURL) (items []string, err error) {
-	session, err := mgo.Dial(fmt.Sprintf("%s:%d", url.Host, url.Port))
+	session, err := mgo.Dial(fmt.Sprintf("%s:%d", url.Hosts[0].Host, url.Hosts[0].Port))
 	if err != nil {
 		return nil, err
 	}
