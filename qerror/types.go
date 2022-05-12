@@ -124,6 +124,12 @@ var (
 
 // sign error
 var (
+	InvalidUserNameOrPassword = &Error{
+		code:   "InvalidUserNameOrPassword",
+		status: 400,
+		enUS:   "invalid user name or password",
+		zhCN:   "用户名或密码错误",
+	}
 	InvalidProvider = &Error{
 		code:   "InvalidProvider",
 		status: 400,

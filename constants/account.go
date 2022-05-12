@@ -47,6 +47,7 @@ const (
 	LocalUserPrefix     = Account + RedisSeparator + LocalSource + RedisSeparator + UserPrefix + RedisSeparator
 	DefaultUserPrefix   = LocalUserPrefix
 	SessionPrefix       = "session"
+	ProviderPrefix      = "provider"
 
 	UserCacheBaseSeconds         = 300
 	UserCacheRandomSeconds       = 120
