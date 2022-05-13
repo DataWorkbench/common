@@ -85,6 +85,21 @@ func (c *Client) ListJobs(ctx context.Context, flinkUrl string) (*JobsOverview, 
 	return data, nil
 }
 
+func (c *Client) ListTaskManagers(ctx context.Context, flinkUrl string) (*TaskManagers, error) {
+	var response *http.Response
+	defer func() {
+		if response != nil && response.Body != nil {
+			_ = response.Body.Close()
+		}
+	}()
+	url := fmt.Sprintf("http://%s/taskmanagers", flinkUrl)
+	data := new(TaskManagers)
+	if err := c.get(ctx, url, data); err != nil {
+		return nil, err
+	}
+	return data, nil
+}
+
 func (c *Client) DescribeJob(ctx context.Context, flinkUrl string, flinkId string) (*JobInfo, error) {
 	var response *http.Response
 	defer func() {
@@ -100,15 +115,15 @@ func (c *Client) DescribeJob(ctx context.Context, flinkUrl string, flinkId strin
 	return data, nil
 }
 
-func (c *Client) ListTaskManagers(ctx context.Context, flinkUrl string) (*TaskManagers, error) {
+func (c *Client) DescribeJobPlan(ctx context.Context, flinkUrl string, flinkId string) (*JobPlan, error) {
 	var response *http.Response
 	defer func() {
 		if response != nil && response.Body != nil {
 			_ = response.Body.Close()
 		}
 	}()
-	url := fmt.Sprintf("http://%s/taskmanagers", flinkUrl)
-	data := new(TaskManagers)
+	url := fmt.Sprintf("http://%s/jobs/%s/plan", flinkUrl, flinkId)
+	data := new(JobPlan)
 	if err := c.get(ctx, url, data); err != nil {
 		return nil, err
 	}
