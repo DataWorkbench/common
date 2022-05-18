@@ -74,3 +74,11 @@ func Test_Cancel(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func Test_CancelWithSavepoint(t *testing.T) {
+	points, err := client.CancelWithSavePoints(ctx, flinkUrl, "86fbaf46d85a7e6f01370b1d700c2891", true, "s3://flink-state/sp/0101")
+	if err != nil {
+		t.Error(err)
+	}
+	t.Log(points)
+}

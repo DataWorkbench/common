@@ -1,14 +1,14 @@
 package flink
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"net/http"
-
 	"github.com/DataWorkbench/common/qerror"
 	"github.com/DataWorkbench/common/web/ghttp"
+	"io/ioutil"
+	"net/http"
 )
 
 type Client struct {
@@ -162,4 +162,38 @@ func (c *Client) CancelJob(ctx context.Context, flinkUrl string, flinkId string)
 		return err
 	}
 	return nil
+}
+
+func (c *Client) CancelWithSavePoints(ctx context.Context, flinkUrl string, flinkId string, cancelJob bool, targetDirectory string) (requestId string, err error) {
+	var req *http.Request
+	var response *http.Response
+	var body []byte
+
+	defer func() {
+		if response != nil && response.Body != nil {
+			_ = response.Body.Close()
+		}
+	}()
+	url := fmt.Sprintf("http://%s/jobs/%s/savepoints", flinkUrl, flinkId)
+	body, err = json.Marshal(&map[string]interface{}{
+		"cancel-job":       cancelJob,
+		"target-directory": targetDirectory,
+	})
+	if err != nil {
+		return
+	}
+	req, err = http.NewRequest(http.MethodPost, url, bytes.NewReader(body))
+	if err != nil {
+		return
+	}
+	response, err = c.Send(ctx, req)
+	if err != nil {
+		return
+	}
+	body, err = ioutil.ReadAll(response.Body)
+	if err != nil {
+		return
+	}
+	requestId = string(body)
+	return
 }
