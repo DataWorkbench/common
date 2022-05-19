@@ -164,15 +164,7 @@ func (c *Client) CancelJob(ctx context.Context, flinkUrl string, flinkId string)
 	return nil
 }
 
-func (c *Client) TriggerSavepoint(ctx context.Context, flinkUrl string, flinkId string, targetDirectory string) (string, error) {
-	return c.SavePoint(ctx, flinkUrl, flinkId, false, targetDirectory)
-}
-
-func (c *Client) CancelWithSavepoint(ctx context.Context, flinkUrl string, flinkId string, targetDirectory string) (string, error) {
-	return c.SavePoint(ctx, flinkUrl, flinkId, true, targetDirectory)
-}
-
-func (c *Client) SavePoint(ctx context.Context, flinkUrl string, flinkId string, cancelJob bool, targetDirectory string) (requestId string, err error) {
+func (c *Client) SavePoints(ctx context.Context, flinkUrl string, flinkId string, cancelJob bool, targetDirectory string) (requestId string, err error) {
 	var req *http.Request
 	var response *http.Response
 	var body []byte
