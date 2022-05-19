@@ -164,7 +164,7 @@ func (c *Client) CancelJob(ctx context.Context, flinkUrl string, flinkId string)
 	return nil
 }
 
-func (c *Client) CancelWithSavePoints(ctx context.Context, flinkUrl string, flinkId string, cancelJob bool, targetDirectory string) (requestId string, err error) {
+func (c *Client) CancelWithSavePoint(ctx context.Context, flinkUrl string, flinkId string, targetDirectory string) (requestId string, err error) {
 	var req *http.Request
 	var response *http.Response
 	var body []byte
@@ -176,7 +176,7 @@ func (c *Client) CancelWithSavePoints(ctx context.Context, flinkUrl string, flin
 	}()
 	url := fmt.Sprintf("http://%s/jobs/%s/savepoints", flinkUrl, flinkId)
 	body, err = json.Marshal(&map[string]interface{}{
-		"cancel-job":       cancelJob,
+		"cancel-job":       true,
 		"target-directory": targetDirectory,
 	})
 	if err != nil {
