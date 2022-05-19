@@ -47,8 +47,8 @@ github.com/DATA-DOG/go-sqlmock v1.5.0 h1:Shsta01QNfFxHCfpW6YH2STWB0MudeXXEWMr20O
 github.com/DATA-DOG/go-sqlmock v1.5.0/go.mod h1:f/Ixk793poVmq4qj/V1dPUg2JEAKC73Q5eFN3EC/SaM=
 github.com/DataWorkbench/glog v0.0.0-20220302035436-25a1ae256704 h1:XRck+LCallgKe6pR28PXsPadPTozMPwvrcx0GVf/b6g=
 github.com/DataWorkbench/glog v0.0.0-20220302035436-25a1ae256704/go.mod h1:zymxJLXn162xdWYUqIb729S3ZzRQpdTj/LwnW+xxru4=
-github.com/DataWorkbench/gproto v0.0.0-20220420085920-2f499b139536 h1:gcx75qiu/aI9O9r0w0vTu5/ZKOjI4fuVXsWP4fu++gU=
-github.com/DataWorkbench/gproto v0.0.0-20220420085920-2f499b139536/go.mod h1:FTxdaY0yL7zQcqfBWB9t8KubyDUyy1B+JvqjQlmVt5c=
+github.com/DataWorkbench/gproto v0.0.0-20220519141407-a811d75e1e22 h1:druLBWw35w8AfLEU0b7RnFwwiksQFqOflqPvXorC66o=
+github.com/DataWorkbench/gproto v0.0.0-20220519141407-a811d75e1e22/go.mod h1:FTxdaY0yL7zQcqfBWB9t8KubyDUyy1B+JvqjQlmVt5c=
 github.com/HdrHistogram/hdrhistogram-go v1.0.1 h1:GX8GAYDuhlFQnI2fRDHQhTlkHMz8bEn0jTI6LJU0mpw=
 github.com/HdrHistogram/hdrhistogram-go v1.0.1/go.mod h1:BWJ+nMSHY3L41Zj7CA3uXnloDp7xxV0YvstAE7nKTaM=
 github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible/go.mod h1:r7JcOSlj0wfOMncg0iLm8Leh48TZaKVeNIfJntJ2wa0=

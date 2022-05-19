@@ -5,7 +5,7 @@ go 1.15
 require (
 	github.com/ClickHouse/clickhouse-go/v2 v2.0.12
 	github.com/DataWorkbench/glog v0.0.0-20220302035436-25a1ae256704
-	github.com/DataWorkbench/gproto v0.0.0-20220420085920-2f499b139536
+	github.com/DataWorkbench/gproto v0.0.0-20220519141407-a811d75e1e22
 	github.com/HdrHistogram/hdrhistogram-go v1.0.1 // indirect
 	github.com/Shopify/sarama v1.29.1
 	github.com/buger/jsonparser v1.1.1

@@ -323,31 +323,43 @@ var (
 
 // workspace error
 var (
-	SpaceProhibitDelete = &Error{
-		code:   "SpaceProhibitDelete",
-		status: 403,
-		enUS:   "The workspace [%s] cannot be deleted, Please delete all flink clusters in the space first.",
-		zhCN:   "工作空间 [%s] 不能被删除, 请先删除空间内的所有计算集群.",
+	NoNetworkConfig = &Error{
+		code:   "NoNetworkConfig",
+		status: 400,
+		enUS:   "The network config is not initialization in workspace [%s]",
+		zhCN:   "工作空间 [%s] 的网络配置未初始化",
 	}
-
-//SpaceNotExists = &Error{
-//	code:   "SpaceNotExists",
-//	status: 404,
-//	enUS:   "The workspace [%s] does not exists.",
-//	zhCN:   "工作空间[%s]不存在.",
-//}
-//SpaceAlreadyExists = &Error{
-//	code:   "SpaceAlreadyExists",
-//	status: 409,
-//	enUS:   "The workspace name [%s] has been used.",
-//	zhCN:   "工作空间名称[%s]已被使用.",
-//}
-//SpaceNotActive = &Error{
-//	code:   "SpaceNotActive",
-//	status: 403,
-//	enUS:   "The workspace [%s] does not active.",
-//	zhCN:   "工作空间[%s]已被禁用",
-//}
+	//SpaceProhibitDelete = &Error{
+	//	code:   "SpaceProhibitDelete",
+	//	status: 403,
+	//	enUS:   "The workspace [%s] cannot be deleted, Please delete all flink clusters in this space first.",
+	//	zhCN:   "工作空间 [%s] 不能被删除, 请先删除空间内的所有计算集群.",
+	//}
+	//
+	//SpaceProhibitDisable = &Error{
+	//	code:   "SpaceProhibitDisable",
+	//	status: 403,
+	//	enUS:   "The workspace [%s] cannot be disabled, Please delete all flink clusters in this space first.",
+	//	zhCN:   "工作空间 [%s] 不能被禁用, 请先删除空间内的所有计算集群.",
+	//}
+	//SpaceNotExists = &Error{
+	//	code:   "SpaceNotExists",
+	//	status: 404,
+	//	enUS:   "The workspace [%s] does not exists.",
+	//	zhCN:   "工作空间[%s]不存在.",
+	//}
+	//SpaceAlreadyExists = &Error{
+	//	code:   "SpaceAlreadyExists",
+	//	status: 409,
+	//	enUS:   "The workspace name [%s] has been used.",
+	//	zhCN:   "工作空间名称[%s]已被使用.",
+	//}
+	//SpaceNotActive = &Error{
+	//	code:   "SpaceNotActive",
+	//	status: 403,
+	//	enUS:   "The workspace [%s] does not active.",
+	//	zhCN:   "工作空间[%s]已被禁用",
+	//}
 )
 
 // member error

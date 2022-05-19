@@ -1,6 +1,10 @@
 package iaas
 
-import "encoding/json"
+import (
+	"encoding/json"
+
+	"github.com/DataWorkbench/gproto/xgo/types/pbmodel/pbiaas"
+)
 
 type ResponseBody interface {
 	ReturnCode() int
@@ -61,24 +65,26 @@ func (b *DescribeAccessKeysOutput) ReturnMessage() string {
 }
 
 // Router represents the router info.
-type Router struct {
-	RouterId   string `json:"router_id"`
-	RouterName string `json:"router_name"`
-	RouterType int    `json:"router_type"`
-	Owner      string `json:"owner"`
-	Status     string `json:"status"`
-	BaseVxnet  string `json:"base_vxnet"`
-	VPCNetwork string `json:"vpc_network"`
-	PrivateIP  string `json:"private_ip"`
-	VPCId      string `json:"vpc_id"`
+type Router = pbiaas.Router
 
-	// Field for DescribeVxnets
-	ManagerIp       string `json:"manager_ip"`
-	IpNetwork       string `json:"ip_network"`
-	DynIpStart      string `json:"dyn_ip_start"`
-	DynIpEnd        string `json:"dyn_ip_end"`
-	BorderPrivateIp string `json:"border_private_ip"`
-}
+//type Router struct {
+//	RouterId   string `json:"router_id"`
+//	RouterName string `json:"router_name"`
+//	RouterType int    `json:"router_type"`
+//	Owner      string `json:"owner"`
+//	Status     string `json:"status"`
+//	BaseVxnet  string `json:"base_vxnet"`
+//	VPCNetwork string `json:"vpc_network"`
+//	PrivateIP  string `json:"private_ip"`
+//	VPCId      string `json:"vpc_id"`
+//
+//	// Field for DescribeVxnets
+//	ManagerIp       string `json:"manager_ip"`
+//	IpNetwork       string `json:"ip_network"`
+//	DynIpStart      string `json:"dyn_ip_start"`
+//	DynIpEnd        string `json:"dyn_ip_end"`
+//	BorderPrivateIp string `json:"border_private_ip"`
+//}
 
 // DescribeRoutersOutput is type response body for action "DescribeRouters"
 type DescribeRoutersOutput struct {
@@ -97,23 +103,25 @@ func (b *DescribeRoutersOutput) ReturnMessage() string {
 }
 
 // RouterVxnet represetns the RouterVxnet info.
-type RouterVxnet struct {
-	RouterId        string `json:"router_id"`
-	VxnetId         string `json:"vxnet_id"`
-	VxnetName       string `json:"vxnet_name"`
-	DynIpStart      string `json:"dyn_ip_start"`
-	DynIpEnd        string `json:"dyn_ip_end"`
-	DynIpv6Start    string `json:"dyn_ipv_6_start"`
-	DynIpv6End      string `json:"dyn_ipv_6_end"`
-	Owner           string `json:"owner"`
-	BorderPrivateIp string `json:"border_private_ip"`
-	ManagerIp       string `json:"manager_ip"`
-	BorderId        string `json:"border_id"`
-	IpNetwork       string `json:"ip_network"`
-	Ipv6Network     string `json:"ipv_6_network"`
-	Mode            int    `json:"mode"`
-	VpcId           string `json:"vpc_id"`
-}
+type RouterVxnet = pbiaas.RouterVxnet
+
+//type RouterVxnet struct {
+//	RouterId        string `json:"router_id"`
+//	VxnetId         string `json:"vxnet_id"`
+//	VxnetName       string `json:"vxnet_name"`
+//	DynIpStart      string `json:"dyn_ip_start"`
+//	DynIpEnd        string `json:"dyn_ip_end"`
+//	DynIpv6Start    string `json:"dyn_ipv_6_start"`
+//	DynIpv6End      string `json:"dyn_ipv_6_end"`
+//	Owner           string `json:"owner"`
+//	BorderPrivateIp string `json:"border_private_ip"`
+//	ManagerIp       string `json:"manager_ip"`
+//	BorderId        string `json:"border_id"`
+//	IpNetwork       string `json:"ip_network"`
+//	Ipv6Network     string `json:"ipv_6_network"`
+//	Mode            int    `json:"mode"`
+//	VpcId           string `json:"vpc_id"`
+//}
 
 // DescribeRouterVxnetsOutput is the type of response body of action "DescribeRouterVxnets"
 type DescribeRouterVxnetsOutput struct {
@@ -132,15 +140,17 @@ func (b *DescribeRouterVxnetsOutput) ReturnMessage() string {
 }
 
 // Vxnet represents the vxnet info.
-type Vxnet struct {
-	VxnetId     string  `json:"vxnet_id"`
-	VxnetName   string  `json:"vxnet_name"`
-	VxnetType   int     `json:"vxnet_type"`
-	Owner       string  `json:"owner"`
-	TunnelType  string  `json:"tunnel_type"`
-	VpcRouterId string  `json:"vpc_router_id"`
-	Router      *Router `json:"router"`
-}
+type Vxnet = pbiaas.VXNet
+
+//type Vxnet struct {
+//	VxnetId     string  `json:"vxnet_id"`
+//	VxnetName   string  `json:"vxnet_name"`
+//	VxnetType   int     `json:"vxnet_type"`
+//	Owner       string  `json:"owner"`
+//	TunnelType  string  `json:"tunnel_type"`
+//	VpcRouterId string  `json:"vpc_router_id"`
+//	Router      *Router `json:"router"`
+//}
 
 // DescribeVxnetsOuput is the type of response body of action "DescribeVxnets"
 type DescribeVxnetsOuput struct {

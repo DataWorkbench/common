@@ -243,7 +243,7 @@ func (c *Client) DescribeUsersById(ctx context.Context, userId string) (user *Us
 		return
 	}
 	if len(body.UserSet) == 0 {
-		err = errors.New("user_not_exists")
+		err = ErrUserNotExists
 		return
 	}
 	user = body.UserSet[0]
@@ -264,7 +264,7 @@ func (c *Client) DescribeAccessKeysById(ctx context.Context, accessKeyId string)
 		return
 	}
 	if len(body.AccessKeySet) == 0 {
-		err = errors.New("access_key_not_exists")
+		err = ErrAccessKeyNotExists
 		return
 	}
 	accessKey = body.AccessKeySet[0]
@@ -286,7 +286,7 @@ func (c *Client) DescribeAccessKeysByOwner(ctx context.Context, owner string) (a
 		return
 	}
 	if len(body.AccessKeySet) == 0 {
-		err = errors.New("access_key_not_exists")
+		err = ErrAccessKeyNotExists
 		return
 	}
 	accessKey = body.AccessKeySet[0]
@@ -294,7 +294,7 @@ func (c *Client) DescribeAccessKeysByOwner(ctx context.Context, owner string) (a
 }
 
 // DescribeRoutersByOwner query the route info of specified owner.
-func (c *Client) DescribeRoutersByOwner(ctx context.Context, owner string) (resp *DescribeRoutersOutput, err error) {
+func (c *Client) DescribeRoutersByOwner(ctx context.Context, owner string, limit int, offset int) (resp *DescribeRoutersOutput, err error) {
 	params := map[string]interface{}{
 		"action":      "DescribeRouters",
 		"routers":     []string{},
@@ -302,13 +302,32 @@ func (c *Client) DescribeRoutersByOwner(ctx context.Context, owner string) (resp
 		"status":      []string{"pending", "active", "poweroffed", "suspended"},
 		"router_type": []int{1, 0, 2, 3},
 		"mode":        0,
-		"verbose":     0,
-		"limit":       100,
-		"offset":      0,
+		"verbose":     1,
 		"owner":       owner,
+		"limit":       limit,
+		"offset":      offset,
 	}
 
 	var body DescribeRoutersOutput
+	if err = c.sendRequest(ctx, params, &body); err != nil {
+		return
+	}
+	resp = &body
+	return
+}
+
+// DescribeRouterVxnetsById query the router's vxnets by specified routerId.
+func (c *Client) DescribeRouterVxnetsById(ctx context.Context, routerId string, limit int, offset int) (resp *DescribeRouterVxnetsOutput, err error) {
+	params := map[string]interface{}{
+		"action":  "DescribeRouterVxnets",
+		"router":  []string{routerId},
+		"zone":    c.cfg.Zone,
+		"verbose": 0,
+		"limit":   limit,
+		"offset":  offset,
+	}
+
+	var body DescribeRouterVxnetsOutput
 	if err = c.sendRequest(ctx, params, &body); err != nil {
 		return
 	}
@@ -335,29 +354,10 @@ func (c *Client) DescribeRoutersById(ctx context.Context, routerId string) (rout
 		return
 	}
 	if len(body.RouterSet) == 0 {
-		err = errors.New("router_key_not_exists")
+		err = ErrRouterNotExists
 		return
 	}
 	router = body.RouterSet[0]
-	return
-}
-
-// DescribeRouterVxnetsById query the router's vxnets by specified routerId.
-func (c *Client) DescribeRouterVxnetsById(ctx context.Context, routerId string) (routerVxnetSet []*RouterVxnet, err error) {
-	params := map[string]interface{}{
-		"action":  "DescribeRouterVxnets",
-		"router":  []string{routerId},
-		"zone":    c.cfg.Zone,
-		"verbose": 0,
-		"limit":   100,
-		"offset":  0,
-	}
-
-	var body DescribeRouterVxnetsOutput
-	if err = c.sendRequest(ctx, params, &body); err != nil {
-		return
-	}
-	routerVxnetSet = body.RouterVxnetSet
 	return
 }
 
@@ -380,7 +380,7 @@ func (c *Client) DescribeVxnetById(ctx context.Context, vxnetId string) (vxnet *
 		return
 	}
 	if len(body.VxnetSet) == 0 {
-		err = errors.New("vxnet_not_exists")
+		err = ErrVXNetNotExists
 		return
 	}
 	vxnet = body.VxnetSet[0]
