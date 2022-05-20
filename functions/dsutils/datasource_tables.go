@@ -316,6 +316,13 @@ func DescribeDatasourceTablesMongodb(ctx context.Context, url *pbdatasource.Mong
 		return nil, err
 	}
 	session.SetMode(mgo.Monotonic, true)
+	if url.User != "" && url.Password != "" {
+		db := session.DB("admin")
+		err = db.Login(url.User, url.Password)
+		if err != nil {
+			return nil, err
+		}
+	}
 	db := session.DB(url.Database)
 	defer session.Close()
 	return db.CollectionNames()

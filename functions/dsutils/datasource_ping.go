@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/dazheng/gohive"
+	"github.com/go-redis/redis"
 	"gopkg.in/mgo.v2"
 	"io"
 	"io/ioutil"
@@ -80,6 +81,7 @@ func pingPostgreSQL(url *pbdatasource.PostgreSQLURL) (err error) {
 	}
 	return
 }
+
 func pingSqlServer(url *pbdatasource.SqlServerURL) (err error) {
 	var conn net.Conn
 
@@ -182,10 +184,11 @@ func pingHBase(url *pbdatasource.HBaseURL) (err error) {
 	}
 
 	conn, _, err = zk.Connect(servers, time.Millisecond*100)
-	if err == nil {
-		conn.Close()
+	if err != nil {
+		return err
 	}
-	return err
+	defer conn.Close()
+	return nil
 }
 
 func pingFtp(url *pbdatasource.FtpURL) (err error) {
@@ -221,7 +224,7 @@ func pingHDFS(url *pbdatasource.HDFSURL) (err error) {
 func pingHive(url *pbdatasource.HiveURL) (err error) {
 	conn, err := gohive.Connect(fmt.Sprintf("%s:%d", url.Host, url.Port), gohive.DefaultOptions)
 	if err != nil {
-		return nil
+		return err
 	}
 	defer conn.Close()
 	return nil
@@ -257,7 +260,31 @@ func pingMongoDb(url *pbdatasource.MongoDbURL) (err error) {
 	if err != nil {
 		return err
 	}
+	session.SetMode(mgo.Monotonic, true)
+	if url.User != "" && url.Password != "" {
+		db := session.DB("admin")
+		err = db.Login(url.User, url.Password)
+		if err != nil {
+			return err
+		}
+	}
 	defer session.Close()
+	return nil
+}
+
+func pingRedis(url *pbdatasource.RedisURL) (err error) {
+	var redisOption = redis.Options{
+		Addr: fmt.Sprintf("%s:%d", url.Hosts[0].Host, url.Hosts[0].Port),
+	}
+	if url.Password != "" {
+		redisOption.Password = url.Password
+	}
+
+	client := redis.NewClient(&redisOption)
+	_, err = client.Ping().Result()
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -298,7 +325,7 @@ func PingDataSourceConnection(ctx context.Context, sourceType pbmodel.DataSource
 	case pbmodel.DataSource_MongoDb:
 		err = pingMongoDb(sourceURL.MongoDb)
 	case pbmodel.DataSource_Redis:
-		//empty
+		err = pingRedis(sourceURL.Redis)
 	}
 
 	if err != nil {
