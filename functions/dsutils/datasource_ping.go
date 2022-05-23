@@ -187,6 +187,10 @@ func pingHBase(url *pbdatasource.HBaseURL) (err error) {
 	if err != nil {
 		return err
 	}
+	_, _, _, err = conn.ExistsW("/")
+	if err != nil {
+		return err
+	}
 	defer conn.Close()
 	return nil
 }

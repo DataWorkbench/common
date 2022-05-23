@@ -379,7 +379,6 @@ func DescribeDataSourceTables(ctx context.Context, sourceType pbmodel.DataSource
 	case pbmodel.DataSource_ClickHouse:
 		items, err = DescribeDatasourceTablesClickHouse(ctx, sourceURL.Clickhouse)
 	case pbmodel.DataSource_HBase:
-		//todo first
 		items, err = DescribeDatasourceTablesHbase(ctx, sourceURL.Hbase)
 	//case pbmodel.DataSource_Ftp:
 	//	// empty no need
