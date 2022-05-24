@@ -250,6 +250,23 @@ func (c *Client) DescribeUsersById(ctx context.Context, userId string) (user *Us
 	return
 }
 
+// DescribeUsersByIds get the list of user by giving user ids.
+func (c *Client) DescribeUsersByIds(ctx context.Context, userIds []string) (users []*User, err error) {
+	if len(userIds) == 0 {
+		return nil, errors.New("the userIds cat not be empty")
+	}
+	params := map[string]interface{}{
+		"action": "DescribeUsers",
+		"users":  userIds,
+	}
+	var body DescribeUsersOutput
+	if err = c.sendRequest(ctx, params, &body); err != nil {
+		return
+	}
+	users = body.UserSet
+	return
+}
+
 // DescribeAccessKeysById query the access key info by the specified accessKeyId.
 func (c *Client) DescribeAccessKeysById(ctx context.Context, accessKeyId string) (accessKey *AccessKey, err error) {
 	params := map[string]interface{}{
