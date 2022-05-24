@@ -3,6 +3,7 @@ package gtrace
 import (
 	"io"
 
+	"github.com/DataWorkbench/glog"
 	"github.com/opentracing/opentracing-go"
 	"github.com/uber/jaeger-client-go"
 	"github.com/uber/jaeger-client-go/config"
@@ -20,7 +21,20 @@ type Config struct {
 // New create a new opentracing.Tracer by jaeger.
 func New(cfg *Config) (tracer Tracer, closer io.Closer, err error) {
 	// Config the jaeger
-	jCfg := config.Configuration{
+	jCfg := genJaegerConfig(cfg)
+	tracer, closer, err = jCfg.NewTracer(config.Logger(jaeger.NullLogger))
+	return
+}
+
+func NewWithGLog(cfg *Config, lg *glog.Logger) (tracer Tracer, closer io.Closer, err error) {
+	// Config the jaeger
+	jCfg := genJaegerConfig(cfg)
+	tracer, closer, err = jCfg.NewTracer(config.Logger(&logger{Output: lg}))
+	return
+}
+
+func genJaegerConfig(cfg *Config) config.Configuration {
+	return config.Configuration{
 		ServiceName: cfg.ServiceName,
 		Sampler: &config.SamplerConfig{
 			Type:  "const",
@@ -40,7 +54,4 @@ func New(cfg *Config) (tracer Tracer, closer io.Closer, err error) {
 			TraceBaggageHeaderPrefix: "x-trace-ctx",
 		},
 	}
-
-	tracer, closer, err = jCfg.NewTracer(config.Logger(jaeger.StdLogger))
-	return
 }
