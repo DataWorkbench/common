@@ -13,15 +13,30 @@ type ResponseBody interface {
 
 // User represents the user info.
 type User struct {
-	UserId     string   `json:"user_id"`
-	Name       string   `json:"user_name"`
-	Email      string   `json:"email"`
-	RootUserId string   `json:"root_user_id"`
-	Role       string   `json:"role"`
-	Status     string   `json:"status"`
-	Privilege  int      `json:"privilege"`
-	Zones      []string `json:"zones"`
-	Regions    []string `json:"regions"`
+	UserId        string   `json:"user_id"`
+	Name          string   `json:"user_name"`
+	Email         string   `json:"email"`
+	RootUserId    string   `json:"root_user_id"`
+	Role          string   `json:"role"`
+	Privilege     int      `json:"privilege"`
+	Status        string   `json:"status"`
+	Zones         []string `json:"zones"`
+	Regions       []string `json:"regions"`
+	NotifyEmail   string   `json:"notify_email"`
+	VerifyType    string   `json:"verify_type"`
+	PaidMode      string   `json:"paid_mode"`
+	GravatarEmail string   `json:"gravatar_email"`
+	PersonalName  string   `json:"personal_name"`
+	CompanyName   string   `json:"company_name"`
+	CompanyPhone  string   `json:"company_phone"`
+	CompanyCode   string   `json:"company_code"`
+	Phone         string   `json:"phone"`
+	ConsoleId     string   `json:"console_id"`
+	Gender        string   `json:"gender"`
+	Remarks       string   `json:"remarks"`
+	MktSource     string   `json:"mkt_source"`
+	CreateTime    string   `json:"create_time"`
+	StatusTime    string   `json:"status_time"`
 }
 
 // DescribeUsersOutput is type response body for action "DescribeUsers"
