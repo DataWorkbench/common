@@ -310,13 +310,14 @@ func (c *Client) DescribeAccessKeysByOwner(ctx context.Context, owner string) (a
 	return
 }
 
-// DescribeRoutersByOwner query the route info of specified owner.
-func (c *Client) DescribeRoutersByOwner(ctx context.Context, owner string, limit int, offset int) (resp *DescribeRoutersOutput, err error) {
+// DescribeActiveRoutersByOwner only query the active router by giving owner.
+func (c *Client) DescribeActiveRoutersByOwner(ctx context.Context, owner string, limit int, offset int) (
+	resp *DescribeRoutersOutput, err error) {
 	params := map[string]interface{}{
 		"action":      "DescribeRouters",
 		"routers":     []string{},
 		"zone":        c.cfg.Zone,
-		"status":      []string{"pending", "active", "poweroffed", "suspended"},
+		"status":      []string{"active"},
 		"router_type": []int{1, 0, 2, 3},
 		"mode":        0,
 		"verbose":     1,
@@ -333,18 +334,23 @@ func (c *Client) DescribeRoutersByOwner(ctx context.Context, owner string, limit
 	return
 }
 
-// DescribeRouterVxnetsById query the router's vxnets by specified routerId.
-func (c *Client) DescribeRouterVxnetsById(ctx context.Context, routerId string, limit int, offset int) (resp *DescribeRouterVxnetsOutput, err error) {
+// DescribeRoutersByOwner query the route info of specified owner.
+func (c *Client) DescribeRoutersByOwner(ctx context.Context, owner string, limit int, offset int) (
+	resp *DescribeRoutersOutput, err error) {
 	params := map[string]interface{}{
-		"action":  "DescribeRouterVxnets",
-		"router":  []string{routerId},
-		"zone":    c.cfg.Zone,
-		"verbose": 0,
-		"limit":   limit,
-		"offset":  offset,
+		"action":      "DescribeRouters",
+		"routers":     []string{},
+		"zone":        c.cfg.Zone,
+		"status":      []string{"pending", "active", "poweroffed", "suspended"},
+		"router_type": []int{1, 0, 2, 3, 99},
+		"mode":        0,
+		"verbose":     1,
+		"owner":       owner,
+		"limit":       limit,
+		"offset":      offset,
 	}
 
-	var body DescribeRouterVxnetsOutput
+	var body DescribeRoutersOutput
 	if err = c.sendRequest(ctx, params, &body); err != nil {
 		return
 	}
@@ -375,6 +381,25 @@ func (c *Client) DescribeRoutersById(ctx context.Context, routerId string) (rout
 		return
 	}
 	router = body.RouterSet[0]
+	return
+}
+
+// DescribeRouterVxnetsById query the router's vxnets by specified routerId.
+func (c *Client) DescribeRouterVxnetsById(ctx context.Context, routerId string, limit int, offset int) (resp *DescribeRouterVxnetsOutput, err error) {
+	params := map[string]interface{}{
+		"action":  "DescribeRouterVxnets",
+		"router":  []string{routerId},
+		"zone":    c.cfg.Zone,
+		"verbose": 0,
+		"limit":   limit,
+		"offset":  offset,
+	}
+
+	var body DescribeRouterVxnetsOutput
+	if err = c.sendRequest(ctx, params, &body); err != nil {
+		return
+	}
+	resp = &body
 	return
 }
 
