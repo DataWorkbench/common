@@ -11,17 +11,17 @@ import (
 	"github.com/DataWorkbench/gproto/xgo/types/pbmodel/pbdatasource"
 	"github.com/DataWorkbench/gproto/xgo/types/pbresponse"
 	"github.com/Shopify/sarama"
+	"github.com/dazheng/gohive"
+	_ "github.com/denisenkom/go-mssqldb"
+	elastic6 "github.com/olivere/elastic/v6"
+	elastic7 "github.com/olivere/elastic/v7"
 	"github.com/tsuna/gohbase"
 	"github.com/tsuna/gohbase/hrpc"
 	"gopkg.in/mgo.v2"
-	"time"
-
-	"github.com/dazheng/gohive"
-	elastic6 "github.com/olivere/elastic/v6"
-	elastic7 "github.com/olivere/elastic/v7"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"time"
 )
 
 // DescribeDatasourceTablesMySQL get a table list of type MySQL.

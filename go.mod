@@ -12,6 +12,7 @@ require (
 	github.com/creasty/defaults v1.5.1
 	github.com/dazheng/gohive v0.0.0-20190904024313-b1810177c8f2
 	github.com/deathowl/go-metrics-prometheus v0.0.0-20200518174047-74482eab5bfb
+	github.com/denisenkom/go-mssqldb v0.0.0-20191001013358-cfbb681360f0
 	github.com/dutchcoders/goftp v0.0.0-20170301105846-ed59a591ce14
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.7.3
