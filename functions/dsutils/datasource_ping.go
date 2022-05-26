@@ -222,7 +222,7 @@ func pingFtp(url *pbdatasource.FtpURL) (err error) {
 	}*/
 	signer, err := ssh.ParsePrivateKey([]byte(url.PrivateKey))
 	if err != nil {
-		fmt.Println(err)
+		return err
 	}
 	config := &ssh.ClientConfig{
 		User: url.User,
@@ -242,6 +242,7 @@ func pingFtp(url *pbdatasource.FtpURL) (err error) {
 	}
 	// Close connection
 	defer client.Close()
+	defer conn.Close()
 	return nil
 }
 
