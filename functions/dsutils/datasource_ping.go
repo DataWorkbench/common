@@ -14,7 +14,9 @@ import (
 	"github.com/go-redis/redis"
 	elastic6 "github.com/olivere/elastic/v6"
 	elastic7 "github.com/olivere/elastic/v7"
+	"github.com/pkg/sftp"
 	"github.com/samuel/go-zookeeper/zk"
+	"golang.org/x/crypto/ssh"
 	"gopkg.in/mgo.v2"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
@@ -196,17 +198,50 @@ func pingHBase(url *pbdatasource.HBaseURL) (err error) {
 }
 
 func pingFtp(url *pbdatasource.FtpURL) (err error) {
-	var (
-		conn *goftp.FTP
-	)
-	if conn, err = goftp.Connect(fmt.Sprintf("%v:%d", url.Host, url.Port)); err != nil {
-		return err
+	if url.Protocol.Number() == 1 {
+		//ftp
+		conn, err := goftp.Connect(fmt.Sprintf("%v:%d", url.Host, url.Port))
+		if err != nil {
+			return err
+		}
+		err = conn.Login(url.User, url.Password)
+		if err != nil {
+			return err
+		}
+		_ = conn.Close()
+		return nil
 	}
-	err = conn.Login(url.User, url.Password)
+	//sftp
+	/*homePath, err := os.UserHomeDir()
+	if err != nil {
+		fmt.Println(err)
+	}
+	key, err := ioutil.ReadFile(path.Join(homePath, ".ssh", "id_rsa"))
+	if err != nil {
+		fmt.Println(err)
+	}*/
+	signer, err := ssh.ParsePrivateKey([]byte(url.PrivateKey))
+	if err != nil {
+		fmt.Println(err)
+	}
+	config := &ssh.ClientConfig{
+		User: url.User,
+		Auth: []ssh.AuthMethod{
+			ssh.Password(url.Password),
+			ssh.PublicKeys(signer),
+		},
+		HostKeyCallback: ssh.InsecureIgnoreHostKey(),
+	}
+	conn, err := ssh.Dial("tcp", url.Host, config)
 	if err != nil {
 		return err
 	}
-	_ = conn.Close()
+	client, err := sftp.NewClient(conn)
+	if err != nil {
+		return err
+	}
+	// Close connection
+	defer client.Close()
 	return nil
 }
 
