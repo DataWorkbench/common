@@ -4,18 +4,18 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"github.com/ClickHouse/clickhouse-go/v2"
 	"github.com/DataWorkbench/common/qerror"
 	"github.com/DataWorkbench/gproto/xgo/types/pbmodel"
+	"github.com/DataWorkbench/gproto/xgo/types/pbmodel/pbdatasource"
 	"github.com/DataWorkbench/gproto/xgo/types/pbresponse"
 	"github.com/dazheng/gohive"
-	"strings"
-	"time"
-
-	"github.com/ClickHouse/clickhouse-go/v2"
-	"github.com/DataWorkbench/gproto/xgo/types/pbmodel/pbdatasource"
+	_ "github.com/denisenkom/go-mssqldb"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"strings"
+	"time"
 )
 
 func escapeColumnType(columnType string) string {
