@@ -90,7 +90,7 @@ func pingSqlServer(url *pbdatasource.SqlServerURL) (err error) {
 	ip := net.JoinHostPort(url.Host, strconv.Itoa(int(url.Port)))
 	conn, err = net.DialTimeout("tcp", ip, time.Second*3)
 	if err != nil {
-		return
+		return err
 	}
 	if conn != nil {
 		_ = conn.Close()
@@ -101,7 +101,7 @@ func pingSqlServer(url *pbdatasource.SqlServerURL) (err error) {
 	if err != nil {
 		return err
 	}
-	return
+	return nil
 }
 
 func pingClickHouse(url *pbdatasource.ClickHouseURL) (err error) {
