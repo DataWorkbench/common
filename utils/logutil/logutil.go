@@ -4,12 +4,17 @@ import (
 	"github.com/DataWorkbench/glog"
 	"github.com/pkg/errors"
 	"gopkg.in/natefinch/lumberjack.v2"
+	"io"
+	"os"
 )
 
 const (
-	outputConsole = "console"
-	outputFile    = "file"
+	OutputConsole = "console"
+	OutputFile    = "file"
+	// console-file: console and file
+	OutputConsoleFile = "console-file"
 )
+
 
 func New(cfg *Config) (*glog.Logger, error) {
 	if err := checkConfig(cfg); err != nil {
@@ -17,16 +22,14 @@ func New(cfg *Config) (*glog.Logger, error) {
 	}
 
 	logger := glog.NewDefault().WithLevel(glog.Level(cfg.Level))
-	if cfg.Output == outputFile {
-		writer := &lumberjack.Logger{
-			Filename:   cfg.File.Path,
-			MaxSize:    cfg.File.MaxSize,
-			MaxAge:     cfg.File.MaxAge,
-			MaxBackups: cfg.File.MaxBackups,
-			LocalTime:  true,
-			Compress:   cfg.File.Compress,
-		}
-		logger = logger.WithExporter(glog.StandardExporter(writer))
+	switch cfg.Output {
+	case OutputConsole:
+	case OutputFile:
+		logger = logger.WithExporter(glog.StandardExporter(fileWriter(*cfg)))
+	case OutputConsoleFile:
+		consoleExper := glog.StandardExporter(os.Stdout)
+		fileExper := glog.StandardExporter(fileWriter(*cfg))
+		logger = logger.WithExporter(glog.MultipleExporter(consoleExper, fileExper))
 	}
 	return logger, nil
 }
@@ -35,7 +38,7 @@ type Config struct {
 	// Level for set the log level. 1=>"debug", 2=>"info", 3=>"warn", 4=>"error", 5=>"fatal"
 	Level int8 `json:"level"  yaml:"level" env:"LEVEL,default=1" validate:"gte=1,lte=5"`
 
-	// Output specified the log output location. Optional value: "console" | "file"
+	// Output specified the log output location. Optional value: "console" | "file" | "console-file"
 	Output string `json:"output" yaml:"output" env:"OUTPUT,default=console" validate:"oneof=console file"`
 
 	// File set the log file configuration. Is required if `Output` is "file"
@@ -78,25 +81,41 @@ func checkConfig(cfg *Config) (err error) {
 		return errors.Errorf("logutil: the log level must greater than 0 and less than 6, you provided: %d", cfg.Level)
 	}
 	switch cfg.Output {
-	case outputConsole:
-	case outputFile:
-		if cfg.File == nil {
-			return errors.New("logutil: the field file must be st if output file")
-		}
-		if cfg.File.Path == "" {
-			return errors.New("logutil: the log file path must be set")
-		}
-		if cfg.File.MaxSize <= 0 {
-			return errors.New("logutil: the max_size must be greater than 0")
-		}
-		if cfg.File.MaxAge < 0 {
-			return errors.New("logutil: the max_age must be greater than or equal to 0")
-		}
-		if cfg.File.MaxBackups < 0 {
-			return errors.New("logutil: the max_backups must be greater than or equal to 0")
-		}
+	case OutputConsole:
+	case OutputFile, OutputConsoleFile:
+		return checkFIleConfig(*cfg)
 	default:
-		return errors.New("logutil: log output must be oneof `console` or `file`")
+		return errors.New("logutil: log output must be oneof `console` or `file` or `console-file`")
 	}
 	return
+}
+
+func fileWriter(cfg Config) io.Writer {
+	return &lumberjack.Logger{
+		Filename:   cfg.File.Path,
+		MaxSize:    cfg.File.MaxSize,
+		MaxAge:     cfg.File.MaxAge,
+		MaxBackups: cfg.File.MaxBackups,
+		LocalTime:  true,
+		Compress:   cfg.File.Compress,
+	}
+}
+
+func checkFIleConfig(cfg Config) error {
+	if cfg.File == nil {
+		return errors.New("logutil: the field file must be st if output file")
+	}
+	if cfg.File.Path == "" {
+		return errors.New("logutil: the log file path must be set")
+	}
+	if cfg.File.MaxSize <= 0 {
+		return errors.New("logutil: the max_size must be greater than 0")
+	}
+	if cfg.File.MaxAge < 0 {
+		return errors.New("logutil: the max_age must be greater than or equal to 0")
+	}
+	if cfg.File.MaxBackups < 0 {
+		return errors.New("logutil: the max_backups must be greater than or equal to 0")
+	}
+	return nil
 }
