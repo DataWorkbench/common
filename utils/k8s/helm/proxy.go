@@ -3,15 +3,11 @@ package helm
 import (
 	"context"
 	"fmt"
-	"github.com/DataWorkbench/common/utils/k8s"
 	"github.com/DataWorkbench/glog"
 	helm "github.com/mittwald/go-helm-client"
 	"github.com/pkg/errors"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
-	"time"
 )
 
 const (
@@ -34,10 +30,14 @@ type Proxy struct {
 	logger          *glog.Logger
 }
 
-func NewProxy(namespace, kubeConfPath string, logger *glog.Logger, debug bool) (*Proxy, error) {
-	debugLog := func(format string, v ...interface{}) {
-		// Change this to your own logger. Default is 'log.Printf(format, v...)'.
+func NewProxy(ctx context.Context, namespace, kubeConfPath string) (*Proxy, error) {
+	logger := glog.FromContext(ctx)
+	debug, ok := ctx.Value(DebugKey).(bool)
+	if !ok {
+		debug = false
 	}
+
+	debugLog := func(format string, v ...interface{}) {}
 	if debug {
 		debugLog = func(format string, v ...interface{}) {
 			logger.Debug().Msg(fmt.Sprintf(format, v)).Fire()
@@ -75,75 +75,53 @@ func NewProxy(namespace, kubeConfPath string, logger *glog.Logger, debug bool) (
 	}, err
 }
 
-func (p Proxy) InstallOrUpgrade(ctx context.Context, chart Chart) error {
-	var name = chart.GetReleaseName()
-	var chartName = chart.GetChartName()
 
-	valuesStr, err := chart.ParseValues()
-	if err != nil {
-		p.logger.Error().String("chart with name", chartName).Error("parse values error", err).Fire()
-		return err
-	}
-
-	p.logger.Info().String("helm install release", name).String("with chart", chartName).Fire()
-	chartSpec := &helm.ChartSpec{
-		ReleaseName: name,
-		ChartName:   fmt.Sprintf("%s/%s", p.repositoryCache, chartName),
-		Namespace:   p.namespace,
-		DryRun:      chart.IsDryRun(),
-		ValuesYaml:  valuesStr,
-		Recreate:    true,
-	}
-	_, err = p.client.InstallOrUpgradeChart(ctx, chartSpec)
+func (p Proxy) InstallOrUpgrade(ctx context.Context, chart *helm.ChartSpec) error {
+	p.logger.Info().String("helm install release", chart.ReleaseName).String("with chart", chart.ChartName).Fire()
+	_, err := p.client.InstallOrUpgradeChart(ctx, chart)
 	if err != nil {
 		p.logger.Error().Error("helm install error", err).Fire()
 		return err
 	}
-
-	if chart.WaitingReady() && !chart.IsDryRun() {
-		wCtx, cancel := context.WithTimeout(ctx, chart.GetTimeoutSecond())
-		defer cancel()
-		err = p.WaitingReady(wCtx, chart)
-	}
 	return err
 }
 
-func (p Proxy) WaitingReady(ctx context.Context, chart Chart) error {
-	name := chart.GetReleaseName()
-	p.logger.Info().String("waiting release", name).Msg("ready..").Fire()
-
-	labelMap := chart.GetLabels()
-	ops := v1.ListOptions{
-		LabelSelector: labels.SelectorFromSet(labelMap).String(),
-	}
-
-	ready := false
-	kProxy, err := k8s.NewProxy(p.kubeConfPath, p.logger)
-	if err != nil {
-		p.logger.Error().Error("new kube-client proxy error", err).Fire()
-		return err
-	}
-
-	duration := time.Duration(DefaultDurationSec) * time.Second
-	for {
-		select {
-		case <-time.After(duration):
-			ready, err = kProxy.CheckPodsReady(ctx, p.namespace, ops)
-			if err != nil {
-				p.logger.Error().Error("check status ready error", err).Fire()
-				return err
-			}
-			if ready {
-				p.logger.Info().String("all pods ready of release", name).
-					String("in namespace", p.namespace).Fire()
-				return nil
-			}
-		case <-ctx.Done():
-			p.logger.Warn().Error("waiting-action been canceled, error", ctx.Err()).Fire()
-			return errors.Errorf("install release=%s timeout", chart.GetReleaseName())
-		}
-	}
-}
+//func (p Proxy) WaitingReady(ctx context.Context, chart Chart) error {
+//	name := chart.GetReleaseName()
+//	p.logger.Info().String("waiting release", name).Msg("ready..").Fire()
+//
+//	labelMap := chart.GetLabels()
+//	ops := v1.ListOptions{
+//		LabelSelector: labels.SelectorFromSet(labelMap).String(),
+//	}
+//
+//	ready := false
+//	kProxy, err := k8s.NewProxy(p.kubeConfPath, p.logger)
+//	if err != nil {
+//		p.logger.Error().Error("new kube-client proxy error", err).Fire()
+//		return err
+//	}
+//
+//	duration := time.Duration(DefaultDurationSec) * time.Second
+//	for {
+//		select {
+//		case <-time.After(duration):
+//			ready, err = kProxy.CheckPodsReady(ctx, p.namespace, ops)
+//			if err != nil {
+//				p.logger.Error().Error("check status ready error", err).Fire()
+//				return err
+//			}
+//			if ready {
+//				p.logger.Info().String("all pods ready of release", name).
+//					String("in namespace", p.namespace).Fire()
+//				return nil
+//			}
+//		case <-ctx.Done():
+//			p.logger.Warn().Error("waiting-action been canceled, error", ctx.Err()).Fire()
+//			return errors.Errorf("install release=%s timeout", chart.GetReleaseName())
+//		}
+//	}
+//}
 
 func (p Proxy) Exist(releaseName string) (bool, error) {
 	_, err := p.client.GetRelease(releaseName)
