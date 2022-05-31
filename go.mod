@@ -23,6 +23,8 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.2
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
 	github.com/grpc-ecosystem/grpc-opentracing v0.0.0-20180507213350-8e809c8a8645
+	github.com/mailru/dbr v3.0.0+incompatible
+	github.com/mailru/go-clickhouse v1.8.0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/mittwald/go-helm-client v0.8.0
 	github.com/olivere/elastic v6.2.37+incompatible // indirect
@@ -48,6 +50,7 @@ require (
 	golang.org/x/crypto v0.0.0-20220214200702-86341886e292
 	google.golang.org/grpc v1.44.0
 	google.golang.org/protobuf v1.27.1
+	gopkg.in/DATA-DOG/go-sqlmock.v1 v1.3.0 // indirect
 	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 	gorm.io/driver/mysql v1.3.2
