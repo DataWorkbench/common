@@ -12,6 +12,7 @@ import (
 	_ "github.com/denisenkom/go-mssqldb"
 	"github.com/dutchcoders/goftp"
 	"github.com/go-redis/redis"
+	"github.com/mailru/dbr"
 	elastic6 "github.com/olivere/elastic/v6"
 	elastic7 "github.com/olivere/elastic/v7"
 	"github.com/pkg/sftp"
@@ -21,10 +22,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"io"
-	"io/ioutil"
 	"net"
-	"net/http"
 	"strconv"
 	"strings"
 	"time"
@@ -35,7 +33,7 @@ func pingMysql(url *pbdatasource.MySQLURL) (err error) {
 	ip := net.JoinHostPort(url.Host, strconv.Itoa(int(url.Port)))
 	conn, err = net.DialTimeout("tcp", ip, time.Second*3)
 	if err != nil {
-		return
+		return err
 	}
 	if conn != nil {
 		_ = conn.Close()
@@ -53,7 +51,7 @@ func pingMysql(url *pbdatasource.MySQLURL) (err error) {
 			_ = sqlDB.Close()
 		}
 	}
-	return
+	return nil
 }
 
 func pingPostgreSQL(url *pbdatasource.PostgreSQLURL) (err error) {
@@ -62,7 +60,7 @@ func pingPostgreSQL(url *pbdatasource.PostgreSQLURL) (err error) {
 	ip := net.JoinHostPort(url.Host, strconv.Itoa(int(url.Port)))
 	conn, err = net.DialTimeout("tcp", ip, time.Second*3)
 	if err != nil {
-		return
+		return err
 	}
 	if conn != nil {
 		_ = conn.Close()
@@ -81,23 +79,16 @@ func pingPostgreSQL(url *pbdatasource.PostgreSQLURL) (err error) {
 			_ = sqlDB.Close()
 		}
 	}
-	return
+	return nil
 }
 
 func pingSqlServer(url *pbdatasource.SqlServerURL) (err error) {
-	var conn net.Conn
-
-	ip := net.JoinHostPort(url.Host, strconv.Itoa(int(url.Port)))
-	conn, err = net.DialTimeout("tcp", ip, time.Second*3)
+	connString := fmt.Sprintf("server=%s;database=%s;user id=%s;password=%s;port=%d;encrypt=disable", url.Host, url.Database, url.User, url.Password, url.Port)
+	db, err := sql.Open("mssql", connString)
 	if err != nil {
 		return err
 	}
-	if conn != nil {
-		_ = conn.Close()
-	}
-
-	connString := fmt.Sprintf("server=%s;database=%s;user id=%s;password=%s;port=%d;encrypt=disable", url.Host, url.Database, url.User, url.Password, url.Port)
-	_, err = sql.Open("mssql", connString)
+	err = db.Ping()
 	if err != nil {
 		return err
 	}
@@ -105,49 +96,16 @@ func pingSqlServer(url *pbdatasource.SqlServerURL) (err error) {
 }
 
 func pingClickHouse(url *pbdatasource.ClickHouseURL) (err error) {
-	var conn net.Conn
-	ip := net.JoinHostPort(url.Host, strconv.Itoa(int(url.Port)))
-	conn, err = net.DialTimeout("tcp", ip, time.Second*3)
+	connect, err := dbr.Open("clickhouse", fmt.Sprintf("http://%s:%s@%s:%d/%s", url.User, url.Password, url.Host, url.Port, url.Database), nil)
 	if err != nil {
-		return
+		return err
 	}
-	if conn != nil {
-		_ = conn.Close()
-	}
-
-	var (
-		client  *http.Client
-		req     *http.Request
-		rep     *http.Response
-		reqBody io.Reader
-	)
-
-	client = &http.Client{Timeout: time.Millisecond * 100}
-	reqBody = strings.NewReader("SELECT 1")
-	dsn := fmt.Sprintf(
-		"http://%s:%d/?user=%s&password=%s&database=%s",
-		url.Host, url.Port, url.User, url.Password, url.Database,
-	)
-
-	req, err = http.NewRequest(http.MethodGet, dsn, reqBody)
+	session := connect.NewSession(nil)
+	err = session.Ping()
 	if err != nil {
-		return
+		return err
 	}
-
-	rep, err = client.Do(req)
-	if err != nil {
-		return
-	}
-
-	repBody, _ := ioutil.ReadAll(rep.Body)
-	_ = rep.Body.Close()
-
-	if rep.StatusCode != http.StatusOK {
-		err = fmt.Errorf("%s request failed, http status code %d, message %s", dsn, rep.StatusCode, string(repBody))
-		_ = rep.Body.Close()
-		return
-	}
-	return
+	return nil
 }
 
 func pingKafka(url *pbdatasource.KafkaURL) (err error) {
