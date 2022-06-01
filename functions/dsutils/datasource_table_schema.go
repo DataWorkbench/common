@@ -11,6 +11,7 @@ import (
 	"github.com/dazheng/gohive"
 	_ "github.com/denisenkom/go-mssqldb"
 	"github.com/mailru/dbr"
+	_ "github.com/mailru/go-clickhouse"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
