@@ -4,18 +4,17 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"github.com/ClickHouse/clickhouse-go/v2"
 	"github.com/DataWorkbench/common/qerror"
 	"github.com/DataWorkbench/gproto/xgo/types/pbmodel"
 	"github.com/DataWorkbench/gproto/xgo/types/pbmodel/pbdatasource"
 	"github.com/DataWorkbench/gproto/xgo/types/pbresponse"
 	"github.com/dazheng/gohive"
 	_ "github.com/denisenkom/go-mssqldb"
+	"github.com/mailru/dbr"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"strings"
-	"time"
 )
 
 func escapeColumnType(columnType string) string {
@@ -130,57 +129,21 @@ func DescribeDatasourceTableSchemaPostgreSQL(ctx context.Context, url *pbdatasou
 
 func DescribeDatasourceTableSchemaClickHouse(ctx context.Context, url *pbdatasource.ClickHouseURL,
 	tableName string) (columns []*pbdatasource.TableColumn, err error) {
-	var conn clickhouse.Conn
-	conn, err = clickhouse.Open(&clickhouse.Options{
-		Addr: []string{fmt.Sprintf("%s:%d", url.Host, url.Port)},
-		Auth: clickhouse.Auth{
-			Database: url.Database,
-			Username: url.User,
-			Password: url.Password,
-		},
-		//Debug:           true,
-		DialTimeout:     time.Second,
-		MaxOpenConns:    10,
-		MaxIdleConns:    5,
-		ConnMaxLifetime: time.Hour,
-		Compression: &clickhouse.Compression{
-			Method: clickhouse.CompressionLZ4,
-		},
-	})
+	connect, err := dbr.Open("clickhouse", fmt.Sprintf("http://%s:%s@%s:%d/%s", url.User, url.Password, url.Host, url.Port, url.Database), nil)
 	if err != nil {
-		return
+		return nil, err
 	}
-
-	defer func() {
-		_ = conn.Close()
-	}()
-
-	var rawSQL strings.Builder
-	rawSQL.Grow(512)
-	rawSQL.WriteString("SELECT ")
-	rawSQL.WriteString("name as Name, type as Type, is_in_primary_key as IsPrimaryKey")
-	//rawSQL.WriteString("name, type, '' length, ")
-	//rawSQL.WriteString("case is_in_primary_key when 1 then 'true' else 'false' end as IsPrimaryKey")
-	rawSQL.WriteString(" FROM system.columns")
-	rawSQL.WriteString(" WHERE ")
-	rawSQL.WriteString(" table = '" + tableName + "'")
-	rawSQL.WriteString(" AND ")
-	rawSQL.WriteString(" database = '" + url.Database + "'")
-	rawSQL.WriteString(";")
-
-	//reqBody := strings.NewReader("select name, type, '' length, " +
-	//	"case is_in_primary_key when 1 then 'true' else 'false' end as is_primary_key from system." +
-	//	"columns where table= '" + tableName + "' and database='" + url.GetDatabase() + "'")
-
 	var result []struct {
-		Name         string
-		Type         string
-		IsPrimaryKey uint8
+		Name         string `json:"Name" db:"Name"`
+		Type         string `json:"Type" db:"Type"`
+		IsPrimaryKey uint8  `json:"IsPrimaryKey" db:"IsPrimaryKey"`
+	}
+	session := connect.NewSession(nil)
+	_, err = session.Select("name as Name, type as Type, is_in_primary_key as IsPrimaryKey").From("system.columns").Where("table = ? and database = ?", tableName, url.Database).Load(&result)
+	if err != nil {
+		return nil, err
 	}
 
-	if err = conn.Select(ctx, &result, rawSQL.String()); err != nil {
-		return
-	}
 	for i := 0; i < len(result); i++ {
 		v := result[i]
 		var isPrimaryKey bool
