@@ -32,42 +32,6 @@ func (p *Proxy) GetKubeNodes(ctx context.Context) ([]string, error) {
 	return nodeSlice, nil
 }
 
-func (p *Proxy) CreateNamespace(ctx context.Context, namespace string) error {
-	ns := &corev1.Namespace{}
-	ns.Name = namespace
-	_, err := p.Client.CoreV1().Namespaces().Get(ctx, namespace, metav1.GetOptions{})
-	if err != nil {
-		if errors.IsNotFound(err) {
-			_, err = p.Client.CoreV1().Namespaces().Create(ctx, ns, metav1.CreateOptions{})
-		}
-	}
-	return err
-}
-
-// Note: need to init p.kubeClient before
-func (p Proxy) CheckPodsReady(ctx context.Context, namespace string, ops metav1.ListOptions) (bool, error) {
-	// get PodLists
-	pods, err := p.Client.CoreV1().Pods(namespace).List(ctx, ops)
-	if err != nil {
-		return false, err
-	}
-	for _, pod := range pods.Items {
-		if pod.Status.Phase == corev1.PodSucceeded {
-			continue
-		}
-
-		for _, condition := range pod.Status.Conditions {
-			if condition.Status != corev1.ConditionTrue {
-				p.Logger.Info().String("pod", pod.GetName()).
-					String("is not ready, status of conditionType", string(condition.Type)).
-					String("is not true, reason", condition.Reason).
-					String("message", condition.Message).Fire()
-				return false, nil
-			}
-		}
-	}
-	return true, nil
-}
 
 func (p Proxy) CopyConfigmap(ctx context.Context, oriNamespace, namespace, name string) error {
 	_, err := p.Client.CoreV1().ConfigMaps(namespace).Get(ctx, name, metav1.GetOptions{})
