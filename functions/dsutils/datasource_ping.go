@@ -13,6 +13,7 @@ import (
 	"github.com/dutchcoders/goftp"
 	"github.com/go-redis/redis"
 	"github.com/mailru/dbr"
+	_ "github.com/mailru/go-clickhouse"
 	elastic6 "github.com/olivere/elastic/v6"
 	elastic7 "github.com/olivere/elastic/v7"
 	"github.com/pkg/sftp"
@@ -118,10 +119,10 @@ func pingKafka(url *pbdatasource.KafkaURL) (err error) {
 	consumer, terr := sarama.NewConsumer(dsn, nil)
 	if terr != nil {
 		err = terr
-		return
+		return err
 	}
 	_ = consumer.Close()
-	return
+	return nil
 }
 
 func pingHBase(url *pbdatasource.HBaseURL) (err error) {
@@ -216,7 +217,7 @@ func pingHDFS(url *pbdatasource.HDFSURL) (err error) {
 	if conn != nil {
 		_ = conn.Close()
 	}
-	return err
+	return nil
 }
 
 func pingHive(url *pbdatasource.HiveURL) (err error) {
