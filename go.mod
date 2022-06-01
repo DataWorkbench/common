@@ -3,7 +3,6 @@ module github.com/DataWorkbench/common
 go 1.15
 
 require (
-	github.com/ClickHouse/clickhouse-go/v2 v2.0.12
 	github.com/DataWorkbench/glog v0.0.0-20220302035436-25a1ae256704
 	github.com/DataWorkbench/gproto v0.0.0-20220519141407-a811d75e1e22
 	github.com/HdrHistogram/hdrhistogram-go v1.0.1 // indirect
@@ -19,6 +18,8 @@ require (
 	github.com/go-playground/validator/v10 v10.4.1
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/go-redis/redis/v8 v8.11.0
+	github.com/google/uuid v1.3.0 // indirect
+	github.com/gorilla/handlers v1.4.2 // indirect
 	github.com/gorilla/websocket v1.4.2
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.2
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
@@ -37,6 +38,7 @@ require (
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475
 	github.com/samuel/go-zookeeper v0.0.0-20190923202752-2cc03de413da
 	github.com/satori/go.uuid v1.2.0
+	github.com/shopspring/decimal v1.3.1 // indirect
 	github.com/speps/go-hashids/v2 v2.0.1
 	github.com/stretchr/objx v0.3.0 // indirect
 	github.com/stretchr/testify v1.7.0
@@ -53,6 +55,7 @@ require (
 	gopkg.in/DATA-DOG/go-sqlmock.v1 v1.3.0 // indirect
 	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
+	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b
 	gorm.io/driver/mysql v1.3.2
 	gorm.io/driver/postgres v1.3.4
 	gorm.io/gorm v1.23.1
