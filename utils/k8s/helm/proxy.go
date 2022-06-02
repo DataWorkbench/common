@@ -40,7 +40,7 @@ func NewProxy(ctx context.Context, namespace, kubeConfPath string) (*Proxy, erro
 	debugLog := func(format string, v ...interface{}) {}
 	if debug {
 		debugLog = func(format string, v ...interface{}) {
-			logger.Debug().Msg(fmt.Sprintf(format, v)).Fire()
+			logger.Debug().Msg(fmt.Sprintf(format, v...)).Fire()
 		}
 	}
 	opts := &helm.Options{
