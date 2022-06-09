@@ -1,9 +1,9 @@
 package io
 
 import (
-"gopkg.in/yaml.v3"
-"io/ioutil"
-"os"
+	"gopkg.in/yaml.v3"
+	"io/ioutil"
+	"os"
 )
 
 func FileExist(file string) (bool, error) {
@@ -29,4 +29,3 @@ func ReadYaml(file string) (map[string]interface{}, error) {
 	}
 	return m, nil
 }
-

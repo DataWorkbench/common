@@ -15,7 +15,6 @@ const (
 	OutputConsoleFile = "console-file"
 )
 
-
 func New(cfg *Config) (*glog.Logger, error) {
 	if err := checkConfig(cfg); err != nil {
 		return nil, err

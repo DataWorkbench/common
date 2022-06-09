@@ -75,7 +75,6 @@ func NewProxy(ctx context.Context, namespace, kubeConfPath string) (*Proxy, erro
 	}, err
 }
 
-
 func (p Proxy) InstallOrUpgrade(ctx context.Context, chart *helm.ChartSpec) error {
 	p.logger.Info().String("helm install release", chart.ReleaseName).String("with chart", chart.ChartName).Fire()
 	_, err := p.client.InstallOrUpgradeChart(ctx, chart)

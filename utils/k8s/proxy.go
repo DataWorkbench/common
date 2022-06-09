@@ -32,7 +32,6 @@ func (p *Proxy) GetKubeNodes(ctx context.Context) ([]string, error) {
 	return nodeSlice, nil
 }
 
-
 func (p Proxy) CopyConfigmap(ctx context.Context, oriNamespace, namespace, name string) error {
 	_, err := p.Client.CoreV1().ConfigMaps(namespace).Get(ctx, name, metav1.GetOptions{})
 	if err != nil {
