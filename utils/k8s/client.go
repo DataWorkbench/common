@@ -2,7 +2,6 @@ package k8s
 
 import (
 	"context"
-	"github.com/DataWorkbench/glog"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -12,16 +11,9 @@ import (
 
 const DefaultKubeConf = "/root/.kube/config"
 
-// **************************************************************
-// the Proxy of kube client to access k8s resource
-// **************************************************************
-type Proxy struct {
-	Client *kubernetes.Clientset
-	Logger *glog.Logger
-}
 
-func (p *Proxy) GetKubeNodes(ctx context.Context) ([]string, error) {
-	nodeList, err := p.Client.CoreV1().Nodes().List(ctx, metav1.ListOptions{})
+func GetKubeNodes(ctx context.Context, client *kubernetes.Clientset) ([]string, error) {
+	nodeList, err := client.CoreV1().Nodes().List(ctx, metav1.ListOptions{})
 	if err != nil {
 		return nil, err
 	}
@@ -32,8 +24,9 @@ func (p *Proxy) GetKubeNodes(ctx context.Context) ([]string, error) {
 	return nodeSlice, nil
 }
 
-func (p Proxy) CopyConfigmap(ctx context.Context, oriNamespace, namespace, name string) error {
-	_, err := p.Client.CoreV1().ConfigMaps(namespace).Get(ctx, name, metav1.GetOptions{})
+
+func CopyConfigmap(ctx context.Context, client *kubernetes.Clientset, oriNamespace, namespace, name string) error {
+	_, err := client.CoreV1().ConfigMaps(namespace).Get(ctx, name, metav1.GetOptions{})
 	if err != nil {
 		if errors.IsNotFound(err) {
 			err = nil
@@ -43,7 +36,7 @@ func (p Proxy) CopyConfigmap(ctx context.Context, oriNamespace, namespace, name 
 
 		// not exist: get configmap from oriNamespace and create at namespace
 		var cm *corev1.ConfigMap
-		if cm, err = p.Client.CoreV1().ConfigMaps(oriNamespace).Get(ctx, name, metav1.GetOptions{}); err != nil {
+		if cm, err = client.CoreV1().ConfigMaps(oriNamespace).Get(ctx, name, metav1.GetOptions{}); err != nil {
 			return err
 		}
 
@@ -53,7 +46,7 @@ func (p Proxy) CopyConfigmap(ctx context.Context, oriNamespace, namespace, name 
 		newCm.Name = name
 		newCm.Data = cm.Data
 		newCm.BinaryData = cm.BinaryData
-		_, err = p.Client.CoreV1().ConfigMaps(namespace).Create(ctx, newCm, metav1.CreateOptions{})
+		_, err = client.CoreV1().ConfigMaps(namespace).Create(ctx, newCm, metav1.CreateOptions{})
 	}
 
 	// exist, return
@@ -62,19 +55,10 @@ func (p Proxy) CopyConfigmap(ctx context.Context, oriNamespace, namespace, name 
 
 // if kubeConfPath == "", create k8s client auth by ServiceAccount in RBAC (/var/run/secrets/kubernetes.io/serviceaccount)
 // otherwise kube client auth by kubeConfig in kubeConfPaths
-func NewProxy(kubeConfPath string, logger *glog.Logger) (*Proxy, error) {
+func NewClient(kubeConfPath string) (*kubernetes.Clientset, error) {
 	config, err := clientcmd.BuildConfigFromFlags("", kubeConfPath)
 	if err != nil {
 		return nil, err
 	}
-
-	kc, err := kubernetes.NewForConfig(config)
-	if err != nil {
-		return nil, err
-	}
-
-	return &Proxy{
-		Client: kc,
-		Logger: logger,
-	}, nil
+	return kubernetes.NewForConfig(config)
 }
