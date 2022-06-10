@@ -34,6 +34,7 @@ func parseValues(conf map[string]interface{}) (string, error) {
 //}
 
 // chartName: full path of HelmChart
+// conf: configuration of chart, eg: from file values.yaml
 func NewChartSpec(ctx context.Context, namespace, releaseName, chartName string, conf map[string]interface{}) (*helm.ChartSpec, error) {
 	values, err := parseValues(conf)
 	if err != nil {
@@ -56,7 +57,6 @@ func NewChartSpec(ctx context.Context, namespace, releaseName, chartName string,
 		ReleaseName:     releaseName,
 		ChartName:       chartName,
 		ValuesYaml:      values,
-		Recreate:        true,
 		Wait:            wait,
 		DryRun:          dryRun,
 		Timeout:         DefaultTimeoutSecond,

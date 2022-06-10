@@ -58,7 +58,9 @@ require (
 	gorm.io/driver/mysql v1.3.2
 	gorm.io/driver/postgres v1.3.4
 	gorm.io/gorm v1.23.1
+	helm.sh/helm/v3 v3.8.0
 	k8s.io/api v0.23.1
 	k8s.io/apimachinery v0.23.1
+	k8s.io/cli-runtime v0.23.1 // indirect
 	k8s.io/client-go v0.23.1
 )
