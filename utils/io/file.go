@@ -1,9 +1,9 @@
 package io
 
 import (
-"gopkg.in/yaml.v3"
-"io/ioutil"
-"os"
+	"gopkg.in/yaml.v3"
+	"io/ioutil"
+	"os"
 )
 
 func FileExist(file string) (bool, error) {
@@ -25,8 +25,7 @@ func ReadYaml(file string) (map[string]interface{}, error) {
 	}
 	m := map[string]interface{}{}
 	if err = yaml.Unmarshal(bytes, &m); err != nil {
-		return m, nil
+		return nil, err
 	}
-	return nil, err
+	return m, nil
 }
-

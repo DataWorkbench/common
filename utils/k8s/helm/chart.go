@@ -4,9 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	helm "github.com/mittwald/go-helm-client"
+	"time"
 )
 
-const DefaultTimeoutSecond = 600
+const DefaultTimeoutSecond = 30 * 60 * time.Second
 const InstanceLabelKey = "app.kubernetes.io/instance"
 
 const (
@@ -33,6 +34,7 @@ func parseValues(conf map[string]interface{}) (string, error) {
 //}
 
 // chartName: full path of HelmChart
+// conf: configuration of chart, eg: from file values.yaml
 func NewChartSpec(ctx context.Context, namespace, releaseName, chartName string, conf map[string]interface{}) (*helm.ChartSpec, error) {
 	values, err := parseValues(conf)
 	if err != nil {
@@ -50,13 +52,13 @@ func NewChartSpec(ctx context.Context, namespace, releaseName, chartName string,
 	}
 
 	return &helm.ChartSpec{
-		Namespace:   namespace,
-		ReleaseName: releaseName,
-		ChartName:   chartName,
-		ValuesYaml:  values,
-		Recreate:    true,
-		Wait:        wait,
-		DryRun:      dryRun,
-		Timeout:     DefaultTimeoutSecond,
+		Namespace:       namespace,
+		CreateNamespace: true,
+		ReleaseName:     releaseName,
+		ChartName:       chartName,
+		ValuesYaml:      values,
+		Wait:            wait,
+		DryRun:          dryRun,
+		Timeout:         DefaultTimeoutSecond,
 	}, err
 }
