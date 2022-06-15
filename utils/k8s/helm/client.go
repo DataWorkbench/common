@@ -22,7 +22,6 @@ const (
 	AllResource = "all"
 )
 
-
 func NewClient(ctx context.Context, namespace, kubeConfPath string) (ghc.Client, error) {
 	logger := glog.FromContext(ctx)
 	debug, ok := ctx.Value(DebugKey).(bool)
@@ -57,7 +56,6 @@ func NewClient(ctx context.Context, namespace, kubeConfPath string) (ghc.Client,
 	return ghc.NewClientFromRestConf(restConfopts)
 }
 
-
 func Exist(client ghc.Client, releaseName string) (bool, error) {
 	_, err := client.GetRelease(releaseName)
 	if err != nil {
@@ -68,7 +66,6 @@ func Exist(client ghc.Client, releaseName string) (bool, error) {
 	}
 	return true, err
 }
-
 
 // Any oneof labelSelector and resourceTypeAndName must be specified
 func WaitingResourceReady(namespace, kubeConfPath, labelSelector string, timeout time.Duration, logFunc func(string, ...interface{}), resourceTypeAndName ...string) error {

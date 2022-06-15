@@ -13,10 +13,9 @@ const ResourceName = "drc-redis-cluster-0"
 const MysqlLabelSelector = "app.kubernetes.io/instance=mysql-cluster-pxc-db"
 const HdfsLabelSelector = "dataomnis.io/cluster-name=hdfs-cluster"
 
-
 func logFunc() func(string, ...interface{}) {
 	return func(s string, i ...interface{}) {
-			println(fmt.Sprintf(s, i...))
+		println(fmt.Sprintf(s, i...))
 	}
 }
 

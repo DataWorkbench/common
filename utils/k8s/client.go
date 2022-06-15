@@ -11,7 +11,6 @@ import (
 
 const DefaultKubeConf = "/root/.kube/config"
 
-
 func GetKubeNodes(ctx context.Context, client *kubernetes.Clientset) ([]string, error) {
 	nodeList, err := client.CoreV1().Nodes().List(ctx, metav1.ListOptions{})
 	if err != nil {
@@ -23,7 +22,6 @@ func GetKubeNodes(ctx context.Context, client *kubernetes.Clientset) ([]string, 
 	}
 	return nodeSlice, nil
 }
-
 
 func CopyConfigmap(ctx context.Context, client *kubernetes.Clientset, oriNamespace, namespace, name string) error {
 	_, err := client.CoreV1().ConfigMaps(namespace).Get(ctx, name, metav1.GetOptions{})
