@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"github.com/ClickHouse/clickhouse-go/v2"
 	"github.com/DataWorkbench/common/qerror"
 	"github.com/DataWorkbench/gproto/xgo/types/pbmodel"
 	"github.com/DataWorkbench/gproto/xgo/types/pbmodel/pbdatasource"
@@ -13,6 +12,8 @@ import (
 	"github.com/Shopify/sarama"
 	"github.com/dazheng/gohive"
 	_ "github.com/denisenkom/go-mssqldb"
+	"github.com/mailru/dbr"
+	_ "github.com/mailru/go-clickhouse"
 	elastic6 "github.com/olivere/elastic/v6"
 	elastic7 "github.com/olivere/elastic/v7"
 	"github.com/tsuna/gohbase"
@@ -21,7 +22,6 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"time"
 )
 
 // DescribeDatasourceTablesMySQL get a table list of type MySQL.
@@ -81,49 +81,24 @@ func DescribeDatasourceTablesPostgresSQL(ctx context.Context, url *pbdatasource.
 // DescribeDatasourceTablesClickHouse get a table list of type ClickHouse.
 func DescribeDatasourceTablesClickHouse(ctx context.Context, url *pbdatasource.ClickHouseURL) (items []string,
 	err error) {
-	var conn clickhouse.Conn
-	conn, err = clickhouse.Open(&clickhouse.Options{
-		Addr: []string{fmt.Sprintf("%s:%d", url.Host, url.Port)},
-		Auth: clickhouse.Auth{
-			Database: url.Database,
-			Username: url.User,
-			Password: url.Password,
-		},
-		//Debug:           true,
-		DialTimeout:     time.Second,
-		MaxOpenConns:    10,
-		MaxIdleConns:    5,
-		ConnMaxLifetime: time.Hour,
-		Compression: &clickhouse.Compression{
-			Method: clickhouse.CompressionLZ4,
-		},
-	})
+	connect, err := dbr.Open("clickhouse", fmt.Sprintf("http://%s:%s@%s:%d/%s", url.User, url.Password, url.Host, url.Port, url.Database), nil)
 	if err != nil {
-		return
+		return nil, err
 	}
-
-	defer func() {
-		_ = conn.Close()
-	}()
-
-	ctx = clickhouse.Context(ctx, clickhouse.WithSettings(clickhouse.Settings{
-		"max_block_size": 10,
-	}), clickhouse.WithProgress(func(p *clickhouse.Progress) {
-		// Some process logic.
-	}))
-
 	var result []struct {
-		Item string
+		Item string `json:"Item" db:"Item"`
 	}
-	rawSQL := "select name as Item from system.tables where database='" + url.Database + "'"
-	if err = conn.Select(ctx, &result, rawSQL); err != nil {
-		return
+	session := connect.NewSession(nil)
+
+	_, err = session.Select("name as Item").From("system.tables").Where("database = ?", url.Database).Load(&result)
+	if err != nil {
+		return nil, err
 	}
 
 	for _, v := range result {
 		items = append(items, v.Item)
 	}
-	return
+	return items, nil
 }
 
 //// DescribeDatasourceTablesClickHouse get a table list of type ClickHouse.

@@ -715,4 +715,11 @@ var (
 		enUS:   "Param not valid, [%s]",
 		zhCN:   "Param not valid, [%s]",
 	}
+
+	BindKeyErr = &Error{
+		code:   "BindKeyErr",
+		status: 400,
+		enUS:   "ApiService not exist or had been bound to AuthKey",
+		zhCN:   "ApiService 不存在或者已经绑定了密钥",
+	}
 )

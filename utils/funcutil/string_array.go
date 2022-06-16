@@ -1,5 +1,15 @@
 package funcutil
 
+// ContainStr check if the str is in strArray
+func ContainStr(strArray []string, str string) bool {
+	for _, s := range strArray {
+		if s == str {
+			return true
+		}
+	}
+	return false
+}
+
 // StringDiffSet calculate the difference set of slice a and slice b
 func StringDiffSet(a []string, b []string) []string {
 	m := make(map[string]struct{}, len(b))
