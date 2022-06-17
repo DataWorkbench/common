@@ -12,13 +12,13 @@ import (
 
 func loadConfig() *iaas.Config {
 	cfg := &iaas.Config{
-		Zone:            "testing",
-		Host:            "api.testing.com",
+		Zone:            "qa1a",
+		Host:            "api.qacloud.com",
 		Port:            7777,
 		Protocol:        "http",
 		Timeout:         30,
-		AccessKeyId:     "LTMJGBXPHSEZRNVKKPHU",
-		SecretAccessKey: "7GvVuGAx2iB8NA9n8NtczH8BJnTkDGwGm9N6DYBo",
+		AccessKeyId:     "BHSWXNKSRKXUAXYCNXUI",
+		SecretAccessKey: "AK0RfVfmpafzkgwMKcTckudgeKH2efYHxn1Nu3qj",
 		Uri:             "/iaas/",
 	}
 	return cfg
@@ -105,3 +105,11 @@ func TestAllocateVips(t *testing.T) {
 //	fmt.Println(len(vxnetResourceSet))
 //}
 //
+
+func TestDescribeNotificationLists(t *testing.T) {
+	iaasClient := getIaasClient()
+	owner := "usr-1VnS6ACB"
+	output, err := iaasClient.DescribeNotificationLists(ctx, owner, 100, 0)
+	require.Nil(t, err)
+	fmt.Println(output.NotificationListSet)
+}

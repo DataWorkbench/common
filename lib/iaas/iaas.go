@@ -232,8 +232,8 @@ func (c *Client) sendRequest(ctx context.Context, params map[string]interface{},
 	return
 }
 
-// DescribeUsersById query the user info by specified userId.
-func (c *Client) DescribeUsersById(ctx context.Context, userId string) (user *User, err error) {
+// DescribeUserById query the user info by specified userId.
+func (c *Client) DescribeUserById(ctx context.Context, userId string) (user *User, err error) {
 	params := map[string]interface{}{
 		"action": "DescribeUsers",
 		"users":  []string{userId},
@@ -250,20 +250,36 @@ func (c *Client) DescribeUsersById(ctx context.Context, userId string) (user *Us
 	return
 }
 
-// DescribeUsersByIds get the list of user by giving user ids.
-func (c *Client) DescribeUsersByIds(ctx context.Context, userIds []string) (users []*User, err error) {
-	if len(userIds) == 0 {
-		return nil, errors.New("the userIds cat not be empty")
-	}
+// DescribeUsers get the list of user by giving user ids.
+func (c *Client) DescribeUsers(ctx context.Context, input *DescribeUsersInput) (resp *DescribeUsersOutput, err error) {
 	params := map[string]interface{}{
 		"action": "DescribeUsers",
-		"users":  userIds,
 	}
+	if input.Limit != 0 {
+		params["limit"] = input.Limit
+	}
+	if input.Offset != 0 {
+		params["offset"] = input.Offset
+	}
+	if len(input.Users) != 0 {
+		params["users"] = input.Users
+	}
+	if input.Status != "" {
+		params["status"] = input.Status
+	}
+	if input.Email != "" {
+		params["email"] = input.Email
+	}
+	if input.Phone != "" {
+		params["phone"] = input.Phone
+	}
+
 	var body DescribeUsersOutput
 	if err = c.sendRequest(ctx, params, &body); err != nil {
 		return
 	}
-	users = body.UserSet
+	resp = &body
+
 	return
 }
 
@@ -629,4 +645,21 @@ LOOP:
 		setup++
 	}
 	return
+}
+
+func (c *Client) DescribeNotificationLists(ctx context.Context, owner string, limit int, offset int) (output *DescribeNotificationListsOutput, err error) {
+	params := map[string]interface{}{
+		"action": "DescribeNotificationLists",
+		"zone":   c.cfg.Zone,
+		"owner":  owner,
+		"limit":  limit,
+		"offset": offset,
+	}
+	var body DescribeNotificationListsOutput
+	if err = c.sendRequest(ctx, params, &body); err != nil {
+		return
+	}
+	output = &body
+	return
+
 }
