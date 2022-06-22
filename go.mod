@@ -4,7 +4,7 @@ go 1.15
 
 require (
 	github.com/DataWorkbench/glog v0.0.0-20220302035436-25a1ae256704
-	github.com/DataWorkbench/gproto v0.0.0-20220617030940-c951505d782b
+	github.com/DataWorkbench/gproto v0.0.0-20220622051207-5c8316fd5031
 	github.com/HdrHistogram/hdrhistogram-go v1.0.1 // indirect
 	github.com/Shopify/sarama v1.29.1
 	github.com/buger/jsonparser v1.1.1

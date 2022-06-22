@@ -64,6 +64,8 @@ const (
 
 	//// IdPrefixUDF represents the id prefix of `UDF`.
 	//IdPrefixUDF = "udf-"
+
+	IdPrefixUser = "usr-"
 )
 
 // Defines the id for IdGenerator. To prevent ID conflicts.
@@ -85,6 +87,7 @@ const (
 	IdInstanceApiRequestParam
 	IdInstanceApiResponseParam
 	IdInstanceCustomerApiVersion
+	IdInstanceUser
 )
 
 // Defines the id for IdGenerator. To prevent version conflicts.

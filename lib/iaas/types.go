@@ -3,7 +3,6 @@ package iaas
 import (
 	"encoding/json"
 
-	"github.com/DataWorkbench/gproto/xgo/types/pbmodel"
 	"github.com/DataWorkbench/gproto/xgo/types/pbmodel/pbiaas"
 )
 
@@ -13,7 +12,7 @@ type ResponseBody interface {
 }
 
 // User represents the user info.
-type User = pbmodel.User
+type User = pbiaas.User
 
 // DescribeUsersInput is type request parameters for action "DescribeUsers"
 type DescribeUsersInput struct {
@@ -48,7 +47,7 @@ func (b *DescribeUsersOutput) ReturnMessage() string {
 }
 
 // AccessKey represents the access key info.
-type AccessKey = pbmodel.AccessKey
+type AccessKey = pbiaas.AccessKey
 
 //type AccessKey struct {
 //	AccessKeyId     string `json:"access_key_id"`
@@ -397,7 +396,7 @@ func (b *ReleaseVipsOutput) ReturnMessage() string {
 	return b.Message
 }
 
-type NotificationListSet = pbmodel.NotificationList
+type NotificationListSet = pbiaas.NotificationList
 
 type DescribeNotificationListsOutput struct {
 	RetCode             int                    `json:"ret_code"`
