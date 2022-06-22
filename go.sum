@@ -83,6 +83,8 @@ github.com/DataWorkbench/glog v0.0.0-20220302035436-25a1ae256704 h1:XRck+LCallgK
 github.com/DataWorkbench/glog v0.0.0-20220302035436-25a1ae256704/go.mod h1:zymxJLXn162xdWYUqIb729S3ZzRQpdTj/LwnW+xxru4=
 github.com/DataWorkbench/gproto v0.0.0-20220622051207-5c8316fd5031 h1:0XqOKWmAG/Kd6LoqD99Oo9ZBSZ00geLLgTN6lsh8U1I=
 github.com/DataWorkbench/gproto v0.0.0-20220622051207-5c8316fd5031/go.mod h1:p0j7UkANQc+TO7L8RZIFhrI81jlZsFrXbI+eVn58AuU=
+github.com/DataWorkbench/gproto v0.0.0-20220622054643-81ccbf2d5f72 h1:2w9iMbLl/5uw/H7gt4Ob1dPbPvQlItbpknUQ5HoOPS8=
+github.com/DataWorkbench/gproto v0.0.0-20220622054643-81ccbf2d5f72/go.mod h1:p0j7UkANQc+TO7L8RZIFhrI81jlZsFrXbI+eVn58AuU=
 github.com/HdrHistogram/hdrhistogram-go v1.0.1 h1:GX8GAYDuhlFQnI2fRDHQhTlkHMz8bEn0jTI6LJU0mpw=
 github.com/HdrHistogram/hdrhistogram-go v1.0.1/go.mod h1:BWJ+nMSHY3L41Zj7CA3uXnloDp7xxV0YvstAE7nKTaM=
 github.com/MakeNowJust/heredoc v0.0.0-20170808103936-bb23615498cd h1:sjQovDkwrZp8u+gxLtPgKGjk5hCxuy2hrRejBTA9xFU=
