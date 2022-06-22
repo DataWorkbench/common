@@ -44,8 +44,28 @@ const (
 	// IdPrefixNotifier represents the id prefix of `Notifier`
 	IdPrefixNotifier = "nof-"
 
+	// IdPrefixDataServiceCluster represents the id prefix of `dataservice cluster`
+	IdPrefixDataServiceCluster = "dsc-"
+
+	// IdPrefixApiGroup represents the id prefix of `dataservice api group`
+	IdPrefixApiGroup = "dsg-"
+
+	// IdPrefixCustomerApi represents the id prefix of `dataservice customer api`
+	IdPrefixCustomerApi = "dsa-"
+
+	// IdPrefixApiRequestParam represents the id prefix of `customer api request param`
+	IdPrefixApiRequestParam = "dsq-"
+
+	// IdPrefixApiResponseParam represents the id prefix of `customer api response param`
+	IdPrefixApiResponseParam = "dsp-"
+
+	// IdPrefixCustomerApiVersion represents the id prefix of `dataservice customer api version`
+	IdPrefixCustomerApiVersion = "dsv-"
+
 	//// IdPrefixUDF represents the id prefix of `UDF`.
 	//IdPrefixUDF = "udf-"
+
+	IdPrefixUser = "usr-"
 )
 
 // Defines the id for IdGenerator. To prevent ID conflicts.
@@ -61,6 +81,13 @@ const (
 	IdInstanceDataSource
 	IdInstanceResourceFile
 	IdInstanceAlertPolicy
+	IdInstanceDataServiceCluster
+	IdInstanceApiGroup
+	IdInstanceCustomerApi
+	IdInstanceApiRequestParam
+	IdInstanceApiResponseParam
+	IdInstanceCustomerApiVersion
+	IdInstanceUser
 )
 
 // Defines the id for IdGenerator. To prevent version conflicts.

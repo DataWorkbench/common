@@ -122,7 +122,7 @@ var (
 	}
 )
 
-// sign error
+// Account error
 var (
 	InvalidProvider = &Error{
 		code:   "InvalidProvider",
@@ -146,8 +146,14 @@ var (
 	AccessKeyNotExists = &Error{
 		code:   "AccessKeyNotExist",
 		status: 403,
-		enUS:   "The access key[%s] not exist.",
+		enUS:   "The access key [%s] not exist.",
 		zhCN:   "Access key[%s]不存在。",
+	}
+	AccessKeyNotActive = &Error{
+		code:   "AccessKeyNotActive",
+		status: 403,
+		enUS:   "The access key [%s] not active.",
+		zhCN:   "Access key [%s] 非活跃状态。",
 	}
 	UserNotExists = &Error{
 		code:   "UserNotExist",
@@ -714,5 +720,12 @@ var (
 		status: 400,
 		enUS:   "Param not valid, [%s]",
 		zhCN:   "Param not valid, [%s]",
+	}
+
+	BindKeyErr = &Error{
+		code:   "BindKeyErr",
+		status: 400,
+		enUS:   "ApiService not exist or had been bound to AuthKey",
+		zhCN:   "ApiService 不存在或者已经绑定了密钥",
 	}
 )
