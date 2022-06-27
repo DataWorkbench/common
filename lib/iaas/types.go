@@ -12,31 +12,22 @@ type ResponseBody interface {
 }
 
 // User represents the user info.
-type User struct {
-	UserId        string   `json:"user_id"`
-	Name          string   `json:"user_name"`
-	Email         string   `json:"email"`
-	RootUserId    string   `json:"root_user_id"`
-	Role          string   `json:"role"`
-	Privilege     int      `json:"privilege"`
-	Status        string   `json:"status"`
-	Zones         []string `json:"zones"`
-	Regions       []string `json:"regions"`
-	NotifyEmail   string   `json:"notify_email"`
-	VerifyType    string   `json:"verify_type"`
-	PaidMode      string   `json:"paid_mode"`
-	GravatarEmail string   `json:"gravatar_email"`
-	PersonalName  string   `json:"personal_name"`
-	CompanyName   string   `json:"company_name"`
-	CompanyPhone  string   `json:"company_phone"`
-	CompanyCode   string   `json:"company_code"`
-	Phone         string   `json:"phone"`
-	ConsoleId     string   `json:"console_id"`
-	Gender        string   `json:"gender"`
-	Remarks       string   `json:"remarks"`
-	MktSource     string   `json:"mkt_source"`
-	CreateTime    string   `json:"create_time"`
-	StatusTime    string   `json:"status_time"`
+type User = pbiaas.User
+
+// DescribeUsersInput is type request parameters for action "DescribeUsers"
+type DescribeUsersInput struct {
+	// The list of user id.
+	Users []string
+
+	Limit int
+
+	Offset int
+
+	Status string
+
+	Email string
+
+	Phone string
 }
 
 // DescribeUsersOutput is type response body for action "DescribeUsers"
@@ -56,12 +47,14 @@ func (b *DescribeUsersOutput) ReturnMessage() string {
 }
 
 // AccessKey represents the access key info.
-type AccessKey struct {
-	AccessKeyId     string `json:"access_key_id"`
-	SecretAccessKey string `json:"secret_access_key"`
-	Owner           string `json:"owner"`
-	RootUserId      string `json:"root_user_id"`
-}
+type AccessKey = pbiaas.AccessKey
+
+//type AccessKey struct {
+//	AccessKeyId     string `json:"access_key_id"`
+//	SecretAccessKey string `json:"secret_access_key"`
+//	Owner           string `json:"owner"`
+//	RootUserId      string `json:"root_user_id"`
+//}
 
 // DescribeAccessKeysOutput is type response body for action "DescribeAccessKeys"
 type DescribeAccessKeysOutput struct {
@@ -400,5 +393,22 @@ func (b *ReleaseVipsOutput) ReturnCode() int {
 }
 
 func (b *ReleaseVipsOutput) ReturnMessage() string {
+	return b.Message
+}
+
+type NotificationListSet = pbiaas.NotificationList
+
+type DescribeNotificationListsOutput struct {
+	RetCode             int                    `json:"ret_code"`
+	Message             string                 `json:"message"`
+	TotalCount          int                    `json:"total_count"`
+	NotificationListSet []*NotificationListSet `json:"notification_list_set"`
+}
+
+func (b *DescribeNotificationListsOutput) ReturnCode() int {
+	return b.RetCode
+}
+
+func (b *DescribeNotificationListsOutput) ReturnMessage() string {
 	return b.Message
 }
