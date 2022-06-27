@@ -305,6 +305,16 @@ var (
 	}
 )
 
+// Error for DataSource.
+var (
+	DataSourceConnectionRefused = &Error{
+		code:   "DataSourceConnectionRefused",
+		status: 400,
+		enUS:   "Failed to connect to the data source [%s], the reason is [%s]",
+		zhCN:   "连接数据源 [%s] 失败, 错误原因: [%s]",
+	}
+)
+
 // Error for Global API
 var (
 //RegionNotSpecified = &Error{
