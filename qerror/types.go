@@ -66,6 +66,12 @@ var (
 		enUS:   "The resource [%s] is used by [%s]",
 		zhCN:   "资源 [%s] 正在被 [%s] 使用中",
 	}
+	ResourceHasBeenDeleted = &Error{
+		code:   "ResourceHasBeenDeleted",
+		status: 410,
+		enUS:   "The used resource [%s %s] has been deleted.",
+		zhCN:   "依赖的资源 [%s %s] 已经被删除",
+	}
 )
 
 // parameters error
