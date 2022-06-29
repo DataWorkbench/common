@@ -8,7 +8,7 @@ import (
 
 const (
 	FlinkVersion_011203_0211     = "flink-1.12.3-scala_2.11"
-	FlinkVersion_011404_0211     = "flink-1.14.4-scala_2.11"
+	FlinkVersion_011404_0211     = "flink-1.14.5-scala_2.11"
 	FlinkVersion_011203_0211_Q09 = "flink-1.12.3-scala_2.11-q0.9"
 )
 
