@@ -310,7 +310,7 @@ func DescribeDatasourceTablesKafka(ctx context.Context, url *pbdatasource.KafkaU
 	}
 	config := sarama.NewConfig()
 	config.Version = sarama.V0_10_1_1
-	client, err := sarama.NewClient(brokes, nil)
+	client, err := sarama.NewClient(brokes, config)
 	if err != nil {
 		return nil, err
 	}

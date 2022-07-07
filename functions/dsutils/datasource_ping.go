@@ -110,18 +110,17 @@ func pingClickHouse(url *pbdatasource.ClickHouseURL) (err error) {
 }
 
 func pingKafka(url *pbdatasource.KafkaURL) (err error) {
-	dsn := make([]string, 0, len(url.KafkaBrokers))
-
-	for _, item := range url.KafkaBrokers {
-		dsn = append(dsn, fmt.Sprintf("%s:%d", item.Host, item.Port))
+	var brokes []string
+	for _, value := range url.KafkaBrokers {
+		brokes = append(brokes, fmt.Sprintf("%s:%d", value.Host, value.Port))
 	}
-
-	consumer, terr := sarama.NewConsumer(dsn, nil)
-	if terr != nil {
-		err = terr
+	config := sarama.NewConfig()
+	config.Version = sarama.V0_10_1_1
+	client, err := sarama.NewClient(brokes, config)
+	if err != nil {
 		return err
 	}
-	_ = consumer.Close()
+	defer client.Close()
 	return nil
 }
 
