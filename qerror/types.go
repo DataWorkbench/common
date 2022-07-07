@@ -66,6 +66,12 @@ var (
 		enUS:   "The resource [%s] is used by [%s]",
 		zhCN:   "资源 [%s] 正在被 [%s] 使用中",
 	}
+	ResourceHasBeenDeleted = &Error{
+		code:   "ResourceHasBeenDeleted",
+		status: 410,
+		enUS:   "The used resource [%s %s] has been deleted.",
+		zhCN:   "依赖的资源 [%s %s] 已经被删除",
+	}
 )
 
 // parameters error
@@ -302,6 +308,16 @@ var (
 		status: 403,
 		enUS:   "Limit exceeded of network number quota. quota is [%d] and already use [%d].",
 		zhCN:   "网络配置个数超出配额限制. 配额 [%d], 已使用 [%d].",
+	}
+)
+
+// Error for DataSource.
+var (
+	DataSourceConnectionRefused = &Error{
+		code:   "DataSourceConnectionRefused",
+		status: 400,
+		enUS:   "Failed to connect to the data source [%s], the reason is [%s]",
+		zhCN:   "连接数据源 [%s] 失败, 错误原因: [%s]",
 	}
 )
 

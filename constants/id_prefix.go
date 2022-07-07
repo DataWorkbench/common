@@ -53,19 +53,14 @@ const (
 	// IdPrefixCustomerApi represents the id prefix of `dataservice customer api`
 	IdPrefixCustomerApi = "dsa-"
 
-	// IdPrefixApiRequestParam represents the id prefix of `customer api request param`
-	IdPrefixApiRequestParam = "dsq-"
-
-	// IdPrefixApiResponseParam represents the id prefix of `customer api response param`
-	IdPrefixApiResponseParam = "dsp-"
-
-	// IdPrefixCustomerApiVersion represents the id prefix of `dataservice customer api version`
-	IdPrefixCustomerApiVersion = "dsv-"
-
 	//// IdPrefixUDF represents the id prefix of `UDF`.
 	//IdPrefixUDF = "udf-"
 
+	// IdPrefixUser represents the id prefix of `user`
 	IdPrefixUser = "usr-"
+
+	// IdPrefixObservable represents the id prefix of `observable`
+	IdPrefixObservable = "obs-"
 )
 
 // Defines the id for IdGenerator. To prevent ID conflicts.
@@ -84,8 +79,6 @@ const (
 	IdInstanceDataServiceCluster
 	IdInstanceApiGroup
 	IdInstanceCustomerApi
-	IdInstanceApiRequestParam
-	IdInstanceApiResponseParam
 	IdInstanceCustomerApiVersion
 	IdInstanceUser
 )
