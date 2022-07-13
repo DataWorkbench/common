@@ -11,14 +11,24 @@ import (
 )
 
 func loadConfig() *iaas.Config {
+	//cfg := &iaas.Config{
+	//	Zone:            "qa1a",
+	//	Host:            "api.qacloud.com",
+	//	Port:            7777,
+	//	Protocol:        "http",
+	//	Timeout:         30,
+	//	AccessKeyId:     "BHSWXNKSRKXUAXYCNXUI",
+	//	SecretAccessKey: "AK0RfVfmpafzkgwMKcTckudgeKH2efYHxn1Nu3qj",
+	//	Uri:             "/iaas/",
+	//}
 	cfg := &iaas.Config{
-		Zone:            "qa1a",
-		Host:            "api.qacloud.com",
+		Zone:            "testing",
+		Host:            "api.testing.com",
 		Port:            7777,
 		Protocol:        "http",
 		Timeout:         30,
-		AccessKeyId:     "BHSWXNKSRKXUAXYCNXUI",
-		SecretAccessKey: "AK0RfVfmpafzkgwMKcTckudgeKH2efYHxn1Nu3qj",
+		AccessKeyId:     "VVVRRUMNJWVPCGOHYGZS",
+		SecretAccessKey: "guQzePxNto2vtGoa7dGRMcXCBSsxmJ2xENO2NMtU",
 		Uri:             "/iaas/",
 	}
 	return cfg
@@ -106,10 +116,18 @@ func TestAllocateVips(t *testing.T) {
 //}
 //
 
-func TestDescribeNotificationLists(t *testing.T) {
+func TestDescribeNotificationLists1(t *testing.T) {
 	iaasClient := getIaasClient()
-	owner := "usr-1VnS6ACB"
-	output, err := iaasClient.DescribeNotificationLists(ctx, owner, 100, 0)
+	owner := "usr-MMizzuys"
+	output, err := iaasClient.DescribeNotificationLists(ctx, owner, nil, 100, 0)
+	require.Nil(t, err)
+	fmt.Println(output.NotificationListSet)
+}
+
+func TestDescribeNotificationLists2(t *testing.T) {
+	iaasClient := getIaasClient()
+	nfLists := []string{"nl-bpvbkz03"}
+	output, err := iaasClient.DescribeNotificationLists(ctx, "", nfLists, 100, 0)
 	require.Nil(t, err)
 	fmt.Println(output.NotificationListSet)
 }

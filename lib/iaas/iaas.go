@@ -649,12 +649,16 @@ LOOP:
 
 func (c *Client) DescribeNotificationLists(ctx context.Context, owner string, nfLists []string, limit int, offset int) (output *DescribeNotificationListsOutput, err error) {
 	params := map[string]interface{}{
-		"action":             "DescribeNotificationLists",
-		"zone":               c.cfg.Zone,
-		"owner":              owner,
-		"notification_lists": nfLists,
-		"limit":              limit,
-		"offset":             offset,
+		"action": "DescribeNotificationLists",
+		"zone":   c.cfg.Zone,
+		"limit":  limit,
+		"offset": offset,
+	}
+	if owner != "" {
+		params["owner"] = owner
+	}
+	if len(nfLists) != 0 {
+		params["notification_lists"] = nfLists
 	}
 	var body DescribeNotificationListsOutput
 	if err = c.sendRequest(ctx, params, &body); err != nil {
