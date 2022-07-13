@@ -652,7 +652,7 @@ func (c *Client) DescribeNotificationLists(ctx context.Context, owner string, nf
 		"action":             "DescribeNotificationLists",
 		"zone":               c.cfg.Zone,
 		"owner":              owner,
-		"notification_lists": strings.Join(nfLists, ","),
+		"notification_lists": nfLists,
 		"limit":              limit,
 		"offset":             offset,
 	}
