@@ -744,4 +744,11 @@ var (
 		enUS:   "ApiService not exist or had been bound to AuthKey",
 		zhCN:   "ApiService 不存在或者已经绑定了密钥",
 	}
+
+	NeedToUnbindFirst = &Error{
+		code:   "NeedToUnbindFirst",
+		status: 400,
+		enUS:   "need to unbind ApiServices first",
+		zhCN:   "需要先解绑已绑定的 ApiService",
+	}
 )
