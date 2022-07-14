@@ -273,6 +273,9 @@ func (c *Client) DescribeUsers(ctx context.Context, input *DescribeUsersInput) (
 	if input.Phone != "" {
 		params["phone"] = input.Phone
 	}
+	if input.RootUser != "" {
+		params["root_user"] = input.RootUser
+	}
 
 	var body DescribeUsersOutput
 	if err = c.sendRequest(ctx, params, &body); err != nil {
