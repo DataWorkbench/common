@@ -20,6 +20,8 @@ const (
 	ReleaseNotFoundErr = "release: not found"
 
 	AllResource = "all"
+
+	WaitInitDuration = 5 * time.Second
 )
 
 func NewClient(ctx context.Context, namespace, kubeConfPath string) (ghc.Client, error) {
@@ -85,6 +87,8 @@ func WaitingResourceReady(namespace, kubeConfPath, labelSelector string, timeout
 	client = kube.New(clientgetter)
 	client.Log = logFunc
 	builder := client.Factory.NewBuilder()
+
+	time.Sleep(WaitInitDuration)
 
 	result := builder.Unstructured().
 		NamespaceParam(namespace).DefaultNamespace().
