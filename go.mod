@@ -41,7 +41,7 @@ require (
 	github.com/speps/go-hashids/v2 v2.0.1
 	github.com/stretchr/objx v0.3.0 // indirect
 	github.com/stretchr/testify v1.7.0
-	github.com/tsuna/gohbase v0.0.0-20220316190246-5d94cc15d57f
+	github.com/tsuna/gohbase v0.0.0-20220517082425-cb1f77f08e4f
 	github.com/uber/jaeger-client-go v2.29.1+incompatible
 	github.com/uber/jaeger-lib v2.4.0+incompatible // indirect
 	github.com/yu31/protoc-plugin v0.0.0-20220417185426-73bdbff89e31
