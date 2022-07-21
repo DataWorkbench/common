@@ -34,14 +34,14 @@ const (
 
 // Config represents the iaas api config.
 type Config struct {
-	Zone            string `json:"zone"              yaml:"zone"              env:"ZONE"                validate:"required"`
-	Host            string `json:"host"              yaml:"host"              env:"HOST"                validate:"required"`
-	Port            int    `json:"port"              yaml:"port"              env:"PORT"                validate:"required"`
-	Protocol        string `json:"protocol"          yaml:"protocol"          env:"PROTOCOL"            validate:"required"`
-	Timeout         int    `json:"timeout"           yaml:"timeout"           env:"TIMEOUT,default=600" validate:"required"`
-	Uri             string `json:"uri"               yaml:"uri"               env:"URI"                 validate:"required"`
-	AccessKeyId     string `json:"access_key_id"     yaml:"access_key_id"     env:"ACCESS_KEY_ID"       validate:"required"`
-	SecretAccessKey string `json:"secret_access_key" yaml:"secret_access_key" env:"SECRET_ACCESS_KEY"   validate:"required"`
+	Zone            string `json:"zone"              yaml:"zone"              env:"ZONE"`
+	Host            string `json:"host"              yaml:"host"              env:"HOST"                validate:"required_with=zone"`
+	Port            int    `json:"port"              yaml:"port"              env:"PORT"                validate:"required_with=zone"`
+	Protocol        string `json:"protocol"          yaml:"protocol"          env:"PROTOCOL"            validate:"required_with=zone"`
+	Timeout         int    `json:"timeout"           yaml:"timeout"           env:"TIMEOUT,default=600" validate:"required_with=zone"`
+	Uri             string `json:"uri"               yaml:"uri"               env:"URI"                 validate:"required_with=zone"`
+	AccessKeyId     string `json:"access_key_id"     yaml:"access_key_id"     env:"ACCESS_KEY_ID"       validate:"required_with=zone"`
+	SecretAccessKey string `json:"secret_access_key" yaml:"secret_access_key" env:"SECRET_ACCESS_KEY"   validate:"required_with=zone"`
 }
 
 // Client represents the iaas api client.
