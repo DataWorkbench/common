@@ -51,6 +51,7 @@ func CopyConfigmap(ctx context.Context, client *kubernetes.Clientset, oriNamespa
 	return err
 }
 
+// NewClient
 // if kubeConfPath == "", create k8s client auth by ServiceAccount in RBAC (/var/run/secrets/kubernetes.io/serviceaccount)
 // otherwise kube client auth by kubeConfig in kubeConfPaths
 func NewClient(kubeConfPath string) (*kubernetes.Clientset, error) {
