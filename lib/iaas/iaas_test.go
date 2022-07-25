@@ -3,6 +3,7 @@ package iaas_test
 import (
 	"context"
 	"fmt"
+	"github.com/go-playground/validator/v10"
 	"testing"
 
 	"github.com/DataWorkbench/common/lib/iaas"
@@ -130,4 +131,34 @@ func TestDescribeNotificationLists2(t *testing.T) {
 	output, err := iaasClient.DescribeNotificationLists(ctx, "", nfLists, 100, 0)
 	require.Nil(t, err)
 	fmt.Println(output.NotificationListSet)
+}
+
+func TestRequiredWith(t *testing.T) {
+	type MyConfig struct {
+		Iaas *iaas.Config `json:"iaas" yaml:"iaas" env:"IAAS" validate:"required"`
+	}
+
+	conf := &iaas.Config{
+		Zone: "test",
+	}
+	conf2 := &iaas.Config{
+		AccessKeyId: "test",
+	}
+	myConf := &MyConfig{
+		Iaas: conf,
+	}
+	myConf2 := &MyConfig{
+		Iaas: conf2,
+	}
+	validate := validator.New()
+	if err := validate.Struct(myConf); err != nil {
+		fmt.Println(err)
+
+		if err2 := validate.Struct(myConf2); err2 != nil {
+			t.Fatal("validate required_with failed.")
+		}
+		fmt.Println("validate required_with passed.")
+	} else {
+		t.Fatal("validate required_with failed.")
+	}
 }
