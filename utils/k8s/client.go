@@ -10,14 +10,32 @@ import (
 )
 
 const DefaultKubeConf = "/root/.kube/config"
+const WorkerLabelKey = "node-role.kubernetes.io/worker"
 
-func GetKubeNodes(ctx context.Context, client *kubernetes.Clientset) ([]string, error) {
-	nodeList, err := client.CoreV1().Nodes().List(ctx, metav1.ListOptions{})
+func GetKubeNodes(ctx context.Context, client *kubernetes.Clientset, onlyWorker, onlySchedulable bool) ([]string, error) {
+	listOptions := metav1.ListOptions{}
+	if onlyWorker {
+		listOptions.LabelSelector = WorkerLabelKey
+	}
+	nodeList, err := client.CoreV1().Nodes().List(ctx, listOptions)
 	if err != nil {
 		return nil, err
 	}
 	var nodeSlice []string
 	for _, node := range nodeList.Items {
+		if onlySchedulable && node.Spec.Unschedulable {
+			unschedulable := false
+			for _, taint := range node.Spec.Taints {
+				if taint.Effect == corev1.TaintEffectNoSchedule {
+					unschedulable = true
+					break
+				}
+			}
+			if unschedulable {
+				continue
+			}
+		}
+
 		nodeSlice = append(nodeSlice, node.Name)
 	}
 	return nodeSlice, nil
