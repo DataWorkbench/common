@@ -99,5 +99,9 @@ func WaitingResourceReady(namespace, labelSelector string, conf Config, logFunc 
 	if err != nil {
 		return err
 	}
-	return client.Wait(infos, time.Duration(conf.Timeout) * time.Second)
+	timeout := DefaultTimeoutSecond
+	if conf.Timeout > 0 {
+		timeout = time.Duration(conf.Timeout) * time.Second
+	}
+	return client.Wait(infos, timeout)
 }
