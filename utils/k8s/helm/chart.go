@@ -2,11 +2,13 @@ package helm
 
 import (
 	"encoding/json"
+	"github.com/DataWorkbench/common/utils/k8s"
 	helm "github.com/mittwald/go-helm-client"
+	"path"
 	"time"
 )
 
-const DefaultTimeoutSecond = 30 * 60 * time.Second
+const DefaultTimeoutSecond = 60 * 60 * time.Second
 
 
 type Config struct {
@@ -22,6 +24,22 @@ type Config struct {
 	Timeout uint
 }
 
+func NewConfig(kubeConf, helmRepo string, debug, dryRun, waitReady bool, timeout uint) *Config {
+	if kubeConf == "" {
+		kubeConf = k8s.DefaultKubeConf
+	}
+	if helmRepo == "" {
+		helmRepo = DefaultHelmRepoCache
+	}
+	return &Config{
+		KubeConfPath: kubeConf,
+		HelmRepoPath: helmRepo,
+		Debug: debug,
+		DryRun: dryRun,
+		WaitReady: waitReady,
+		Timeout: timeout,
+	}
+}
 
 
 func parseValues(conf map[string]interface{}) (string, error) {
@@ -36,7 +54,7 @@ func parseValues(conf map[string]interface{}) (string, error) {
 }
 
 // NewChartSpec
-// chartName: full path of HelmChart
+// chartName: the HelmChart filename
 // valueConf: configuration of chart, eg: from file values.yaml
 // conf: the optional configuration of ChartSpec, dryRun / wait / timeout(second)
 func NewChartSpec(namespace, releaseName, chartName string, valueConf map[string]interface{}, conf Config) (*helm.ChartSpec, error) {
@@ -50,11 +68,17 @@ func NewChartSpec(namespace, releaseName, chartName string, valueConf map[string
 		timeoutSecond = time.Duration(conf.Timeout) * time.Second
 	}
 
+	repo := conf.HelmRepoPath
+	if repo == "" {
+		repo = DefaultHelmRepoCache
+	}
+	chart := path.Join(repo, chartName)
+
 	return &helm.ChartSpec{
 		Namespace:       namespace,
 		CreateNamespace: true,
 		ReleaseName:     releaseName,
-		ChartName:       chartName,
+		ChartName:       chart,
 		ValuesYaml:      values,
 		Wait:            conf.WaitReady,
 		DryRun:          conf.DryRun,
