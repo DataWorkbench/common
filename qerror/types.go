@@ -751,4 +751,11 @@ var (
 		enUS:   "need to unbind ApiServices first",
 		zhCN:   "需要先解绑已绑定的 ApiService",
 	}
+
+	DeleteRouteFirst = &Error{
+		code:   "DeleteRouteFirst",
+		status: 400,
+		enUS:   "need to delete Route first",
+		zhCN:   "需要先删除关联的Route",
+	}
 )
