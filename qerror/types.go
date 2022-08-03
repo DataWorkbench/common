@@ -66,6 +66,12 @@ var (
 		enUS:   "The resource [%s] is used by [%s]",
 		zhCN:   "资源 [%s] 正在被 [%s] 使用中",
 	}
+	ResourceHasBeenDeleted = &Error{
+		code:   "ResourceHasBeenDeleted",
+		status: 410,
+		enUS:   "The used resource [%s %s] has been deleted.",
+		zhCN:   "依赖的资源 [%s %s] 已经被删除",
+	}
 )
 
 // parameters error
@@ -737,5 +743,19 @@ var (
 		status: 400,
 		enUS:   "ApiService not exist or had been bound to AuthKey",
 		zhCN:   "ApiService 不存在或者已经绑定了密钥",
+	}
+
+	NeedToUnbindFirst = &Error{
+		code:   "NeedToUnbindFirst",
+		status: 400,
+		enUS:   "need to unbind ApiServices first",
+		zhCN:   "需要先解绑已绑定的 ApiService",
+	}
+
+	DeleteRouteFirst = &Error{
+		code:   "DeleteRouteFirst",
+		status: 400,
+		enUS:   "need to delete Route first",
+		zhCN:   "需要先删除关联的Route",
 	}
 )

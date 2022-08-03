@@ -228,7 +228,7 @@ func DescribeDatasourceTablesSqlServer(ctx context.Context, url *pbdatasource.Sq
 	if err != nil {
 		return nil, err
 	}
-	stmt, err := conn.Prepare("select name from sysobjects where xtype='u'")
+	stmt, err := conn.Prepare("select name from sysobjects where xtype='U' and category = 0")
 	if err != nil {
 		return nil, err
 	}
@@ -310,7 +310,7 @@ func DescribeDatasourceTablesKafka(ctx context.Context, url *pbdatasource.KafkaU
 	}
 	config := sarama.NewConfig()
 	config.Version = sarama.V0_10_1_1
-	client, err := sarama.NewClient(brokes, nil)
+	client, err := sarama.NewClient(brokes, config)
 	if err != nil {
 		return nil, err
 	}

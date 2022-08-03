@@ -20,38 +20,36 @@ const (
 	ReleaseNotFoundErr = "release: not found"
 
 	AllResource = "all"
+
+	WaitInitDuration = 5 * time.Second
 )
 
-func NewClient(ctx context.Context, namespace, kubeConfPath string) (ghc.Client, error) {
+func NewClient(ctx context.Context, namespace string, conf *Config) (ghc.Client, error) {
 	logger := glog.FromContext(ctx)
-	debug, ok := ctx.Value(DebugKey).(bool)
-	if !ok {
-		debug = false
-	}
 
 	debugLog := func(format string, v ...interface{}) {}
-	if debug {
+	if conf.Debug {
 		debugLog = func(format string, v ...interface{}) {
 			logger.Debug().Msg(fmt.Sprintf(format, v...)).Fire()
 		}
 	}
 	opts := &ghc.Options{
 		Namespace:        namespace, // Change this to the namespace you wish to install the chart in.
-		RepositoryCache:  DefaultHelmRepoCache,
+		RepositoryCache:  conf.HelmRepoPath,
 		RepositoryConfig: DefaultHelmRepoConfig,
-		Debug:            debug,
+		Debug:            conf.Debug,
 		Linting:          true, // Change this to false if you don't want linting.
 		DebugLog:         debugLog,
 	}
 
-	var conf *rest.Config
+	var restConf *rest.Config
 	var err error
-	if conf, err = clientcmd.BuildConfigFromFlags("", kubeConfPath); err != nil {
+	if restConf, err = clientcmd.BuildConfigFromFlags("", conf.KubeConfPath); err != nil {
 		return nil, err
 	}
 	restConfopts := &ghc.RestConfClientOptions{
 		Options:    opts,
-		RestConfig: conf,
+		RestConfig: restConf,
 	}
 	return ghc.NewClientFromRestConf(restConfopts)
 }
@@ -67,24 +65,27 @@ func Exist(client ghc.Client, releaseName string) (bool, error) {
 	return true, err
 }
 
+// WaitingResourceReady
 // Any oneof labelSelector and resourceTypeAndName must be specified
-func WaitingResourceReady(namespace, kubeConfPath, labelSelector string, timeout time.Duration, logFunc func(string, ...interface{}), resourceTypeAndName ...string) error {
+func WaitingResourceReady(namespace, labelSelector string, conf Config, logFunc func(string, ...interface{}), resourceTypeAndName ...string) error {
 	if len(resourceTypeAndName) == 0 {
 		resourceTypeAndName = append(resourceTypeAndName, AllResource)
 	}
 
-	var conf *rest.Config
+	var restConf *rest.Config
 	var err error
 	var clientgetter genericclioptions.RESTClientGetter
 	var client *kube.Client
 
-	if conf, err = clientcmd.BuildConfigFromFlags("", kubeConfPath); err != nil {
+	if restConf, err = clientcmd.BuildConfigFromFlags("", conf.KubeConfPath); err != nil {
 		return err
 	}
-	clientgetter = ghc.NewRESTClientGetter(namespace, nil, conf)
+	clientgetter = ghc.NewRESTClientGetter(namespace, nil, restConf)
 	client = kube.New(clientgetter)
 	client.Log = logFunc
 	builder := client.Factory.NewBuilder()
+
+	time.Sleep(WaitInitDuration)
 
 	result := builder.Unstructured().
 		NamespaceParam(namespace).DefaultNamespace().
@@ -97,6 +98,10 @@ func WaitingResourceReady(namespace, kubeConfPath, labelSelector string, timeout
 	infos, err := result.Infos()
 	if err != nil {
 		return err
+	}
+	timeout := DefaultTimeoutSecond
+	if conf.Timeout > 0 {
+		timeout = time.Duration(conf.Timeout) * time.Second
 	}
 	return client.Wait(infos, timeout)
 }

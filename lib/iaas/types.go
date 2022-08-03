@@ -28,6 +28,8 @@ type DescribeUsersInput struct {
 	Email string
 
 	Phone string
+
+	RootUser string
 }
 
 // DescribeUsersOutput is type response body for action "DescribeUsers"

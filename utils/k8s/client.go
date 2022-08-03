@@ -10,14 +10,32 @@ import (
 )
 
 const DefaultKubeConf = "/root/.kube/config"
+const WorkerLabelKey = "node-role.kubernetes.io/worker"
 
-func GetKubeNodes(ctx context.Context, client *kubernetes.Clientset) ([]string, error) {
-	nodeList, err := client.CoreV1().Nodes().List(ctx, metav1.ListOptions{})
+func GetKubeNodes(ctx context.Context, client *kubernetes.Clientset, onlyWorker, onlySchedulable bool) ([]string, error) {
+	listOptions := metav1.ListOptions{}
+	if onlyWorker {
+		listOptions.LabelSelector = WorkerLabelKey
+	}
+	nodeList, err := client.CoreV1().Nodes().List(ctx, listOptions)
 	if err != nil {
 		return nil, err
 	}
 	var nodeSlice []string
 	for _, node := range nodeList.Items {
+		if onlySchedulable && node.Spec.Unschedulable {
+			unschedulable := false
+			for _, taint := range node.Spec.Taints {
+				if taint.Effect == corev1.TaintEffectNoSchedule {
+					unschedulable = true
+					break
+				}
+			}
+			if unschedulable {
+				continue
+			}
+		}
+
 		nodeSlice = append(nodeSlice, node.Name)
 	}
 	return nodeSlice, nil
@@ -51,6 +69,7 @@ func CopyConfigmap(ctx context.Context, client *kubernetes.Clientset, oriNamespa
 	return err
 }
 
+// NewClient
 // if kubeConfPath == "", create k8s client auth by ServiceAccount in RBAC (/var/run/secrets/kubernetes.io/serviceaccount)
 // otherwise kube client auth by kubeConfig in kubeConfPaths
 func NewClient(kubeConfPath string) (*kubernetes.Clientset, error) {

@@ -34,14 +34,14 @@ const (
 
 // Config represents the iaas api config.
 type Config struct {
-	Zone            string `json:"zone"              yaml:"zone"              env:"ZONE"                validate:"required"`
-	Host            string `json:"host"              yaml:"host"              env:"HOST"                validate:"required"`
-	Port            int    `json:"port"              yaml:"port"              env:"PORT"                validate:"required"`
-	Protocol        string `json:"protocol"          yaml:"protocol"          env:"PROTOCOL"            validate:"required"`
-	Timeout         int    `json:"timeout"           yaml:"timeout"           env:"TIMEOUT,default=600" validate:"required"`
-	Uri             string `json:"uri"               yaml:"uri"               env:"URI"                 validate:"required"`
-	AccessKeyId     string `json:"access_key_id"     yaml:"access_key_id"     env:"ACCESS_KEY_ID"       validate:"required"`
-	SecretAccessKey string `json:"secret_access_key" yaml:"secret_access_key" env:"SECRET_ACCESS_KEY"   validate:"required"`
+	Zone            string `json:"zone"              yaml:"zone"              env:"ZONE"                validate:"-"`
+	Host            string `json:"host"              yaml:"host"              env:"HOST"                validate:"required_with=Zone"`
+	Port            int    `json:"port"              yaml:"port"              env:"PORT"                validate:"required_with=Zone"`
+	Protocol        string `json:"protocol"          yaml:"protocol"          env:"PROTOCOL"            validate:"required_with=Zone"`
+	Timeout         int    `json:"timeout"           yaml:"timeout"           env:"TIMEOUT,default=600" validate:"required_with=Zone"`
+	Uri             string `json:"uri"               yaml:"uri"               env:"URI"                 validate:"required_with=Zone"`
+	AccessKeyId     string `json:"access_key_id"     yaml:"access_key_id"     env:"ACCESS_KEY_ID"       validate:"required_with=Zone"`
+	SecretAccessKey string `json:"secret_access_key" yaml:"secret_access_key" env:"SECRET_ACCESS_KEY"   validate:"required_with=Zone"`
 }
 
 // Client represents the iaas api client.
@@ -272,6 +272,9 @@ func (c *Client) DescribeUsers(ctx context.Context, input *DescribeUsersInput) (
 	}
 	if input.Phone != "" {
 		params["phone"] = input.Phone
+	}
+	if input.RootUser != "" {
+		params["root_user"] = input.RootUser
 	}
 
 	var body DescribeUsersOutput
@@ -647,13 +650,18 @@ LOOP:
 	return
 }
 
-func (c *Client) DescribeNotificationLists(ctx context.Context, owner string, limit int, offset int) (output *DescribeNotificationListsOutput, err error) {
+func (c *Client) DescribeNotificationLists(ctx context.Context, owner string, nfLists []string, limit int, offset int) (output *DescribeNotificationListsOutput, err error) {
 	params := map[string]interface{}{
 		"action": "DescribeNotificationLists",
 		"zone":   c.cfg.Zone,
-		"owner":  owner,
 		"limit":  limit,
 		"offset": offset,
+	}
+	if owner != "" {
+		params["owner"] = owner
+	}
+	if len(nfLists) != 0 {
+		params["notification_lists"] = nfLists
 	}
 	var body DescribeNotificationListsOutput
 	if err = c.sendRequest(ctx, params, &body); err != nil {

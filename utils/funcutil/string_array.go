@@ -1,5 +1,7 @@
 package funcutil
 
+import "errors"
+
 // ContainStr check if the str is in strArray
 func ContainStr(strArray []string, str string) bool {
 	for _, s := range strArray {
@@ -23,4 +25,20 @@ func StringDiffSet(a []string, b []string) []string {
 		}
 	}
 	return c
+}
+
+func InterfaceToStringArray(i interface{}) ([]string, error) {
+	varray, ok := i.([]interface{})
+	if !ok {
+		return nil, errors.New( "the format of interface is not array")
+	}
+	var arr []string
+	for _, v := range varray {
+		str, ok := v.(string)
+		if !ok {
+			return nil, errors.New( "the format of interface-value is not string")
+		}
+		arr = append(arr, str)
+	}
+	return arr, nil
 }
