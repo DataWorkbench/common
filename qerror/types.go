@@ -764,10 +764,10 @@ var (
 var (
 	// ApiAlreadyExists render message if creating api already exists.
 	ApiAlreadyExists = &Error{
-	code:   "ApiAlreadyExists",
-	status: 409,
-	enUS:   "The api [%s] you are using already exists.",
-	zhCN:   "API [%s] 已存在",
+		code:   "ApiAlreadyExists",
+		status: 409,
+		enUS:   "The api [%s] you are using already exists.",
+		zhCN:   "API [%s] 已存在",
 	}
 
 	// ApiPathAlreadyExists render message if creating api path already exists.
@@ -777,7 +777,4 @@ var (
 		enUS:   "The api [%s] you are using already exists.",
 		zhCN:   "API Path [%s] 二级路径已存在",
 	}
-
 )
-
-

@@ -3,9 +3,11 @@ module github.com/DataWorkbench/common
 go 1.15
 
 require (
+	github.com/BurntSushi/toml v0.4.1
 	github.com/DataWorkbench/glog v0.0.0-20220302035436-25a1ae256704
 	github.com/DataWorkbench/gproto v0.0.0-20220714040257-4514070e27b7
 	github.com/HdrHistogram/hdrhistogram-go v1.0.1 // indirect
+	github.com/Masterminds/sprig/v3 v3.2.2
 	github.com/Shopify/sarama v1.29.1
 	github.com/buger/jsonparser v1.1.1
 	github.com/creasty/defaults v1.5.1
@@ -63,4 +65,5 @@ require (
 	k8s.io/apimachinery v0.23.1
 	k8s.io/cli-runtime v0.23.1
 	k8s.io/client-go v0.23.1
+	sigs.k8s.io/yaml v1.3.0
 )
