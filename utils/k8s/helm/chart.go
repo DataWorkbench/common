@@ -10,12 +10,11 @@ import (
 
 const DefaultTimeoutSecond = 60 * 60 * time.Second
 
-
 type Config struct {
 	KubeConfPath string
 	HelmRepoPath string
 
-	Debug bool
+	Debug  bool
 	DryRun bool
 	// if wait release ready
 	WaitReady bool
@@ -34,13 +33,12 @@ func NewConfig(kubeConf, helmRepo string, debug, dryRun, waitReady bool, timeout
 	return &Config{
 		KubeConfPath: kubeConf,
 		HelmRepoPath: helmRepo,
-		Debug: debug,
-		DryRun: dryRun,
-		WaitReady: waitReady,
-		Timeout: timeout,
+		Debug:        debug,
+		DryRun:       dryRun,
+		WaitReady:    waitReady,
+		Timeout:      timeout,
 	}
 }
-
 
 func parseValues(conf map[string]interface{}) (string, error) {
 	if conf != nil {

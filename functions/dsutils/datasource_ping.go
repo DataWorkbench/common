@@ -5,6 +5,11 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"net"
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/DataWorkbench/gproto/xgo/types/pbmodel"
 	"github.com/DataWorkbench/gproto/xgo/types/pbmodel/pbdatasource"
 	"github.com/Shopify/sarama"
@@ -23,22 +28,26 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"net"
-	"strconv"
-	"strings"
-	"time"
 )
 
-func pingMysql(url *pbdatasource.MySQLURL) (err error) {
+func pingNetwork(address string, port int32) (err error) {
 	var conn net.Conn
-	ip := net.JoinHostPort(url.Host, strconv.Itoa(int(url.Port)))
-	conn, err = net.DialTimeout("tcp", ip, time.Second*3)
+	ip := net.JoinHostPort(address, strconv.Itoa(int(port)))
+	conn, err = net.DialTimeout("tcp", ip, time.Second*5)
 	if err != nil {
 		return err
 	}
 	if conn != nil {
 		_ = conn.Close()
 	}
+	return
+}
+
+func pingMysql(url *pbdatasource.MySQLURL) (err error) {
+	if err = pingNetwork(url.Host, url.Port); err != nil {
+		return
+	}
+
 	dsn := fmt.Sprintf(
 		"%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		url.User, url.Password, url.Host, url.Port, url.Database,
@@ -56,15 +65,8 @@ func pingMysql(url *pbdatasource.MySQLURL) (err error) {
 }
 
 func pingPostgreSQL(url *pbdatasource.PostgreSQLURL) (err error) {
-	var conn net.Conn
-
-	ip := net.JoinHostPort(url.Host, strconv.Itoa(int(url.Port)))
-	conn, err = net.DialTimeout("tcp", ip, time.Second*3)
-	if err != nil {
-		return err
-	}
-	if conn != nil {
-		_ = conn.Close()
+	if err = pingNetwork(url.Host, url.Port); err != nil {
+		return
 	}
 
 	dsn := fmt.Sprintf(
@@ -84,6 +86,10 @@ func pingPostgreSQL(url *pbdatasource.PostgreSQLURL) (err error) {
 }
 
 func pingSqlServer(url *pbdatasource.SqlServerURL) (err error) {
+	if err = pingNetwork(url.Host, url.Port); err != nil {
+		return
+	}
+
 	connString := fmt.Sprintf("server=%s;database=%s;user id=%s;password=%s;port=%d;encrypt=disable", url.Host, url.Database, url.User, url.Password, url.Port)
 	db, err := sql.Open("mssql", connString)
 	if err != nil {
@@ -97,16 +103,22 @@ func pingSqlServer(url *pbdatasource.SqlServerURL) (err error) {
 }
 
 func pingClickHouse(url *pbdatasource.ClickHouseURL) (err error) {
+	if err = pingNetwork(url.Host, url.Port); err != nil {
+		return
+	}
+
 	connect, err := dbr.Open("clickhouse", fmt.Sprintf("http://%s:%s@%s:%d/%s", url.User, url.Password, url.Host, url.Port, url.Database), nil)
 	if err != nil {
 		return err
 	}
-	session := connect.NewSession(nil)
-	err = session.Ping()
+	defer func() {
+		_ = connect.Close()
+	}()
+	err = connect.Ping()
 	if err != nil {
 		return err
 	}
-	return nil
+	return
 }
 
 func pingKafka(url *pbdatasource.KafkaURL) (err error) {
