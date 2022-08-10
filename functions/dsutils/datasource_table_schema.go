@@ -162,7 +162,7 @@ func DescribeDatasourceTableSchemaClickHouse(ctx context.Context, url *pbdatasou
 		}
 		columns = append(columns, &pbdatasource.TableColumn{
 			Name:         v.Name,
-			Type:         escapeColumnTypeForCK(v.Type),
+			Type:         v.Type, //escapeColumnTypeForCK(v.Type)
 			IsPrimaryKey: isPrimaryKey,
 		})
 	}
