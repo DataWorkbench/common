@@ -31,6 +31,14 @@ func escapeColumnType(columnType string) string {
 	return strings.ToUpper(columnType)
 }
 
+func escapeColumnTypeForCK(columnType string) string {
+	if columnType == "" {
+		return columnType
+	}
+	columnType = strings.Split(columnType, " ")[0]
+	return columnType
+}
+
 func DescribeDatasourceTableSchemaMySQL(ctx context.Context, url *pbdatasource.MySQLURL,
 	tableName string) (columns []*pbdatasource.TableColumn, err error) {
 	dsn := fmt.Sprintf(
@@ -154,7 +162,7 @@ func DescribeDatasourceTableSchemaClickHouse(ctx context.Context, url *pbdatasou
 		}
 		columns = append(columns, &pbdatasource.TableColumn{
 			Name:         v.Name,
-			Type:         escapeColumnType(v.Type),
+			Type:         escapeColumnTypeForCK(v.Type),
 			IsPrimaryKey: isPrimaryKey,
 		})
 	}
