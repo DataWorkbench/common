@@ -229,7 +229,7 @@ func DescribeDatasourceTablesSqlServer(ctx context.Context, url *pbdatasource.Sq
 	if err != nil {
 		return nil, err
 	}
-	stmt, err := conn.Prepare("select name from sysobjects where xtype='U' and category = 0")
+	stmt, err := conn.Prepare("select t1.name from sysobjects t1 join sys.tables t2 on t1.name = t2.name where t1.xtype='U' and t1.category = 0 and t2.is_tracked_by_cdc = 1")
 	if err != nil {
 		return nil, err
 	}
