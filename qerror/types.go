@@ -777,4 +777,20 @@ var (
 		enUS:   "The api [%s] you are using already exists.",
 		zhCN:   "API Path [%s] 二级路径已存在",
 	}
+
+	// DataServiceClusterAlreadyExists render message if creating cluster already exists.
+	DataServiceClusterAlreadyExists = &Error{
+		code:   "DataServiceClusterAlreadyExists",
+		status: 409,
+		enUS:   "The cluster [%s] you are using already exists.",
+		zhCN:   "服务集群 [%s] 已存在",
+	}
+
+	// DataServiceClusterNotRunning render message if dataservice cluster is not running.
+	DataServiceClusterNotRunning = &Error{
+		code:   "DataServiceClusterNotRunning",
+		status: 409,
+		enUS:   "The cluster is not running",
+		zhCN:   "API关联集群不可用",
+	}
 )
