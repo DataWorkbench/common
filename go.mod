@@ -3,11 +3,9 @@ module github.com/DataWorkbench/common
 go 1.15
 
 require (
-	github.com/BurntSushi/toml v0.4.1
 	github.com/DataWorkbench/glog v0.0.0-20220302035436-25a1ae256704
 	github.com/DataWorkbench/gproto v0.0.0-20220714040257-4514070e27b7
 	github.com/HdrHistogram/hdrhistogram-go v1.0.1 // indirect
-	github.com/Masterminds/sprig/v3 v3.2.2
 	github.com/Shopify/sarama v1.29.1
 	github.com/buger/jsonparser v1.1.1
 	github.com/creasty/defaults v1.5.1
@@ -27,8 +25,8 @@ require (
 	github.com/grpc-ecosystem/grpc-opentracing v0.0.0-20180507213350-8e809c8a8645
 	github.com/mailru/dbr v3.0.0+incompatible
 	github.com/mailru/go-clickhouse v1.8.0
+	github.com/mattn/go-sqlite3 v1.14.15 // indirect
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/mittwald/go-helm-client v0.9.0
 	github.com/olivere/elastic v6.2.37+incompatible // indirect
 	github.com/olivere/elastic/v6 v6.2.1
 	github.com/olivere/elastic/v7 v7.0.32
@@ -60,10 +58,4 @@ require (
 	gorm.io/driver/mysql v1.3.2
 	gorm.io/driver/postgres v1.3.4
 	gorm.io/gorm v1.23.1
-	helm.sh/helm/v3 v3.8.0
-	k8s.io/api v0.23.1
-	k8s.io/apimachinery v0.23.1
-	k8s.io/cli-runtime v0.23.1
-	k8s.io/client-go v0.23.1
-	sigs.k8s.io/yaml v1.3.0
 )
