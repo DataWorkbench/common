@@ -7,9 +7,10 @@ import (
 )
 
 const (
-	FlinkVersion_011203_0211     = "flink-1.12.3-scala_2.11"
-	FlinkVersion_011405_0211     = "flink-1.14.5-scala_2.11"
-	FlinkVersion_011203_0211_Q09 = "flink-1.12.3-scala_2.11-q0.9"
+	FlinkVersion_011203_0211        = "flink-1.12.3-scala_2.11"
+	FlinkVersion_011405_0211        = "flink-1.14.5-scala_2.11"
+	FlinkVersion_011203_0211_Q09    = "flink-1.12.3-scala_2.11-q0.9"
+	FlinkVersion_011203_0211_CJ0112 = "flink-1.12.3-scala_2.11-cj_1.12"
 )
 
 // GenerateFlinkJobId for generate a flink job id with spaceId and instanceId by uuid v3.
