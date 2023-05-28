@@ -4,7 +4,7 @@ go 1.15
 
 require (
 	github.com/DataWorkbench/glog v0.0.0-20220302035436-25a1ae256704
-	github.com/DataWorkbench/gproto v0.0.0-20220714040257-4514070e27b7
+	github.com/DataWorkbench/gproto v0.0.0-20230528154725-d7c1604edd8a
 	github.com/HdrHistogram/hdrhistogram-go v1.0.1 // indirect
 	github.com/Shopify/sarama v1.29.1
 	github.com/buger/jsonparser v1.1.1
@@ -44,12 +44,12 @@ require (
 	github.com/tsuna/gohbase v0.0.0-20220517082425-cb1f77f08e4f
 	github.com/uber/jaeger-client-go v2.29.1+incompatible
 	github.com/uber/jaeger-lib v2.4.0+incompatible // indirect
-	github.com/yu31/protoc-plugin v0.0.0-20220417185426-73bdbff89e31
+	github.com/yu31/protoc-plugin v0.0.0-20230528154456-c713541dce13
 	github.com/yu31/snowflake v0.0.0-20220217043813-1552fe47d479
 	go.etcd.io/etcd/api/v3 v3.5.1
 	go.etcd.io/etcd/client/v3 v3.5.0
 	golang.org/x/crypto v0.0.0-20220214200702-86341886e292
-	google.golang.org/grpc v1.46.2
+	google.golang.org/grpc v1.48.0
 	google.golang.org/protobuf v1.27.1
 	gopkg.in/DATA-DOG/go-sqlmock.v1 v1.3.0 // indirect
 	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22
